@@ -1,0 +1,21 @@
+allprojects {
+    group 'com.azuriom'
+    version '1.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+
+        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    }
+
+    dependencies {
+        compileOnly 'com.google.code.gson:gson:2.8.5'
+    }
+}

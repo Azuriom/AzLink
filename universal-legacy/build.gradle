@@ -1,0 +1,23 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
+}
+
+dependencies {
+    compile project(':azlink-common')
+    compile project(':azlink-bukkit')
+    compile project(':azlink-bungee')
+    compile project(':azlink-sponge')
+
+    compile 'com.google.code.gson:gson:2.8.5'
+}
+
+shadowJar {
+    archiveFileName = "AzLink-Legacy-${project.version}.jar"
+
+    relocate 'okio', 'com.azuriom.azlink.libs.okio'
+    relocate 'okhttp3', 'com.azuriom.azlink.libs.okhttp3'
+}
+
+artifacts {
+    archives shadowJar
+}

@@ -1,0 +1,10 @@
+dependencies {
+    compileOnly 'net.md-5:bungeecord-api:1.14-SNAPSHOT'
+    compile project(':azlink-common')
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand 'pluginVersion': project.version
+    }
+}

@@ -1,0 +1,12 @@
+name: AzLink
+version: ${pluginVersion}
+author: Azuriom Team
+description: The plugin to link your Azuriom website with your server.
+website: https://azuriom.com
+main: com.azuriom.azlink.bukkit.AzLinkBukkitPlugin
+api-version: 1.13
+commands:
+  azlink:
+    description: Manage the AzLink plugin.
+    usage: /<command> [status|key|url]
+    aliases: [azuriomlink]

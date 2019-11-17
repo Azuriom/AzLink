@@ -1,0 +1,4 @@
+dependencies {
+    compileOnly 'org.slf4j:slf4j-api:1.7.28'
+    compile 'com.squareup.okhttp3:okhttp:3.14.3'
+}
