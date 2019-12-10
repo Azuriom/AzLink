@@ -66,10 +66,10 @@ public class AzLinkPlugin {
             return;
         }
 
-        LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.HOURS).plusHours(1);
+        LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(1);
         long startDelay = Duration.between(LocalDateTime.now(), start).toMillis();
 
-        scheduler.scheduleAtFixedRate(fetcherTask, startDelay, TimeUnit.HOURS.toMillis(1), TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
         if (!config.isValid()) {
             platform.getLoggerAdapter().warn("Invalid configuration, you can use '/azlink' to setup the plugin.");
@@ -78,7 +78,7 @@ public class AzLinkPlugin {
 
         platform.executeAsync(() -> {
             try {
-                httpClient.getStatus();
+                httpClient.verifyStatus();
             } catch (IOException e) {
                 platform.getLoggerAdapter().warn("Unable to connect", e);
             }
@@ -89,9 +89,11 @@ public class AzLinkPlugin {
         scheduler.shutdown();
     }
 
-    public void saveConfig(PluginConfig config) throws IOException {
+    public void setConfig(PluginConfig config) {
         this.config = config;
+    }
 
+    public void saveConfig() throws IOException {
         if (!Files.isDirectory(platform.getDataDirectory())) {
             Files.createDirectories(platform.getDataDirectory());
         }
@@ -105,23 +107,24 @@ public class AzLinkPlugin {
         return command;
     }
 
-    public ServerData getServerData() {
+    public ServerData getServerData(boolean fullData) {
         List<PlayerData> players = platform.getOnlinePlayers()
                 .map(CommandSender::toData)
                 .collect(Collectors.toList());
-
-        PlatformData platformData = platform.getPlatformData();
-        SystemData system = new SystemData(getMemoryUsage(), getCpuUsage());
-        WorldData world = platform.getWorldData().orElse(null);
         int max = platform.getMaxPlayers();
 
-        return new ServerData(platformData, platform.getPluginVersion(), players, max, system, world);
+        PlatformData platformData = platform.getPlatformData();
+
+        SystemData system = fullData ? new SystemData(getMemoryUsage(), getCpuUsage()) : null;
+        WorldData world = fullData ? platform.getWorldData().orElse(null) : null;
+
+        return new ServerData(platformData, platform.getPluginVersion(), players, max, system, world, fullData);
     }
 
-    public double getCpuUsage() {
+    private double getCpuUsage() {
         try {
             if (ManagementFactory.getOperatingSystemMXBean() instanceof com.sun.management.OperatingSystemMXBean) {
-                return ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad();
+                return ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad() * 100.0;
             }
         } catch (Throwable t) {
             if (logCpuError) {
@@ -133,7 +136,11 @@ public class AzLinkPlugin {
         return -1;
     }
 
-    public double getMemoryUsage() {
+    public void fetchNow() {
+        platform.executeAsync(fetcherTask);
+    }
+
+    private double getMemoryUsage() {
         return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0;
     }
 

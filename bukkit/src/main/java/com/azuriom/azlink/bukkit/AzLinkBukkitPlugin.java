@@ -9,6 +9,7 @@ import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.logger.JulLoggerAdapter;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
+import com.azuriom.azlink.common.tasks.TpsTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.nio.file.Path;
@@ -19,6 +20,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     private final AzLinkPlugin plugin = new AzLinkPlugin(this);
 
+    private final TpsTask tpsTask = new TpsTask();
+
     private LoggerAdapter logger;
 
     @Override
@@ -28,6 +31,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         plugin.init();
 
         getCommand("azlink").setExecutor(new BukkitCommandExecutor(plugin));
+
+        getServer().getScheduler().runTaskTimer(this, tpsTask, 0, 1);
     }
 
     @Override
@@ -78,7 +83,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
         int entities = getServer().getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
 
-        return Optional.of(new WorldData(0, loadedChunks, entities));
+        return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
     }
 
     @Override

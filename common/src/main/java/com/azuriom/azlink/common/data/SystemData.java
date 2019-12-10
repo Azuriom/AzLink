@@ -2,16 +2,16 @@ package com.azuriom.azlink.common.data;
 
 public class SystemData {
 
-    private final double memory;
+    private final double ram;
     private final double cpu;
 
-    public SystemData(double memory, double cpu) {
-        this.memory = memory;
+    public SystemData(double ram, double cpu) {
+        this.ram = ram;
         this.cpu = cpu;
     }
 
-    public double getMemory() {
-        return memory;
+    public double getRam() {
+        return ram;
     }
 
     public double getCpu() {

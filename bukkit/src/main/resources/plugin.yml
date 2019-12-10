@@ -8,5 +8,5 @@ api-version: 1.13
 commands:
   azlink:
     description: Manage the AzLink plugin.
-    usage: /<command> [status|key|url]
+    usage: /<command> [status|setup]
     aliases: [azuriomlink]

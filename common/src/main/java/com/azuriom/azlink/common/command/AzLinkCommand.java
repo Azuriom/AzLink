@@ -1,7 +1,9 @@
 package com.azuriom.azlink.common.command;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
+import com.azuriom.azlink.common.config.PluginConfig;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -24,22 +26,29 @@ public class AzLinkCommand {
         }
 
         if (args[0].equalsIgnoreCase("setup")) {
-            // TODO
+            if (args.length < 3) {
+                sender.sendMessage("§cUsage: /azlink setup <url> <key>");
+                return;
+            }
+
+            setup(sender, args[1], args[2]);
+
             return;
         }
 
         if (args[0].equalsIgnoreCase("status")) {
-            // TODO
+
+            showStatus(sender);
+
             return;
         }
 
-        if (args[0].equalsIgnoreCase("key")) {
-            // TODO
-            return;
-        }
+        if (args[0].equalsIgnoreCase("fetch")) {
 
-        if (args[0].equalsIgnoreCase("site")) {
-            // TODO
+            plugin.fetchNow();
+
+            sender.sendMessage("§6Fetch done.");
+
             return;
         }
 
@@ -59,7 +68,39 @@ public class AzLinkCommand {
     }
 
     private void sendUsage(CommandSender sender) {
-        // TODO
+        String version = plugin.getPlatform().getPluginVersion();
+        sender.sendMessage("§9AzLink v" + version + "§7. Website: §9https://azuriom.com");
+        sender.sendMessage("§8- /azlink setup <url> <key>");
+        sender.sendMessage("§8- /azlink status");
+    }
+
+    private void setup(CommandSender sender, String url, String key) {
+        plugin.setConfig(new PluginConfig(key, url));
+
+        if (showStatus(sender)) {
+            try {
+                plugin.saveConfig();
+            } catch (IOException e) {
+                sender.sendMessage("§cError while saving config: " + e.getMessage() + " - " + e.getClass().getName());
+                plugin.getPlatform().getLoggerAdapter().error("Error while saving config", e);
+            }
+        }
+    }
+
+    private boolean showStatus(CommandSender sender) {
+        try {
+            plugin.getHttpClient().verifyStatus();
+
+            sender.sendMessage("§aStatus ok");
+
+            plugin.fetchNow();
+
+            return true;
+        } catch (IOException e) {
+            sender.sendMessage("§cUnable to connect to the server: " + e.getMessage());
+
+            return false;
+        }
     }
 
     private static boolean startsWithIgnoreCase(String string, String prefix) {

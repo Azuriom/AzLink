@@ -31,13 +31,19 @@ public class HttpClient {
         this.plugin = plugin;
     }
 
+    public void verifyStatus() throws IOException {
+        try (Response response = getStatus()) {
+            // success
+        }
+    }
+
     public Response getStatus() throws IOException {
         return makeCall(new Request.Builder().url(getSiteUrl()).build());
     }
 
     public WebsiteResponse postData(ServerData data) throws IOException {
         Request request = new Request.Builder().url(getSiteUrl())
-                .post(RequestBody.create(JSON_TYPE, data.toString()))
+                .post(RequestBody.create(JSON_TYPE, plugin.getGson().toJson(data)))
                 .build();
 
         try (Response response = makeCall(request)) {

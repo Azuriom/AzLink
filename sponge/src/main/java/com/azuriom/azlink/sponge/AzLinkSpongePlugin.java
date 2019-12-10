@@ -7,6 +7,7 @@ import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.logger.Slf4jLoggerAdapter;
+import com.azuriom.azlink.common.tasks.TpsTask;
 import com.azuriom.azlink.sponge.command.SpongeCommandExecutor;
 import com.azuriom.azlink.sponge.command.SpongeCommandSender;
 import com.google.common.collect.Iterables;
@@ -42,6 +43,8 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     private final LoggerAdapter logger;
 
+    private TpsTask tpsTask = new TpsTask();
+
     @Inject
     public AzLinkSpongePlugin(Game game, @ConfigDir(sharedRoot = false) Path configDirectory, Logger logger) {
         this.game = game;
@@ -54,6 +57,8 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
         plugin.init();
 
         game.getCommandManager().register(this, new SpongeCommandExecutor(plugin), "azlink", "azuriomlink");
+
+        Task.builder().intervalTicks(1).execute(tpsTask).submit(this);
     }
 
     @Override
@@ -99,7 +104,7 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
         int entities = game.getServer().getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
 
-        return Optional.of(new WorldData(0, loadedChunks, entities));
+        return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
     }
 
     @Override

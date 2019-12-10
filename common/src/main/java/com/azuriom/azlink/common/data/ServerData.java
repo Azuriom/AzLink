@@ -1,7 +1,5 @@
 package com.azuriom.azlink.common.data;
 
-import com.azuriom.azlink.common.PlatformType;
-
 import java.util.List;
 
 public class ServerData {
@@ -15,13 +13,16 @@ public class ServerData {
     private final SystemData system;
     private final WorldData worlds;
 
-    public ServerData(PlatformData platform, String version, List<PlayerData> players, int maxPlayers, SystemData system, WorldData worlds) {
+    private final boolean full;
+
+    public ServerData(PlatformData platform, String version, List<PlayerData> players, int maxPlayers, SystemData system, WorldData worlds, boolean full) {
         this.platform = platform;
         this.version = version;
         this.players = players;
         this.maxPlayers = maxPlayers;
         this.system = system;
         this.worlds = worlds;
+        this.full = full;
     }
 
     public PlatformData getPlatform() {
@@ -46,5 +47,9 @@ public class ServerData {
 
     public WorldData getWorlds() {
         return worlds;
+    }
+
+    public boolean isFull() {
+        return full;
     }
 }

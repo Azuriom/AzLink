@@ -14,14 +14,22 @@ public class FetcherTask implements Runnable {
 
     private final AzLinkPlugin plugin;
 
+    private int count = 0;
+
     public FetcherTask(AzLinkPlugin plugin) {
         this.plugin = plugin;
+    }
+
+    public void runTask() {
+        count++;
+
+        run();
     }
 
     @Override
     public void run() {
         plugin.getPlatform().executeSync(() -> {
-            ServerData data = plugin.getServerData();
+            ServerData data = plugin.getServerData(count % 15 == 0);
 
             plugin.getPlatform().executeAsync(() -> sendData(data));
         });
