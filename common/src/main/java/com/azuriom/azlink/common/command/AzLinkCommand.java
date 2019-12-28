@@ -66,6 +66,11 @@ public class AzLinkCommand {
                 return;
             }
 
+            if (port < 1 || port > 65535) {
+                sender.sendMessage("§cThe port must be between 1 and 65535");
+                return;
+            }
+
             plugin.getConfig().setHttpPort(port);
 
             plugin.getPlatform().executeAsync(() -> {

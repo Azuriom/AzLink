@@ -18,6 +18,7 @@ import org.spongepowered.api.Platform;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
+import org.spongepowered.api.event.game.state.GameStoppedEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.scheduler.Task;
 
@@ -59,6 +60,11 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
         game.getCommandManager().register(this, new SpongeCommandExecutor(plugin), "azlink", "azuriomlink");
 
         Task.builder().intervalTicks(1).execute(tpsTask).submit(this);
+    }
+
+    @Listener
+    public void onGameStop(GameStoppedEvent event) {
+        plugin.shutdown();
     }
 
     @Override

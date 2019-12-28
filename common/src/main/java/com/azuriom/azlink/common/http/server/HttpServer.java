@@ -26,6 +26,8 @@ public class HttpServer {
     }
 
     public void start() throws Exception {
+        plugin.getLogger().info("Stating HTTP server");
+
         int port = plugin.getConfig().getHttpPort();
 
         if (port < 1 || port > 65535) {
@@ -51,10 +53,6 @@ public class HttpServer {
     }
 
     public void stop() throws Exception {
-        if (channelFuture != null) {
-            channelFuture.channel().closeFuture().sync();
-        }
-
         bossGroup.shutdownGracefully();
         workerGroup.shutdownGracefully();
     }

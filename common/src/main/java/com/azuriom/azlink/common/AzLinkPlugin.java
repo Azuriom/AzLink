@@ -105,6 +105,11 @@ public class AzLinkPlugin {
     public void shutdown() {
         getLogger().info("Shutting down scheduler");
         scheduler.shutdown();
+        try {
+            scheduler.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            getLogger().warn("Error while shutting down scheduler", e);
+        }
 
         getLogger().info("Stopping HTTP server");
         httpServer.stopSafe();
@@ -160,6 +165,10 @@ public class AzLinkPlugin {
 
     public HttpClient getHttpClient() {
         return httpClient;
+    }
+
+    public HttpServer getHttpServer() {
+        return httpServer;
     }
 
     public Gson getGson() {
