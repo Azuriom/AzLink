@@ -1,4 +1,4 @@
-package com.azuriom.azlink.common.http;
+package com.azuriom.azlink.common.http.client;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.data.ServerData;
@@ -52,8 +52,8 @@ public class HttpClient {
                     throw new RuntimeException("No body in response");
                 }
 
-                try (InputStream is = body.byteStream()) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8))) {
+                try (InputStream in = body.byteStream()) {
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
                         return plugin.getGson().fromJson(reader, WebsiteResponse.class);
                     }
                 }
@@ -82,6 +82,6 @@ public class HttpClient {
     }
 
     private String getSiteUrl() {
-        return plugin.getConfig().getSiteUrl() + "/api/v1/azlink";
+        return plugin.getConfig().getSiteUrl() + "/api/azlink";
     }
 }

@@ -43,7 +43,7 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     private final LoggerAdapter logger;
 
-    private TpsTask tpsTask = new TpsTask();
+    private final TpsTask tpsTask = new TpsTask();
 
     @Inject
     public AzLinkSpongePlugin(Game game, @ConfigDir(sharedRoot = false) Path configDirectory, Logger logger) {

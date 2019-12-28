@@ -9,10 +9,12 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+
     repositories {
         mavenCentral()
-
-        maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     }
 
     dependencies {

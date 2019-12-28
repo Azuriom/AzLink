@@ -6,6 +6,8 @@ import com.azuriom.azlink.common.data.ServerData;
 import com.azuriom.azlink.common.data.WebsiteResponse;
 
 import java.io.IOException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -14,28 +16,29 @@ public class FetcherTask implements Runnable {
 
     private final AzLinkPlugin plugin;
 
-    private int count = 0;
+    private Instant lastFullDataSent = Instant.MIN;
 
     public FetcherTask(AzLinkPlugin plugin) {
         this.plugin = plugin;
     }
 
-    public void runTask() {
-        count++;
-
-        run();
-    }
-
     @Override
     public void run() {
-        plugin.getPlatform().executeSync(() -> {
-            ServerData data = plugin.getServerData(count % 15 == 0);
+        if (!plugin.getConfig().isValid()) {
+            return;
+        }
 
-            plugin.getPlatform().executeAsync(() -> sendData(data));
+        plugin.getPlatform().executeSync(() -> {
+            LocalDateTime now = LocalDateTime.now();
+            boolean sendFullData = now.getMinute() % 15 == 0 && lastFullDataSent.isBefore(Instant.now().minusSeconds(60));
+
+            ServerData data = plugin.getServerData(sendFullData);
+
+            plugin.getPlatform().executeAsync(() -> sendData(data, sendFullData));
         });
     }
 
-    private void sendData(ServerData data) {
+    private void sendData(ServerData data, boolean sendFullData) {
         try {
             WebsiteResponse response = plugin.getHttpClient().postData(data);
 
@@ -43,7 +46,7 @@ public class FetcherTask implements Runnable {
                 return;
             }
 
-            plugin.getPlatform().getLoggerAdapter().info("Dispatching " + response.getCommands() + " commands.");
+            plugin.getLogger().info("Dispatching " + response.getCommands() + " commands.");
 
             Map<String, CommandSender> players = plugin.getPlatform()
                     .getOnlinePlayers()
@@ -55,12 +58,16 @@ public class FetcherTask implements Runnable {
                         .replace("{name}", player.getName())
                         .replace("{uuid}", player.getUuid().toString());
 
-                plugin.getPlatform().getLoggerAdapter().info("Dispatching command for player " + player.getName() + ": " + command);
+                plugin.getLogger().info("Dispatching command for player " + player.getName() + ": " + command);
 
                 plugin.getPlatform().dispatchConsoleCommand(command);
             }
+
+            if (sendFullData) {
+                lastFullDataSent = Instant.now();
+            }
         } catch (IOException e) {
-            plugin.getPlatform().getLoggerAdapter().error("Unable to send data to website", e);
+            plugin.getLogger().error("Unable to send data to website: " + e.getMessage() + " - " + e.getClass().getName());
         }
     }
 }

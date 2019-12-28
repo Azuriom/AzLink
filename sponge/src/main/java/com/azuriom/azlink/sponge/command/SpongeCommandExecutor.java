@@ -3,7 +3,6 @@ package com.azuriom.azlink.sponge.command;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.AzLinkCommand;
 import org.spongepowered.api.command.CommandCallable;
-import org.spongepowered.api.command.CommandException;
 import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.CommandSource;
 import org.spongepowered.api.text.Text;
@@ -55,6 +54,6 @@ public class SpongeCommandExecutor extends AzLinkCommand implements CommandCalla
     @Override
     @Nonnull
     public Text getUsage(@Nonnull CommandSource source) {
-        return Text.of("Usage: /azlink [status|key|url]");
+        return Text.of(getUsage());
     }
 }

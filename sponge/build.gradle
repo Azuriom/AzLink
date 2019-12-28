@@ -7,8 +7,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spongepowered:spongeapi:7.1.0'
     compile project(':azlink-common')
+    compileOnly 'org.spongepowered:spongeapi:7.1.0'
 }
 
 blossom {

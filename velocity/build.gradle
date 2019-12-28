@@ -3,13 +3,13 @@ plugins {
 }
 
 repositories {
-    maven { url 'https://repo.velocitypowered.com/snapshots/' }
+    maven { url 'https://repo.velocitypowered.com/releases/' }
 }
 
 dependencies {
-    compileOnly 'com.velocitypowered:velocity-api:1.0.4-SNAPSHOT'
-    annotationProcessor 'com.velocitypowered:velocity-api:1.0.4-SNAPSHOT'
     compile project(':azlink-common')
+    compileOnly 'com.velocitypowered:velocity-api:1.0.4'
+    annotationProcessor 'com.velocitypowered:velocity-api:1.0.4'
 }
 
 blossom {

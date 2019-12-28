@@ -1,7 +1,6 @@
 package com.azuriom.azlink.common.command;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
-import com.azuriom.azlink.common.config.PluginConfig;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -11,7 +10,7 @@ import java.util.stream.Stream;
 
 public class AzLinkCommand {
 
-    private static final String[] COMPLETIONS = {"status", "setup", "key", "site"};
+    private static final String[] COMPLETIONS = {"status", "setup", "fetch", "port"};
 
     private final AzLinkPlugin plugin;
 
@@ -52,6 +51,37 @@ public class AzLinkCommand {
             return;
         }
 
+        if (args[0].equalsIgnoreCase("port")) {
+            if (args.length < 2) {
+                sender.sendMessage("§cUsage: /azlink port <port>");
+                return;
+            }
+
+            int port;
+
+            try {
+                port = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                sender.sendMessage("§c'" + args[1] + "' is not a valid port !");
+                return;
+            }
+
+            plugin.getConfig().setHttpPort(port);
+
+            plugin.getPlatform().executeAsync(() -> {
+                try {
+                    plugin.restartHttpServer();
+
+                    sender.sendMessage("§aHTTP server started on port " + port);
+                } catch (Exception e) {
+                    sender.sendMessage("§cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
+                    plugin.getLogger().error("Error while starting the HTTP server", e);
+                }
+            });
+
+            return;
+        }
+
         sendUsage(sender);
     }
 
@@ -67,22 +97,28 @@ public class AzLinkCommand {
         return Collections.emptyList();
     }
 
+    public String getUsage() {
+        return "Usage: /azlink [" + String.join("|", COMPLETIONS) + "]";
+    }
+
     private void sendUsage(CommandSender sender) {
         String version = plugin.getPlatform().getPluginVersion();
         sender.sendMessage("§9AzLink v" + version + "§7. Website: §9https://azuriom.com");
         sender.sendMessage("§8- /azlink setup <url> <key>");
+        sender.sendMessage("§8- /azlink port <port>");
         sender.sendMessage("§8- /azlink status");
     }
 
     private void setup(CommandSender sender, String url, String key) {
-        plugin.setConfig(new PluginConfig(key, url));
+        plugin.getConfig().setSiteKey(key);
+        plugin.getConfig().setSiteUrl(url);
 
         if (showStatus(sender)) {
             try {
                 plugin.saveConfig();
             } catch (IOException e) {
-                sender.sendMessage("§cError while saving config: " + e.getMessage() + " - " + e.getClass().getName());
-                plugin.getPlatform().getLoggerAdapter().error("Error while saving config", e);
+                sender.sendMessage("§cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
+                plugin.getLogger().error("Error while saving config", e);
             }
         }
     }
@@ -96,8 +132,8 @@ public class AzLinkCommand {
             plugin.fetchNow();
 
             return true;
-        } catch (IOException e) {
-            sender.sendMessage("§cUnable to connect to the server: " + e.getMessage());
+        } catch (Exception e) {
+            sender.sendMessage("§cUnable to connect to the website: " + e.getMessage() + " - " + e.getClass().getName());
 
             return false;
         }

@@ -8,16 +8,18 @@ import com.azuriom.azlink.common.data.PlayerData;
 import com.azuriom.azlink.common.data.ServerData;
 import com.azuriom.azlink.common.data.SystemData;
 import com.azuriom.azlink.common.data.WorldData;
-import com.azuriom.azlink.common.http.HttpClient;
+import com.azuriom.azlink.common.http.client.HttpClient;
+import com.azuriom.azlink.common.http.server.HttpServer;
+import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.scheduler.ThreadBuilder;
 import com.azuriom.azlink.common.tasks.FetcherTask;
+import com.azuriom.azlink.common.utils.SystemUtils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -35,6 +37,7 @@ public class AzLinkPlugin {
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> new ThreadBuilder(r).name("azlink-thread").daemon().build());
 
     private final HttpClient httpClient = new HttpClient(this);
+    private HttpServer httpServer = new HttpServer(this);
 
     private final Gson gson = new Gson();
     private final Gson gsonPrettyPrint = new GsonBuilder().setPrettyPrinting().create();
@@ -46,7 +49,7 @@ public class AzLinkPlugin {
     private final AzLinkPlatform platform;
 
     private Path configFile;
-    private PluginConfig config = new PluginConfig(null, null);
+    private PluginConfig config = new PluginConfig(null, null, true, HttpServer.DEFAULT_PORT);
 
     private boolean logCpuError = true;
 
@@ -62,31 +65,47 @@ public class AzLinkPlugin {
         } catch (NoSuchFileException e) {
             // ignore, not setup yet
         } catch (IOException e) {
-            platform.getLoggerAdapter().error("Error while loading configuration", e);
+            getLogger().error("Error while loading configuration", e);
             return;
         }
 
         LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(1);
-        long startDelay = Duration.between(LocalDateTime.now(), start).toMillis();
+        long startDelay = Duration.between(LocalDateTime.now(), start).toMillis() + 500; // Add 0.5s to ensure we are not in the previous hour
 
         scheduler.scheduleAtFixedRate(fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
         if (!config.isValid()) {
-            platform.getLoggerAdapter().warn("Invalid configuration, you can use '/azlink' to setup the plugin.");
+            getLogger().warn("Invalid configuration, you can use '/azlink' to setup the plugin.");
             return;
         }
 
         platform.executeAsync(() -> {
             try {
                 httpClient.verifyStatus();
+
+                getLogger().info("Successful connected to " + config.getSiteUrl());
             } catch (IOException e) {
-                platform.getLoggerAdapter().warn("Unable to connect", e);
+                getLogger().warn("Unable to verify website connection: " + e.getMessage() + " - " + e.getClass().getName());
             }
         });
+
+        if (config.hasInstantCommands()) {
+            platform.executeAsync(httpServer::startSafe);
+        }
+    }
+
+    public void restartHttpServer() throws Exception {
+        httpServer.stopSafe();
+
+        httpServer = new HttpServer(this);
+
+        httpServer.start();
     }
 
     public void shutdown() {
         scheduler.shutdown();
+
+        httpServer.stopSafe();
     }
 
     public void setConfig(PluginConfig config) {
@@ -115,33 +134,18 @@ public class AzLinkPlugin {
 
         PlatformData platformData = platform.getPlatformData();
 
-        SystemData system = fullData ? new SystemData(getMemoryUsage(), getCpuUsage()) : null;
+        SystemData system = fullData ? new SystemData(getCpuUsage(), SystemUtils.getMemoryUsage()) : null;
         WorldData world = fullData ? platform.getWorldData().orElse(null) : null;
 
         return new ServerData(platformData, platform.getPluginVersion(), players, max, system, world, fullData);
-    }
-
-    private double getCpuUsage() {
-        try {
-            if (ManagementFactory.getOperatingSystemMXBean() instanceof com.sun.management.OperatingSystemMXBean) {
-                return ((com.sun.management.OperatingSystemMXBean) ManagementFactory.getOperatingSystemMXBean()).getProcessCpuLoad() * 100.0;
-            }
-        } catch (Throwable t) {
-            if (logCpuError) {
-                logCpuError = false;
-
-                platform.getLoggerAdapter().warn("Error while retrieving cpu usage", t);
-            }
-        }
-        return -1;
     }
 
     public void fetchNow() {
         platform.executeAsync(fetcherTask);
     }
 
-    private double getMemoryUsage() {
-        return (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024.0 / 1024.0;
+    public LoggerAdapter getLogger() {
+        return platform.getLoggerAdapter();
     }
 
     public PluginConfig getConfig() {
@@ -162,5 +166,18 @@ public class AzLinkPlugin {
 
     public Gson getGsonPrettyPrint() {
         return gsonPrettyPrint;
+    }
+
+    private double getCpuUsage() {
+        try {
+            return SystemUtils.getCpuUsage();
+        } catch (Throwable t) {
+            if (logCpuError) {
+                logCpuError = false;
+
+                getLogger().warn("Error while retrieving cpu usage", t);
+            }
+        }
+        return -1;
     }
 }

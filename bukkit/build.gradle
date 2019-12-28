@@ -1,10 +1,11 @@
 repositories {
     maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT'
     compile project(':azlink-common')
+    compileOnly 'org.spigotmc:spigot-api:1.15.1-R0.1-SNAPSHOT'
 }
 
 processResources {
