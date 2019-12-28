@@ -24,17 +24,27 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
-        if (!request.uri().equals("/")) {
+        //noinspection deprecation - Request#uri is not avaible on old MC versions :(
+        String uri = request.getUri();
+        //noinspection deprecation - Request#method is not avaible on old MC versions :(
+        HttpMethod method = request.getMethod();
+
+        if (!uri.equals("/")) {
             close(ctx, writeResponse(HttpResponseStatus.NOT_FOUND, "Error: Not Found"));
             return;
         }
 
-        if (request.method() == HttpMethod.GET) {
+        if (method == HttpMethod.GET) {
             close(ctx, writeResponse(HttpResponseStatus.OK, "Status: OK"));
             return;
         }
 
-        if (request.method() == HttpMethod.POST) {
+        if (method == HttpMethod.POST) {
+            if (!plugin.getConfig().isValid()) {
+                close(ctx, writeResponse(HttpResponseStatus.UNPROCESSABLE_ENTITY, "Error: Invalid configuration"));
+                return;
+            }
+
             String siteKeyHash = Hash.SHA_256.hash(plugin.getConfig().getSiteKey());
 
             if (!siteKeyHash.equals(request.headers().get("Authorization"))) {

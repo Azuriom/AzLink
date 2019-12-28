@@ -74,6 +74,10 @@ public class AzLinkPlugin {
 
         scheduler.scheduleAtFixedRate(fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
+        if (config.hasInstantCommands()) {
+            platform.executeAsync(httpServer::startSafe);
+        }
+
         if (!config.isValid()) {
             getLogger().warn("Invalid configuration, you can use '/azlink' to setup the plugin.");
             return;
@@ -88,10 +92,6 @@ public class AzLinkPlugin {
                 getLogger().warn("Unable to verify website connection: " + e.getMessage() + " - " + e.getClass().getName());
             }
         });
-
-        if (config.hasInstantCommands()) {
-            platform.executeAsync(httpServer::startSafe);
-        }
     }
 
     public void restartHttpServer() throws Exception {
@@ -103,8 +103,10 @@ public class AzLinkPlugin {
     }
 
     public void shutdown() {
+        getLogger().info("Shutting down scheduler");
         scheduler.shutdown();
 
+        getLogger().info("Stopping HTTP server");
         httpServer.stopSafe();
     }
 

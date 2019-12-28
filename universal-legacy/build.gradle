@@ -9,6 +9,9 @@ dependencies {
     compile project(':azlink-sponge')
 
     compile 'com.google.code.gson:gson:2.8.5'
+
+    compile 'io.netty:netty-handler:4.1.38.Final'
+    compile 'io.netty:netty-codec-http:4.1.38.Final'
 }
 
 shadowJar {
@@ -16,6 +19,8 @@ shadowJar {
 
     relocate 'okio', 'com.azuriom.azlink.libs.okio'
     relocate 'okhttp3', 'com.azuriom.azlink.libs.okhttp3'
+    relocate 'com.google.gson', 'com.azuriom.azlink.libs.gson'
+    relocate 'io.netty', 'com.azuriom.azlink.libs.netty'
 }
 
 artifacts {
