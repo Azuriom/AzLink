@@ -20,9 +20,12 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
     private LoggerAdapter loggerAdapter;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         loggerAdapter = new JulLoggerAdapter(getLogger());
+    }
 
+    @Override
+    public void onEnable() {
         plugin.init();
 
         getProxy().getPluginManager().registerCommand(this, new BungeeCommandExecutor(plugin));

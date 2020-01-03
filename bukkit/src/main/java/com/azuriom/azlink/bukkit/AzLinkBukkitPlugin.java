@@ -25,8 +25,22 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     private LoggerAdapter logger;
 
     @Override
-    public void onEnable() {
+    public void onLoad() {
         logger = new JulLoggerAdapter(getLogger());
+    }
+
+    @Override
+    public void onEnable() {
+        try {
+            Class.forName("com.google.gson.JsonObject");
+
+            Class.forName("io.netty.channel.Channel");
+        } catch (ClassNotFoundException e) {
+            logger.error("Your server version is not compatible with this version of AzLink !");
+            logger.error("Please download AzLink Legacy on https://azuriom.com/azlink");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
         plugin.init();
 
