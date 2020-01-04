@@ -2,5 +2,6 @@ dependencies {
     compileOnly 'org.slf4j:slf4j-api:1.7.28'
     compileOnly 'com.google.code.gson:gson:2.8.5'
     compileOnly 'io.netty:netty-all:4.1.25.Final'
+    compile 'de.mkammerer:argon2-jvm:2.5'
     compile 'com.squareup.okhttp3:okhttp:3.14.3'
 }

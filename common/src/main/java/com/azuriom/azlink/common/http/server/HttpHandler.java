@@ -45,7 +45,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
                 return;
             }
 
-            String siteKeyHash = Hash.SHA_256.hash(plugin.getConfig().getSiteKey());
+            String siteKeyHash = Hash.ARGON2id.hash(plugin.getConfig().getSiteKey());
 
             if (!siteKeyHash.equals(request.headers().get("Authorization"))) {
                 close(ctx, writeResponse(HttpResponseStatus.UNAUTHORIZED, "Error: Invalid authorization"));
