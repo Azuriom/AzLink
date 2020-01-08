@@ -8,6 +8,7 @@ dependencies {
     compile project(':azlink-bungee')
     compile project(':azlink-sponge')
     compile project(':azlink-velocity')
+    compile project(':azlink-nukkit')
 }
 
 shadowJar {

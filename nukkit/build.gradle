@@ -1,0 +1,14 @@
+repositories {
+    maven { url 'https://repo.nukkitx.com/maven-snapshots' }
+}
+
+dependencies {
+    compile project(':azlink-common')
+    compileOnly 'cn.nukkit:nukkit:1.0-SNAPSHOT'
+}
+
+processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        expand 'pluginVersion': project.version
+    }
+}

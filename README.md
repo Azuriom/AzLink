@@ -5,10 +5,15 @@
 AzLink is a plugin to link a Minecraft server or proxy with [Azuriom](https://azuriom.com).
 
 This plugin currently support the following platforms:
+
+  MCPC :
 * [Bukkit/Spigot](https://www.spigotmc.org/)
 * [BungeeCord](https://github.com/SpigotMC/BungeeCord)
 * [Sponge](https://www.spongepowered.org/)
 * [Velocity](https://www.velocitypowered.com/)
+
+ MCPE :
+* [NukkitX/Nukkit](https://nukkitx.com/)
 
 ## Setup
 

@@ -8,6 +8,7 @@ dependencies {
     compile project(':azlink-bungee')
     compile project(':azlink-sponge')
     compile project(':azlink-velocity')
+    compile project(':azlink-nukkit')
 
     compile 'com.google.code.gson:gson:2.8.5'
     compile 'io.netty:netty-handler:4.1.38.Final'

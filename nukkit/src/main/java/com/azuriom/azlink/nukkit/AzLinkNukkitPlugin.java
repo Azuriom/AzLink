@@ -1,0 +1,121 @@
+package com.azuriom.azlink.nukkit;
+
+import cn.nukkit.plugin.PluginBase;
+import com.azuriom.azlink.common.AzLinkPlatform;
+import com.azuriom.azlink.common.AzLinkPlugin;
+import com.azuriom.azlink.common.PlatformType;
+import com.azuriom.azlink.common.command.CommandSender;
+import com.azuriom.azlink.common.data.WorldData;
+import com.azuriom.azlink.common.logger.LoggerAdapter;
+import com.azuriom.azlink.common.tasks.TpsTask;
+import com.azuriom.azlink.nukkit.command.NukkitCommandExecutor;
+import com.azuriom.azlink.nukkit.command.NukkitCommandSender;
+import com.azuriom.azlink.nukkit.utils.NukkitLoggerAdaptater;
+
+import java.nio.file.Path;
+import java.util.Optional;
+import java.util.stream.Stream;
+
+public class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatform {
+
+    private final AzLinkPlugin plugin = new AzLinkPlugin(this);
+
+    private final TpsTask tpsTask = new TpsTask();
+
+    private LoggerAdapter logger;
+
+    @Override
+    public void onLoad() {
+        logger = new NukkitLoggerAdaptater(getServer().getLogger());
+    }
+
+    @Override
+    public void onEnable() {
+
+        plugin.init();
+
+        getServer().getScheduler().scheduleDelayedRepeatingTask(this, tpsTask, 0, 1);
+
+        getServer().getCommandMap().register("azlink", new NukkitCommandExecutor(plugin));
+
+    }
+
+
+    @Override
+    public void onDisable() {
+        plugin.shutdown();
+    }
+
+    @Override
+    public AzLinkPlugin getPlugin() {
+        return plugin;
+    }
+
+    @Override
+    public LoggerAdapter getLoggerAdapter() {
+        return logger;
+    }
+
+    @Override
+    public PlatformType getPlatformType() {
+        return PlatformType.NUKKIT;
+    }
+
+    @Override
+    public String getPlatformName() {
+        return getServer().getName();
+    }
+
+    @Override
+    public String getPlatformVersion() {
+        return getServer().getNukkitVersion();
+    }
+
+    @Override
+    public String getPluginVersion() {
+        return getDescription().getVersion();
+    }
+
+
+    @Override
+    public Optional<WorldData> getWorldData() {
+
+        int loadedChunks = getServer().getLevels().values().stream().mapToInt(w -> w.getChunks().values().size()).sum();
+
+        int entities = getServer().getLevels().values().stream().mapToInt(w -> w.getEntities().length).sum();
+
+        return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
+
+    }
+
+    @Override
+    public Path getDataDirectory() {
+        return getDataFolder().toPath();
+    }
+
+    @Override
+    public Stream<CommandSender> getOnlinePlayers() {
+        return getServer().getOnlinePlayers().values().stream().map(NukkitCommandSender::new);
+    }
+
+    @Override
+    public int getMaxPlayers() {
+        return getServer().getMaxPlayers();
+    }
+
+    @Override
+    public void dispatchConsoleCommand(String command) {
+        getServer().dispatchCommand(getServer().getConsoleSender(), command);
+    }
+
+
+    @Override
+    public void executeAsync(Runnable runnable) {
+        getServer().getScheduler().scheduleTask(this, runnable, true);
+    }
+
+    @Override
+    public void executeSync(Runnable runnable) {
+        getServer().getScheduler().scheduleTask(this, runnable, false);
+    }
+}
