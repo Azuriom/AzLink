@@ -1,43 +1,43 @@
 package com.azuriom.azlink.nukkit.utils;
 
-import cn.nukkit.utils.MainLogger;
+import cn.nukkit.utils.Logger;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 
-public class NukkitLoggerAdaptater implements LoggerAdapter {
+public class NukkitLoggerAdapter implements LoggerAdapter {
 
-    private MainLogger mainLogger;
+    private final Logger logger;
 
-    public NukkitLoggerAdaptater(MainLogger mainLogger) {
-        this.mainLogger = mainLogger;
+    public NukkitLoggerAdapter(Logger logger) {
+        this.logger = logger;
     }
 
     @Override
     public void info(String message) {
-        mainLogger.info(message);
+        logger.info(message);
     }
 
     @Override
     public void info(String message, Throwable throwable) {
-        mainLogger.info(message, throwable);
+        logger.info(message, throwable);
     }
 
     @Override
     public void warn(String message) {
-        mainLogger.warning(message);
+        logger.warning(message);
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
-        mainLogger.warning(message, throwable);
+        logger.warning(message, throwable);
     }
 
     @Override
     public void error(String message) {
-        mainLogger.error(message);
+        logger.error(message);
     }
 
     @Override
     public void error(String message, Throwable throwable) {
-        mainLogger.error(message, throwable);
+        logger.error(message, throwable);
     }
 }

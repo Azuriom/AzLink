@@ -1,31 +1,21 @@
 package com.azuriom.azlink.nukkit.command;
 
 import cn.nukkit.command.Command;
+import cn.nukkit.command.CommandExecutor;
 import cn.nukkit.command.CommandSender;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.AzLinkCommand;
 
-public class NukkitCommandExecutor extends Command {
+public class NukkitCommandExecutor extends AzLinkCommand implements CommandExecutor {
 
-    private final AzLinkCommand azLinkCommand;
-
-    public NukkitCommandExecutor(AzLinkPlugin azLinkPlugin) {
-
-        super("azlink", "Manage the AzLink plugin");
-
-        this.setAliases(new String[]{"azuriomlink"});
-
-        this.setPermission("azlink.admin");
-
-        this.azLinkCommand = new AzLinkCommand(azLinkPlugin);
+    public NukkitCommandExecutor(AzLinkPlugin plugin) {
+        super(plugin);
     }
 
     @Override
-    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        execute(new NukkitCommandSender(sender), args);
 
-        azLinkCommand.execute(new NukkitCommandSender(sender), args);
-
-        return false;
-
+        return true;
     }
 }

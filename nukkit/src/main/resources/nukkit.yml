@@ -5,3 +5,8 @@ author: Azuriom Team
 description: The plugin to link your Azuriom website with your server
 website: https://azuriom.com
 api: ["1.0.0"]
+commands:
+  azlink:
+    description: Manage the AzLink plugin.
+    usage: /azlink [status|setup|fetch|port]
+    aliases: [azuriomlink]

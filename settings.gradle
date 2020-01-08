@@ -1,8 +1,6 @@
 rootProject.name = 'azlink'
 
-['common', 'bukkit', 'bungee', 'sponge', 'velocity', 'universal', 'universal-legacy', 'nukkit'].each {
+['common', 'bukkit', 'bungee', 'sponge', 'velocity', 'nukkit', 'universal', 'universal-legacy'].each {
     include ":azlink-${it}"
     project(":azlink-${it}").projectDir = file(it)
 }
-
-

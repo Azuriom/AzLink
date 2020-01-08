@@ -1,5 +1,7 @@
 package com.azuriom.azlink.nukkit;
 
+import cn.nukkit.command.PluginCommand;
+import cn.nukkit.command.PluginIdentifiableCommand;
 import cn.nukkit.plugin.PluginBase;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
@@ -10,13 +12,13 @@ import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import com.azuriom.azlink.nukkit.command.NukkitCommandExecutor;
 import com.azuriom.azlink.nukkit.command.NukkitCommandSender;
-import com.azuriom.azlink.nukkit.utils.NukkitLoggerAdaptater;
+import com.azuriom.azlink.nukkit.utils.NukkitLoggerAdapter;
 
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatform {
+public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatform {
 
     private final AzLinkPlugin plugin = new AzLinkPlugin(this);
 
@@ -26,20 +28,18 @@ public class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatform {
 
     @Override
     public void onLoad() {
-        logger = new NukkitLoggerAdaptater(getServer().getLogger());
+        logger = new NukkitLoggerAdapter(getLogger());
     }
 
     @Override
     public void onEnable() {
-
         plugin.init();
 
+        PluginIdentifiableCommand command = getCommand("azlink");
+        ((PluginCommand<?>) command).setExecutor(new NukkitCommandExecutor(plugin));
+
         getServer().getScheduler().scheduleDelayedRepeatingTask(this, tpsTask, 0, 1);
-
-        getServer().getCommandMap().register("azlink", new NukkitCommandExecutor(plugin));
-
     }
-
 
     @Override
     public void onDisable() {
@@ -79,13 +79,15 @@ public class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatform {
 
     @Override
     public Optional<WorldData> getWorldData() {
+        int loadedChunks = getServer().getLevels().values().stream()
+                .mapToInt(w -> w.getChunks().size())
+                .sum();
 
-        int loadedChunks = getServer().getLevels().values().stream().mapToInt(w -> w.getChunks().values().size()).sum();
-
-        int entities = getServer().getLevels().values().stream().mapToInt(w -> w.getEntities().length).sum();
+        int entities = getServer().getLevels().values().stream()
+                .mapToInt(w -> w.getEntities().length)
+                .sum();
 
         return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
-
     }
 
     @Override
@@ -107,7 +109,6 @@ public class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatform {
     public void dispatchConsoleCommand(String command) {
         getServer().dispatchCommand(getServer().getConsoleSender(), command);
     }
-
 
     @Override
     public void executeAsync(Runnable runnable) {

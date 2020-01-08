@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class NukkitCommandSender implements CommandSender {
 
-    private cn.nukkit.command.CommandSender commandSender;
+    private final cn.nukkit.command.CommandSender commandSender;
 
     public NukkitCommandSender(cn.nukkit.command.CommandSender commandSender) {
         this.commandSender = commandSender;
@@ -20,11 +20,8 @@ public class NukkitCommandSender implements CommandSender {
 
     @Override
     public UUID getUuid() {
-
         if (commandSender instanceof Player) {
-
             return ((Player) commandSender).getUniqueId();
-
         }
 
         return UUID.nameUUIDFromBytes(getName().getBytes());
