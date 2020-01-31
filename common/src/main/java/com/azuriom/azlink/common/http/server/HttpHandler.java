@@ -23,10 +23,9 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Request#uri & Request#method don't exits  on old Netty versions
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
-        //noinspection deprecation - Request#uri is not avaible on old MC versions :(
         String uri = request.getUri();
-        //noinspection deprecation - Request#method is not avaible on old MC versions :(
         HttpMethod method = request.getMethod();
 
         if (!uri.equals("/")) {

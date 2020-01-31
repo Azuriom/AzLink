@@ -49,7 +49,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         plugin.init();
 
-        server.getCommandManager().register(new VelocityCommandExecutor(plugin), "gazlink", "gazuriomlink");
+        server.getCommandManager().register(new VelocityCommandExecutor(plugin), "azlink", "azuriomlink");
     }
 
     @Subscribe

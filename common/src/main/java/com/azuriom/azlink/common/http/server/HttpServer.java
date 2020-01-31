@@ -2,10 +2,13 @@ package com.azuriom.azlink.common.http.server;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+
+import java.net.InetSocketAddress;
 
 public class HttpServer {
 
@@ -16,7 +19,7 @@ public class HttpServer {
     private final EventLoopGroup bossGroup;
     private final EventLoopGroup workerGroup;
 
-    private ChannelFuture channelFuture;
+    private Channel channel;
 
     public HttpServer(AzLinkPlugin plugin) {
         this.plugin = plugin;
@@ -25,7 +28,7 @@ public class HttpServer {
         workerGroup = new NioEventLoopGroup();
     }
 
-    public void start() throws Exception {
+    public void start() {
         plugin.getLogger().info("Stating HTTP server");
 
         int port = plugin.getConfig().getHttpPort();
@@ -34,34 +37,35 @@ public class HttpServer {
             port = DEFAULT_PORT;
         }
 
-        ServerBootstrap bootstrap = new ServerBootstrap()
+        InetSocketAddress address = new InetSocketAddress(port);
+
+        new ServerBootstrap()
                 .channel(NioServerSocketChannel.class)
+                .group(bossGroup, workerGroup)
                 .childHandler(new HttpChannelInitializer(plugin))
-                .group(bossGroup, workerGroup);
+                .bind(address)
+                .addListener((ChannelFutureListener) future -> {
+                    if (!future.isSuccess()) {
+                        plugin.getLogger().error("Unable to start HTTP server on " + address, future.cause());
+                        return;
+                    }
 
-        channelFuture = bootstrap.bind(port).sync();
+                    channel = future.channel();
 
-        plugin.getLogger().info("HTTP server started on port " + port);
+                    plugin.getLogger().info("HTTP server started on " + future.channel().localAddress());
+                });
     }
 
-    public void startSafe() {
+    public void stop() {
         try {
-            start();
-        } catch (Exception e) {
-            plugin.getLogger().error("An error occurred while starting HTTP server", e);
-        }
-    }
-
-    public void stop() throws Exception {
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
-    }
-
-    public void stopSafe() {
-        try {
-            stop();
+            if (channel != null) {
+                channel.close().syncUninterruptibly();
+            }
         } catch (Exception e) {
             plugin.getLogger().error("An error occurred while stopping HTTP server", e);
         }
+
+        bossGroup.shutdownGracefully();
+        workerGroup.shutdownGracefully();
     }
 }

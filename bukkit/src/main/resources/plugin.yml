@@ -10,3 +10,8 @@ commands:
     description: Manage the AzLink plugin.
     usage: /<command> [status|setup|fetch|port]
     aliases: [azuriomlink]
+
+permissions:
+  azlink.admin:
+    description: Allows you to use the /azlink command.
+    default: op

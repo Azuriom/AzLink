@@ -11,7 +11,7 @@ public class BungeeCommandExecutor extends Command implements TabExecutor {
     private final AzLinkCommand command;
 
     public BungeeCommandExecutor(AzLinkPlugin plugin) {
-        super("gazlink", "azlink.admin", "gazuriomlink");
+        super("azlink", "azlink.admin", "azuriomlink");
 
         command = new AzLinkCommand(plugin);
     }

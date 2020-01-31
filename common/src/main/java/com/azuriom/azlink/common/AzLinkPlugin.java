@@ -11,7 +11,7 @@ import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.http.client.HttpClient;
 import com.azuriom.azlink.common.http.server.HttpServer;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
-import com.azuriom.azlink.common.scheduler.ThreadBuilder;
+import com.azuriom.azlink.common.scheduler.ThreadFactoryBuilder;
 import com.azuriom.azlink.common.tasks.FetcherTask;
 import com.azuriom.azlink.common.utils.SystemUtils;
 import com.google.gson.Gson;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 
 public class AzLinkPlugin {
 
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(r -> new ThreadBuilder(r).name("azlink-thread").daemon().build());
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().name("azlink-scheduler").daemon());
 
     private final HttpClient httpClient = new HttpClient(this);
     private HttpServer httpServer = new HttpServer(this);
@@ -75,7 +75,7 @@ public class AzLinkPlugin {
         scheduler.scheduleAtFixedRate(fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
         if (config.hasInstantCommands()) {
-            platform.executeAsync(httpServer::startSafe);
+            httpServer.start();
         }
 
         if (!config.isValid()) {
@@ -94,8 +94,8 @@ public class AzLinkPlugin {
         });
     }
 
-    public void restartHttpServer() throws Exception {
-        httpServer.stopSafe();
+    public void restartHttpServer() {
+        httpServer.stop();
 
         httpServer = new HttpServer(this);
 
@@ -112,7 +112,7 @@ public class AzLinkPlugin {
         }
 
         getLogger().info("Stopping HTTP server");
-        httpServer.stopSafe();
+        httpServer.stop();
     }
 
     public void setConfig(PluginConfig config) {
@@ -153,6 +153,10 @@ public class AzLinkPlugin {
 
     public LoggerAdapter getLogger() {
         return platform.getLoggerAdapter();
+    }
+
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
     }
 
     public PluginConfig getConfig() {

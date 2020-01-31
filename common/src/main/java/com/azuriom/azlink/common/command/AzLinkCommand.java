@@ -73,16 +73,14 @@ public class AzLinkCommand {
 
             plugin.getConfig().setHttpPort(port);
 
-            plugin.getPlatform().executeAsync(() -> {
-                try {
-                    plugin.restartHttpServer();
+            try {
+                plugin.restartHttpServer();
 
-                    sender.sendMessage("§aHTTP server started on port " + port);
-                } catch (Exception e) {
-                    sender.sendMessage("§cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
-                    plugin.getLogger().error("Error while starting the HTTP server", e);
-                }
-            });
+                sender.sendMessage("§aHTTP server started on port " + port);
+            } catch (Exception e) {
+                sender.sendMessage("§cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
+                plugin.getLogger().error("Error while starting the HTTP server", e);
+            }
 
             return;
         }

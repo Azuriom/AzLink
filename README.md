@@ -1,6 +1,7 @@
 # AzLink
 
-[![Build Status](https://travis-ci.org/Azuriom/AzLink.svg?branch=master)](https://travis-ci.org/Azuriom/AzLink)
+[![Build Status](https://img.shields.io/travis/Azuriom/AzLink/master?style=flat-square)](https://travis-ci.org/Azuriom/AzLink)
+[![Chat](https://img.shields.io/discord/625774284823986183?color=7289da&label=Discord&logo=discord&logoColor=fff&style=flat-square)](https://azuriom.com/discord)
 
 AzLink is a plugin to link a Minecraft server or proxy with [Azuriom](https://azuriom.com).
 
