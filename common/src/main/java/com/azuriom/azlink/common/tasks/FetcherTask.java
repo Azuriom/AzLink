@@ -52,36 +52,39 @@ public class FetcherTask implements Runnable {
                 return;
             }
 
-            plugin.getLogger().info("Dispatching commands to " + response.getCommands().size() + " players.");
-
-            Map<String, CommandSender> players = plugin.getPlatform()
-                    .getOnlinePlayers()
-                    .collect(Collectors.toMap(cs -> cs.getName().toLowerCase(), Function.identity()));
-
-            for (Map.Entry<String, List<String>> entry : response.getCommands().entrySet()) {
-                String playerName = entry.getKey();
-                List<String> commands = entry.getValue();
-                CommandSender player = players.get(playerName.toLowerCase());
-
-                if (player != null) {
-                    playerName = player.getName();
-                }
-
-                for (String command : commands) {
-                    command = command.replace("{player}", playerName)
-                            .replace("{uuid}", player != null ? player.getUuid().toString() : "?");
-
-                    plugin.getLogger().info("Dispatching command for player " + playerName + ": " + command);
-
-                    plugin.getPlatform().dispatchConsoleCommand(command);
-                }
-            }
+            plugin.getPlatform().executeSync(() -> dispatchCommands(response.getCommands()));
 
             if (sendFullData) {
                 lastFullDataSent = Instant.now();
             }
         } catch (IOException e) {
             plugin.getLogger().error("Unable to send data to website: " + e.getMessage() + " - " + e.getClass().getName());
+        }
+    }
+
+    private void dispatchCommands(Map<String, List<String>> commands) {
+        plugin.getLogger().info("Dispatching commands to " + commands.size() + " players.");
+
+        Map<String, CommandSender> players = plugin.getPlatform()
+                .getOnlinePlayers()
+                .collect(Collectors.toMap(cs -> cs.getName().toLowerCase(), Function.identity()));
+
+        for (Map.Entry<String, List<String>> entry : commands.entrySet()) {
+            String playerName = entry.getKey();
+            CommandSender player = players.get(playerName.toLowerCase());
+
+            if (player != null) {
+                playerName = player.getName();
+            }
+
+            for (String command : entry.getValue()) {
+                command = command.replace("{player}", playerName)
+                        .replace("{uuid}", player != null ? player.getUuid().toString() : "?");
+
+                plugin.getLogger().info("Dispatching command for player " + playerName + ": " + command);
+
+                plugin.getPlatform().dispatchConsoleCommand(command);
+            }
         }
     }
 }
