@@ -29,7 +29,7 @@ public class HttpServer {
     }
 
     public void start() {
-        plugin.getLogger().info("Stating HTTP server");
+        plugin.getLogger().info("Starting HTTP server");
 
         int port = plugin.getConfig().getHttpPort();
 
@@ -46,7 +46,7 @@ public class HttpServer {
                 .bind(address)
                 .addListener((ChannelFutureListener) future -> {
                     if (!future.isSuccess()) {
-                        plugin.getLogger().error("Unable to start HTTP server on " + address, future.cause());
+                        plugin.getLogger().error("Unable to start the HTTP server on " + address, future.cause());
                         return;
                     }
 

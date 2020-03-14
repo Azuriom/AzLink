@@ -58,7 +58,7 @@ public class FetcherTask implements Runnable {
                 lastFullDataSent = Instant.now();
             }
         } catch (IOException e) {
-            plugin.getLogger().error("Unable to send data to website: " + e.getMessage() + " - " + e.getClass().getName());
+            plugin.getLogger().error("Unable to send data to the website: " + e.getMessage() + " - " + e.getClass().getName());
         }
     }
 

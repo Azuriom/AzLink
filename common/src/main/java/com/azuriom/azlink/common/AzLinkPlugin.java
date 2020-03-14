@@ -79,7 +79,7 @@ public class AzLinkPlugin {
         }
 
         if (!config.isValid()) {
-            getLogger().warn("Invalid configuration, you can use '/azlink' to setup the plugin.");
+            getLogger().warn("Invalid configuration, please use '/azlink' to setup the plugin.");
             return;
         }
 
@@ -87,9 +87,9 @@ public class AzLinkPlugin {
             try {
                 httpClient.verifyStatus();
 
-                getLogger().info("Successful connected to " + config.getSiteUrl());
+                getLogger().info("Successfully connected to " + config.getSiteUrl());
             } catch (IOException e) {
-                getLogger().warn("Unable to verify website connection: " + e.getMessage() + " - " + e.getClass().getName());
+                getLogger().warn("Unable to verify the website connection: " + e.getMessage() + " - " + e.getClass().getName());
             }
         });
     }
@@ -190,7 +190,7 @@ public class AzLinkPlugin {
             if (logCpuError) {
                 logCpuError = false;
 
-                getLogger().warn("Error while retrieving cpu usage", t);
+                getLogger().warn("Error while retrieving CPU usage", t);
             }
         }
         return -1;
