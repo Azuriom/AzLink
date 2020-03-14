@@ -130,7 +130,7 @@ public class AzLinkCommand {
         try {
             plugin.getHttpClient().verifyStatus();
 
-            sender.sendMessage("§aLinked to the website succesfully.");
+            sender.sendMessage("§aLinked to the website successfully.");
 
             plugin.fetchNow();
 
