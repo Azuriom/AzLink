@@ -46,7 +46,7 @@ public class AzLinkCommand {
 
             plugin.fetchNow();
 
-            sender.sendMessage("§6Data has been fetched succesfully.");
+            sender.sendMessage("§6Data has been fetched successfully.");
 
             return;
         }
