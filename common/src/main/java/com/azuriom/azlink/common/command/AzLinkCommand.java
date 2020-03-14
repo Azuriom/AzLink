@@ -46,7 +46,7 @@ public class AzLinkCommand {
 
             plugin.fetchNow();
 
-            sender.sendMessage("§6Fetch done.");
+            sender.sendMessage("§6Data has been fetched succesfully.");
 
             return;
         }
@@ -130,7 +130,7 @@ public class AzLinkCommand {
         try {
             plugin.getHttpClient().verifyStatus();
 
-            sender.sendMessage("§aStatus ok");
+            sender.sendMessage("§aLinked to the website succesfully.");
 
             plugin.fetchNow();
 
