@@ -87,7 +87,7 @@ public class AzLinkPlugin {
             try {
                 httpClient.verifyStatus();
 
-                getLogger().info("Successfuly connected to " + config.getSiteUrl());
+                getLogger().info("Successfully connected to " + config.getSiteUrl());
             } catch (IOException e) {
                 getLogger().warn("Unable to verify the website connection: " + e.getMessage() + " - " + e.getClass().getName());
             }
