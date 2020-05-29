@@ -15,20 +15,21 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 
 public class HttpClient {
 
-    private static final MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
+    public static final MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
 
     private final OkHttpClient httpClient = new OkHttpClient.Builder()
             .addInterceptor(chain -> chain.proceed(addHeadersToRequest(chain.request())))
             .build();
 
     private final AzLinkPlugin plugin;
+    private final String userAgent;
 
     public HttpClient(AzLinkPlugin plugin) {
         this.plugin = plugin;
+        this.userAgent = "AzLink v" + plugin.getPlatform().getPluginVersion();
     }
 
     public void verifyStatus() throws IOException {
@@ -71,13 +72,17 @@ public class HttpClient {
         return response;
     }
 
+    public OkHttpClient getHttpClient() {
+        return httpClient;
+    }
+
     private Request addHeadersToRequest(Request request) {
         byte[] key = plugin.getConfig().getSiteKey().getBytes(StandardCharsets.UTF_8);
         String keyEncoded = Base64.getEncoder().encodeToString(key);
 
         return request.newBuilder()
-                .header("Authorization", "Basic " + keyEncoded)
-                .header("User-Agent", "AzLink v" + plugin.getPlatform().getPluginVersion())
+                .header("Authorization", "Bearer " + plugin.getConfig().getSiteKey())
+                .header("User-Agent", this.userAgent)
                 .build();
     }
 

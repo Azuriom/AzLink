@@ -141,7 +141,7 @@ public class AzLinkPlugin {
 
         PlatformData platformData = platform.getPlatformData();
 
-        SystemData system = fullData ? new SystemData(getCpuUsage(), SystemUtils.getMemoryUsage()) : null;
+        SystemData system = fullData ? new SystemData(SystemUtils.getMemoryUsage(), getCpuUsage()) : null;
         WorldData world = fullData ? platform.getWorldData().orElse(null) : null;
 
         return new ServerData(platformData, platform.getPluginVersion(), players, max, system, world, fullData);
