@@ -77,9 +77,6 @@ public class HttpClient {
     }
 
     private Request addHeadersToRequest(Request request) {
-        byte[] key = plugin.getConfig().getSiteKey().getBytes(StandardCharsets.UTF_8);
-        String keyEncoded = Base64.getEncoder().encodeToString(key);
-
         return request.newBuilder()
                 .header("Authorization", "Bearer " + plugin.getConfig().getSiteKey())
                 .header("User-Agent", this.userAgent)
