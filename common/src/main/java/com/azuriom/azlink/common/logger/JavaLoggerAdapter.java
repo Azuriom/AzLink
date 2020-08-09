@@ -3,11 +3,11 @@ package com.azuriom.azlink.common.logger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class JulLoggerAdapter implements LoggerAdapter{
+public class JavaLoggerAdapter implements LoggerAdapter{
 
     private final Logger logger;
 
-    public JulLoggerAdapter(Logger logger) {
+    public JavaLoggerAdapter(Logger logger) {
         this.logger = logger;
     }
 

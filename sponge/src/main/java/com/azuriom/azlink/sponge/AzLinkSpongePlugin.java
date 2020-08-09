@@ -2,11 +2,12 @@ package com.azuriom.azlink.sponge;
 
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
-import com.azuriom.azlink.common.PlatformType;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.logger.Slf4jLoggerAdapter;
+import com.azuriom.azlink.common.platform.PlatformInfo;
+import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import com.azuriom.azlink.sponge.command.SpongeCommandExecutor;
 import com.azuriom.azlink.sponge.command.SpongeCommandSender;
@@ -20,6 +21,7 @@ import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppedEvent;
 import org.spongepowered.api.plugin.Plugin;
+import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
 
 import java.nio.file.Path;
@@ -36,8 +38,6 @@ import java.util.stream.Stream;
 )
 public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
-    private final AzLinkPlugin plugin = new AzLinkPlugin(this);
-
     private final Game game;
 
     private final Path configDirectory;
@@ -45,6 +45,8 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
     private final LoggerAdapter logger;
 
     private final TpsTask tpsTask = new TpsTask();
+
+    private AzLinkPlugin plugin;
 
     @Inject
     public AzLinkSpongePlugin(Game game, @ConfigDir(sharedRoot = false) Path configDirectory, Logger logger) {
@@ -55,6 +57,7 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
+        plugin = new AzLinkPlugin(this);
         plugin.init();
 
         game.getCommandManager().register(this, new SpongeCommandExecutor(plugin), "azlink", "azuriomlink");
@@ -83,13 +86,11 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
     }
 
     @Override
-    public String getPlatformName() {
-        return game.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getName();
-    }
+    public PlatformInfo getPlatformInfo() {
+        Platform platform = game.getPlatform();
+        PluginContainer version = platform.getContainer(Platform.Component.IMPLEMENTATION);
 
-    @Override
-    public String getPlatformVersion() {
-        return game.getPlatform().getContainer(Platform.Component.IMPLEMENTATION).getVersion().orElse("unknown");
+        return new PlatformInfo(version.getName(), version.getVersion().orElse("unknown"));
     }
 
     @Override
@@ -108,7 +109,9 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
                 .mapToInt(w -> Iterables.size(w.getLoadedChunks()))
                 .sum();
 
-        int entities = game.getServer().getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
+        int entities = game.getServer().getWorlds().stream()
+                .mapToInt(w -> w.getEntities().size())
+                .sum();
 
         return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
     }

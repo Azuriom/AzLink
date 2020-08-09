@@ -4,10 +4,11 @@ import com.azuriom.azlink.bungee.command.BungeeCommandExecutor;
 import com.azuriom.azlink.bungee.command.BungeeCommandSender;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
-import com.azuriom.azlink.common.PlatformType;
+import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.command.CommandSender;
-import com.azuriom.azlink.common.logger.JulLoggerAdapter;
+import com.azuriom.azlink.common.logger.JavaLoggerAdapter;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
+import com.azuriom.azlink.common.platform.PlatformInfo;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.nio.file.Path;
@@ -15,17 +16,18 @@ import java.util.stream.Stream;
 
 public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
 
-    private final AzLinkPlugin plugin = new AzLinkPlugin(this);
+    private AzLinkPlugin plugin;
 
     private LoggerAdapter loggerAdapter;
 
     @Override
     public void onLoad() {
-        loggerAdapter = new JulLoggerAdapter(getLogger());
+        loggerAdapter = new JavaLoggerAdapter(getLogger());
     }
 
     @Override
     public void onEnable() {
+        plugin = new AzLinkPlugin(this);
         plugin.init();
 
         getProxy().getPluginManager().registerCommand(this, new BungeeCommandExecutor(plugin));
@@ -52,13 +54,8 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
     }
 
     @Override
-    public String getPlatformName() {
-        return getProxy().getName();
-    }
-
-    @Override
-    public String getPlatformVersion() {
-        return getProxy().getVersion();
+    public PlatformInfo getPlatformInfo() {
+        return new PlatformInfo(getProxy().getName(), getProxy().getVersion());
     }
 
     @Override

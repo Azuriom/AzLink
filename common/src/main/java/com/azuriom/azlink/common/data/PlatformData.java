@@ -1,6 +1,7 @@
 package com.azuriom.azlink.common.data;
 
-import com.azuriom.azlink.common.PlatformType;
+import com.azuriom.azlink.common.platform.PlatformInfo;
+import com.azuriom.azlink.common.platform.PlatformType;
 
 public class PlatformData {
 
@@ -8,10 +9,10 @@ public class PlatformData {
     private final String name;
     private final String version;
 
-    public PlatformData(PlatformType type, String name, String version) {
+    public PlatformData(PlatformType type, PlatformInfo info) {
         this.type = type;
-        this.name = name;
-        this.version = version;
+        this.name = info.getName();
+        this.version = info.getVersion();
     }
 
     public PlatformType getType() {

@@ -25,11 +25,9 @@ public class HttpClient {
             .build();
 
     private final AzLinkPlugin plugin;
-    private final String userAgent;
 
     public HttpClient(AzLinkPlugin plugin) {
         this.plugin = plugin;
-        this.userAgent = "AzLink v" + plugin.getPlatform().getPluginVersion();
     }
 
     public void verifyStatus() throws IOException {
@@ -79,7 +77,8 @@ public class HttpClient {
     private Request addHeadersToRequest(Request request) {
         return request.newBuilder()
                 .header("Authorization", "Bearer " + plugin.getConfig().getSiteKey())
-                .header("User-Agent", this.userAgent)
+                .header("Azuriom-Link-Token", plugin.getConfig().getSiteKey())
+                .header("User-Agent", "AzLink v" + plugin.getPlatform().getPluginVersion())
                 .build();
     }
 

@@ -4,11 +4,12 @@ import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
-import com.azuriom.azlink.common.PlatformType;
+import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.WorldData;
-import com.azuriom.azlink.common.logger.JulLoggerAdapter;
+import com.azuriom.azlink.common.logger.JavaLoggerAdapter;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
+import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -18,15 +19,15 @@ import java.util.stream.Stream;
 
 public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatform {
 
-    private final AzLinkPlugin plugin = new AzLinkPlugin(this);
-
     private final TpsTask tpsTask = new TpsTask();
+
+    private AzLinkPlugin plugin;
 
     private LoggerAdapter logger;
 
     @Override
     public void onLoad() {
-        logger = new JulLoggerAdapter(getLogger());
+        logger = new JavaLoggerAdapter(getLogger());
     }
 
     @Override
@@ -42,6 +43,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
             return;
         }
 
+        plugin = new AzLinkPlugin(this);
         plugin.init();
 
         getCommand("azlink").setExecutor(new BukkitCommandExecutor(plugin));
@@ -70,13 +72,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     }
 
     @Override
-    public String getPlatformName() {
-        return getServer().getName();
-    }
-
-    @Override
-    public String getPlatformVersion() {
-        return getServer().getVersion();
+    public PlatformInfo getPlatformInfo() {
+        return new PlatformInfo(getServer().getName(), getServer().getVersion());
     }
 
     @Override

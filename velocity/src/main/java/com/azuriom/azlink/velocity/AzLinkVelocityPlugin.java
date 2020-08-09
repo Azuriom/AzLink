@@ -2,10 +2,11 @@ package com.azuriom.azlink.velocity;
 
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
-import com.azuriom.azlink.common.PlatformType;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.logger.Slf4jLoggerAdapter;
+import com.azuriom.azlink.common.platform.PlatformInfo;
+import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.velocity.command.VelocityCommandExecutor;
 import com.azuriom.azlink.velocity.command.VelocityCommandSender;
 import com.google.inject.Inject;
@@ -15,6 +16,7 @@ import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
+import com.velocitypowered.api.util.ProxyVersion;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -30,13 +32,13 @@ import java.util.stream.Stream;
 )
 public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
-    private final AzLinkPlugin plugin = new AzLinkPlugin(this);
-
     private final ProxyServer server;
 
     private final Path dataDirectory;
 
     private final LoggerAdapter logger;
+
+    private AzLinkPlugin plugin;
 
     @Inject
     public AzLinkVelocityPlugin(ProxyServer server, @DataDirectory Path dataDirectory, Logger logger) {
@@ -47,6 +49,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        plugin = new AzLinkPlugin(this);
         plugin.init();
 
         server.getCommandManager().register(new VelocityCommandExecutor(plugin), "azlink", "azuriomlink");
@@ -73,13 +76,10 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
     }
 
     @Override
-    public String getPlatformName() {
-        return server.getVersion().getName();
-    }
+    public PlatformInfo getPlatformInfo() {
+        ProxyVersion version = server.getVersion();
 
-    @Override
-    public String getPlatformVersion() {
-        return server.getVersion().getVersion();
+        return new PlatformInfo(version.getName(), version.getVersion());
     }
 
     @Override
