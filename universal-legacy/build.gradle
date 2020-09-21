@@ -9,9 +9,9 @@ dependencies {
     compile project(':azlink-sponge')
     compile project(':azlink-velocity')
 
-    compile 'com.google.code.gson:gson:2.8.5'
-    compile 'io.netty:netty-handler:4.1.38.Final'
-    compile 'io.netty:netty-codec-http:4.1.38.Final'
+    compile 'com.google.code.gson:gson:2.8.6'
+    compile 'io.netty:netty-handler:4.1.51.Final'
+    compile 'io.netty:netty-codec-http:4.1.51.Final'
 }
 
 shadowJar {
