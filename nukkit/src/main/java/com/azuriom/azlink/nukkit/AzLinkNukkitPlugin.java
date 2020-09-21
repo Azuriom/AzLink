@@ -64,7 +64,7 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
 
     @Override
     public PlatformType getPlatformType() {
-        return PlatformType.BUKKIT;
+        return PlatformType.NUKKIT;
     }
 
     @Override

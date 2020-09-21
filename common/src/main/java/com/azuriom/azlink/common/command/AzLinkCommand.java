@@ -119,6 +119,8 @@ public class AzLinkCommand {
         if (showStatus(sender)) {
             try {
                 plugin.saveConfig();
+
+                plugin.restartHttpServer();
             } catch (IOException e) {
                 sender.sendMessage("§cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
                 plugin.getLogger().error("Error while saving config", e);

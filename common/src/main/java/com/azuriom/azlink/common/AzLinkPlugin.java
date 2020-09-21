@@ -74,13 +74,13 @@ public class AzLinkPlugin {
 
         scheduler.scheduleAtFixedRate(fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
-        if (config.hasInstantCommands()) {
-            httpServer.start();
-        }
-
         if (!config.isValid()) {
             getLogger().warn("Invalid configuration, please use '/azlink' to setup the plugin.");
             return;
+        }
+
+        if (config.hasInstantCommands()) {
+            httpServer.start();
         }
 
         platform.executeAsync(() -> {

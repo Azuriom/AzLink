@@ -10,6 +10,7 @@ This plugin currently supports the following platforms:
 * [BungeeCord](https://github.com/SpigotMC/BungeeCord)
 * [Sponge](https://www.spongepowered.org/)
 * [Velocity](https://www.velocitypowered.com/)
+* [Nukkit](https://nukkitx.com/)
 
 ## Setup
 
