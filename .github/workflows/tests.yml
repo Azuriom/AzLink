@@ -15,22 +15,28 @@ jobs:
         java-version: [ 1.8, 11 ]
 
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
       - name: Setup JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v1
         with:
           java-version: ${{ matrix.java-version }}
 
+      - name: Validate Gradle Wrapper
+        uses: gradle/wrapper-validation-action@v1
+
       - name: Build
         run: ./gradlew build
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload AzLink.jar
+        uses: actions/upload-artifact@v2
         with:
           name: AzLink
           path: universal/build/libs/AzLink.jar
 
-      - uses: actions/upload-artifact@v2
+      - name: Upload AzLink-Legacy.jar
+        uses: actions/upload-artifact@v2
         with:
           name: AzLink-Legacy
           path: universal-legacy/build/libs/AzLink-Legacy.jar
