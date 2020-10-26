@@ -3,4 +3,11 @@ dependencies {
     compileOnly 'com.google.code.gson:gson:2.8.6'
     compileOnly 'io.netty:netty-all:4.1.25.Final'
     compile 'com.squareup.okhttp3:okhttp:3.14.8'
+
+    testCompile 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testCompile 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
 }
