@@ -3,7 +3,7 @@ package com.azuriom.azlink.velocity.command;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
-import net.kyori.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.UUID;
 
@@ -31,7 +31,7 @@ public class VelocityCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        source.sendMessage(LegacyComponentSerializer.legacyLinking().deserialize(message));
+        source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
     }
 
     @Override

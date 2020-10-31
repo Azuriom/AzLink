@@ -20,6 +20,7 @@ import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.game.state.GamePreInitializationEvent;
 import org.spongepowered.api.event.game.state.GameStoppedEvent;
+import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
 import org.spongepowered.api.scheduler.Task;
@@ -34,7 +35,8 @@ import java.util.stream.Stream;
         version = "${pluginVersion}",
         description = "The plugin to link your Azuriom website with your server.",
         url = "https://azuriom.com",
-        authors = "Azuriom Team"
+        authors = "Azuriom Team",
+        dependencies = @Dependency(id = Platform.API_ID)
 )
 public final class AzLinkSpongePlugin implements AzLinkPlatform {
 

@@ -1,6 +1,7 @@
 package com.azuriom.azlink.bungee.command;
 
 import com.azuriom.azlink.common.command.CommandSender;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
@@ -30,7 +31,9 @@ public class BungeeCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        sender.sendMessage(TextComponent.fromLegacyText(message));
+        String formatted = ChatColor.translateAlternateColorCodes('&', message);
+
+        sender.sendMessage(TextComponent.fromLegacyText(formatted));
     }
 
     @Override

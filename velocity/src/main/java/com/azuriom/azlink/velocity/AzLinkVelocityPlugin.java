@@ -49,10 +49,18 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
+        try {
+            Class.forName("com.velocitypowered.api.command.SimpleCommand");
+        } catch (ClassNotFoundException e) {
+            logger.error("AzLink requires Velocity 1.1.0 or higher");
+            logger.error("You can download the latest version of Velocity on https://velocitypowered.com/downloads");
+            return;
+        }
+
         plugin = new AzLinkPlugin(this);
         plugin.init();
 
-        server.getCommandManager().register(new VelocityCommandExecutor(plugin), "azlink", "azuriomlink");
+        server.getCommandManager().register("azlink", new VelocityCommandExecutor(plugin), "azuriomlink");
     }
 
     @Subscribe
@@ -104,7 +112,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Override
     public void dispatchConsoleCommand(String command) {
-        server.getCommandManager().execute(server.getConsoleCommandSource(), command);
+        server.getCommandManager().executeAsync(server.getConsoleCommandSource(), command);
     }
 
     @Override

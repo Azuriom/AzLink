@@ -1,6 +1,7 @@
 package com.azuriom.azlink.nukkit.command;
 
 import cn.nukkit.Player;
+import cn.nukkit.utils.TextFormat;
 import com.azuriom.azlink.common.command.CommandSender;
 
 import java.util.UUID;
@@ -29,7 +30,7 @@ public class NukkitCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        commandSender.sendMessage(message);
+        commandSender.sendMessage(TextFormat.colorize(message));
     }
 
     @Override

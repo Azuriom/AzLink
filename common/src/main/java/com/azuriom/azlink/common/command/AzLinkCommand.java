@@ -26,7 +26,7 @@ public class AzLinkCommand {
 
         if (args[0].equalsIgnoreCase("setup")) {
             if (args.length < 3) {
-                sender.sendMessage("§cUsage: /azlink setup <url> <key>");
+                sender.sendMessage("&cUsage: /azlink setup <url> <key>");
                 return;
             }
 
@@ -46,14 +46,14 @@ public class AzLinkCommand {
 
             plugin.fetchNow();
 
-            sender.sendMessage("§6Data has been fetched successfully.");
+            sender.sendMessage("&6Data has been fetched successfully.");
 
             return;
         }
 
         if (args[0].equalsIgnoreCase("port")) {
             if (args.length < 2) {
-                sender.sendMessage("§cUsage: /azlink port <port>");
+                sender.sendMessage("&cUsage: /azlink port <port>");
                 return;
             }
 
@@ -62,12 +62,12 @@ public class AzLinkCommand {
             try {
                 port = Integer.parseInt(args[1]);
             } catch (NumberFormatException e) {
-                sender.sendMessage("§c'" + args[1] + "' is not a valid port !");
+                sender.sendMessage("&c'" + args[1] + "' is not a valid port !");
                 return;
             }
 
             if (port < 1 || port > 65535) {
-                sender.sendMessage("§cThe port must be between 1 and 65535");
+                sender.sendMessage("&cThe port must be between 1 and 65535");
                 return;
             }
 
@@ -76,9 +76,9 @@ public class AzLinkCommand {
             try {
                 plugin.restartHttpServer();
 
-                sender.sendMessage("§aHTTP server started on port " + port);
+                sender.sendMessage("&aHTTP server started on port " + port);
             } catch (Exception e) {
-                sender.sendMessage("§cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
+                sender.sendMessage("&cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
                 plugin.getLogger().error("Error while starting the HTTP server", e);
             }
 
@@ -106,10 +106,10 @@ public class AzLinkCommand {
 
     private void sendUsage(CommandSender sender) {
         String version = plugin.getPlatform().getPluginVersion();
-        sender.sendMessage("§9AzLink v" + version + "§7. Website: §9https://azuriom.com");
-        sender.sendMessage("§8- /azlink setup <url> <key>");
-        sender.sendMessage("§8- /azlink port <port>");
-        sender.sendMessage("§8- /azlink status");
+        sender.sendMessage("&9AzLink v" + version + "&7. Website: &9https://azuriom.com");
+        sender.sendMessage("&8- /azlink setup <url> <key>");
+        sender.sendMessage("&8- /azlink port <port>");
+        sender.sendMessage("&8- /azlink status");
     }
 
     private void setup(CommandSender sender, String url, String key) {
@@ -122,7 +122,7 @@ public class AzLinkCommand {
 
                 plugin.restartHttpServer();
             } catch (IOException e) {
-                sender.sendMessage("§cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
+                sender.sendMessage("&cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
                 plugin.getLogger().error("Error while saving config", e);
             }
         }
@@ -132,13 +132,13 @@ public class AzLinkCommand {
         try {
             plugin.getHttpClient().verifyStatus();
 
-            sender.sendMessage("§aLinked to the website successfully.");
+            sender.sendMessage("&aLinked to the website successfully.");
 
             plugin.fetchNow();
 
             return true;
         } catch (Exception e) {
-            sender.sendMessage("§cUnable to connect to the website: " + e.getMessage() + " - " + e.getClass().getName());
+            sender.sendMessage("&cUnable to connect to the website: " + e.getMessage() + " - " + e.getClass().getName());
 
             return false;
         }

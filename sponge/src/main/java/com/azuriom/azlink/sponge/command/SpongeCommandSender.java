@@ -31,7 +31,7 @@ public class SpongeCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        source.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message.replace('\u00A7', '&')));
+        source.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
     }
 
     @Override

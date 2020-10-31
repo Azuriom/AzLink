@@ -1,6 +1,7 @@
 package com.azuriom.azlink.bukkit.command;
 
 import com.azuriom.azlink.common.command.CommandSender;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 
 import java.util.UUID;
@@ -29,7 +30,7 @@ public class BukkitCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        sender.sendMessage(message);
+        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
     @Override
