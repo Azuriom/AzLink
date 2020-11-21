@@ -12,8 +12,8 @@ public class ThreadFactoryBuilderTest {
     public void testThreadFactoryBuilder() {
         ThreadFactoryBuilder factory = new ThreadFactoryBuilder().name("thread-factory-test-%t").priority(2);
 
-        Thread thread0 = factory.newThread(voidRunnable);
-        Thread thread1 = factory.newThread(voidRunnable);
+        Thread thread0 = factory.newThread(this.voidRunnable);
+        Thread thread1 = factory.newThread(this.voidRunnable);
 
         Assertions.assertEquals("thread-factory-test-0", thread0.getName());
         Assertions.assertEquals("thread-factory-test-1", thread1.getName());
@@ -22,7 +22,7 @@ public class ThreadFactoryBuilderTest {
 
         ThreadFactoryBuilder daemonFactory = factory.daemon();
 
-        Thread daemonThread = daemonFactory.newThread(voidRunnable);
+        Thread daemonThread = daemonFactory.newThread(this.voidRunnable);
 
         Assertions.assertTrue(daemonThread.isDaemon());
     }

@@ -52,30 +52,30 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
         try {
             Class.forName("com.velocitypowered.api.command.SimpleCommand");
         } catch (ClassNotFoundException e) {
-            logger.error("AzLink requires Velocity 1.1.0 or higher");
-            logger.error("You can download the latest version of Velocity on https://velocitypowered.com/downloads");
+            this.logger.error("AzLink requires Velocity 1.1.0 or higher");
+            this.logger.error("You can download the latest version of Velocity on https://velocitypowered.com/downloads");
             return;
         }
 
-        plugin = new AzLinkPlugin(this);
-        plugin.init();
+        this.plugin = new AzLinkPlugin(this);
+        this.plugin.init();
 
-        server.getCommandManager().register("azlink", new VelocityCommandExecutor(plugin), "azuriomlink");
+        this.server.getCommandManager().register("azlink", new VelocityCommandExecutor(this.plugin), "azuriomlink");
     }
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        plugin.shutdown();
+        this.plugin.shutdown();
     }
 
     @Override
     public AzLinkPlugin getPlugin() {
-        return plugin;
+        return this.plugin;
     }
 
     @Override
     public LoggerAdapter getLoggerAdapter() {
-        return logger;
+        return this.logger;
     }
 
     @Override
@@ -85,7 +85,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Override
     public PlatformInfo getPlatformInfo() {
-        ProxyVersion version = server.getVersion();
+        ProxyVersion version = this.server.getVersion();
 
         return new PlatformInfo(version.getName(), version.getVersion());
     }
@@ -97,26 +97,26 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Override
     public Path getDataDirectory() {
-        return dataDirectory;
+        return this.dataDirectory;
     }
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
-        return server.getAllPlayers().stream().map(VelocityCommandSender::new);
+        return this.server.getAllPlayers().stream().map(VelocityCommandSender::new);
     }
 
     @Override
     public int getMaxPlayers() {
-        return server.getConfiguration().getShowMaxPlayers();
+        return this.server.getConfiguration().getShowMaxPlayers();
     }
 
     @Override
     public void dispatchConsoleCommand(String command) {
-        server.getCommandManager().executeAsync(server.getConsoleCommandSource(), command);
+        this.server.getCommandManager().executeAsync(this.server.getConsoleCommandSource(), command);
     }
 
     @Override
     public void executeAsync(Runnable runnable) {
-        server.getScheduler().buildTask(this, runnable).schedule();
+        this.server.getScheduler().buildTask(this, runnable).schedule();
     }
 }

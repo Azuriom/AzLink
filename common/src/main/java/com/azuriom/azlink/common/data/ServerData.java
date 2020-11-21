@@ -26,30 +26,30 @@ public class ServerData {
     }
 
     public PlatformData getPlatform() {
-        return platform;
+        return this.platform;
     }
 
     public String getVersion() {
-        return version;
+        return this.version;
     }
 
     public List<PlayerData> getPlayers() {
-        return players;
+        return this.players;
     }
 
     public int getMaxPlayers() {
-        return maxPlayers;
+        return this.maxPlayers;
     }
 
     public SystemData getSystem() {
-        return system;
+        return this.system;
     }
 
     public WorldData getWorlds() {
-        return worlds;
+        return this.worlds;
     }
 
     public boolean isFull() {
-        return full;
+        return this.full;
     }
 }

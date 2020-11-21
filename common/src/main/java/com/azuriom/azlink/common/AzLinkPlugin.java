@@ -58,10 +58,10 @@ public class AzLinkPlugin {
     }
 
     public void init() {
-        configFile = platform.getDataDirectory().resolve("config.json");
+        this.configFile = this.platform.getDataDirectory().resolve("config.json");
 
-        try (BufferedReader reader = Files.newBufferedReader(configFile)) {
-            config = gson.fromJson(reader, PluginConfig.class);
+        try (BufferedReader reader = Files.newBufferedReader(this.configFile)) {
+            this.config = this.gson.fromJson(reader, PluginConfig.class);
         } catch (NoSuchFileException e) {
             // ignore, not setup yet
         } catch (IOException e) {
@@ -72,22 +72,22 @@ public class AzLinkPlugin {
         LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(1);
         long startDelay = Duration.between(LocalDateTime.now(), start).toMillis() + 500; // Add 0.5s to ensure we are not in the previous hour
 
-        scheduler.scheduleAtFixedRate(fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
+        this.scheduler.scheduleAtFixedRate(this.fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
-        if (!config.isValid()) {
+        if (!this.config.isValid()) {
             getLogger().warn("Invalid configuration, please use '/azlink' to setup the plugin.");
             return;
         }
 
-        if (config.hasInstantCommands()) {
-            httpServer.start();
+        if (this.config.hasInstantCommands()) {
+            this.httpServer.start();
         }
 
-        platform.executeAsync(() -> {
+        this.platform.executeAsync(() -> {
             try {
-                httpClient.verifyStatus();
+                this.httpClient.verifyStatus();
 
-                getLogger().info("Successfully connected to " + config.getSiteUrl());
+                getLogger().info("Successfully connected to " + this.config.getSiteUrl());
             } catch (IOException e) {
                 getLogger().warn("Unable to verify the website connection: " + e.getMessage() + " - " + e.getClass().getName());
             }
@@ -95,24 +95,24 @@ public class AzLinkPlugin {
     }
 
     public void restartHttpServer() {
-        httpServer.stop();
+        this.httpServer.stop();
 
-        httpServer = new HttpServer(this);
+        this.httpServer = new HttpServer(this);
 
-        httpServer.start();
+        this.httpServer.start();
     }
 
     public void shutdown() {
         getLogger().info("Shutting down scheduler");
-        scheduler.shutdown();
+        this.scheduler.shutdown();
         try {
-            scheduler.awaitTermination(5, TimeUnit.SECONDS);
+            this.scheduler.awaitTermination(5, TimeUnit.SECONDS);
         } catch (InterruptedException e) {
             getLogger().warn("Error while shutting down scheduler", e);
         }
 
         getLogger().info("Stopping HTTP server");
-        httpServer.stop();
+        this.httpServer.stop();
     }
 
     public void setConfig(PluginConfig config) {
@@ -120,75 +120,75 @@ public class AzLinkPlugin {
     }
 
     public void saveConfig() throws IOException {
-        if (!Files.isDirectory(platform.getDataDirectory())) {
-            Files.createDirectories(platform.getDataDirectory());
+        if (!Files.isDirectory(this.platform.getDataDirectory())) {
+            Files.createDirectories(this.platform.getDataDirectory());
         }
 
-        try (BufferedWriter writer = Files.newBufferedWriter(configFile)) {
-            gsonPrettyPrint.toJson(config, writer);
+        try (BufferedWriter writer = Files.newBufferedWriter(this.configFile)) {
+            this.gsonPrettyPrint.toJson(this.config, writer);
         }
     }
 
     public AzLinkCommand getCommand() {
-        return command;
+        return this.command;
     }
 
     public ServerData getServerData(boolean fullData) {
-        List<PlayerData> players = platform.getOnlinePlayers()
+        List<PlayerData> players = this.platform.getOnlinePlayers()
                 .map(CommandSender::toData)
                 .collect(Collectors.toList());
-        int max = platform.getMaxPlayers();
+        int max = this.platform.getMaxPlayers();
 
-        PlatformData platformData = platform.getPlatformData();
+        PlatformData platformData = this.platform.getPlatformData();
 
         SystemData system = fullData ? new SystemData(SystemUtils.getMemoryUsage(), getCpuUsage()) : null;
-        WorldData world = fullData ? platform.getWorldData().orElse(null) : null;
+        WorldData world = fullData ? this.platform.getWorldData().orElse(null) : null;
 
-        return new ServerData(platformData, platform.getPluginVersion(), players, max, system, world, fullData);
+        return new ServerData(platformData, this.platform.getPluginVersion(), players, max, system, world, fullData);
     }
 
     public void fetchNow() {
-        platform.executeAsync(fetcherTask);
+        this.platform.executeAsync(this.fetcherTask);
     }
 
     public LoggerAdapter getLogger() {
-        return platform.getLoggerAdapter();
+        return this.platform.getLoggerAdapter();
     }
 
     public ScheduledExecutorService getScheduler() {
-        return scheduler;
+        return this.scheduler;
     }
 
     public PluginConfig getConfig() {
-        return config;
+        return this.config;
     }
 
     public AzLinkPlatform getPlatform() {
-        return platform;
+        return this.platform;
     }
 
     public HttpClient getHttpClient() {
-        return httpClient;
+        return this.httpClient;
     }
 
     public HttpServer getHttpServer() {
-        return httpServer;
+        return this.httpServer;
     }
 
     public Gson getGson() {
-        return gson;
+        return this.gson;
     }
 
     public Gson getGsonPrettyPrint() {
-        return gsonPrettyPrint;
+        return this.gsonPrettyPrint;
     }
 
     private double getCpuUsage() {
         try {
             return SystemUtils.getCpuUsage();
         } catch (Throwable t) {
-            if (logCpuError) {
-                logCpuError = false;
+            if (this.logCpuError) {
+                this.logCpuError = false;
 
                 getLogger().warn("Error while retrieving CPU usage", t);
             }

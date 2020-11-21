@@ -42,7 +42,7 @@ public class HttpClient {
 
     public WebsiteResponse postData(ServerData data) throws IOException {
         Request request = new Request.Builder().url(getSiteUrl())
-                .post(RequestBody.create(JSON_TYPE, plugin.getGson().toJson(data)))
+                .post(RequestBody.create(JSON_TYPE, this.plugin.getGson().toJson(data)))
                 .build();
 
         try (Response response = makeCall(request)) {
@@ -53,7 +53,7 @@ public class HttpClient {
 
                 try (InputStream in = body.byteStream()) {
                     try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                        return plugin.getGson().fromJson(reader, WebsiteResponse.class);
+                        return this.plugin.getGson().fromJson(reader, WebsiteResponse.class);
                     }
                 }
             }
@@ -61,7 +61,7 @@ public class HttpClient {
     }
 
     public Response makeCall(Request request) throws IOException {
-        Response response = httpClient.newCall(request).execute();
+        Response response = this.httpClient.newCall(request).execute();
 
         if (!response.isSuccessful()) {
             throw new IOException("Invalid response: " + response.code() + " (" + response.message() + ")");
@@ -71,18 +71,18 @@ public class HttpClient {
     }
 
     public OkHttpClient getHttpClient() {
-        return httpClient;
+        return this.httpClient;
     }
 
     private Request addHeadersToRequest(Request request) {
         return request.newBuilder()
-                .header("Authorization", "Bearer " + plugin.getConfig().getSiteKey())
-                .header("Azuriom-Link-Token", plugin.getConfig().getSiteKey())
-                .header("User-Agent", "AzLink v" + plugin.getPlatform().getPluginVersion())
+                .header("Authorization", "Bearer " + this.plugin.getConfig().getSiteKey())
+                .header("Azuriom-Link-Token", this.plugin.getConfig().getSiteKey())
+                .header("User-Agent", "AzLink v" + this.plugin.getPlatform().getPluginVersion())
                 .build();
     }
 
     private String getSiteUrl() {
-        return plugin.getConfig().getSiteUrl() + "/api/azlink";
+        return this.plugin.getConfig().getSiteUrl() + "/api/azlink";
     }
 }

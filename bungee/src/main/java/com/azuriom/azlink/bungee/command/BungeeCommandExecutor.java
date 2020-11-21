@@ -13,16 +13,16 @@ public class BungeeCommandExecutor extends Command implements TabExecutor {
     public BungeeCommandExecutor(AzLinkPlugin plugin) {
         super("azlink", "azlink.admin", "azuriomlink");
 
-        command = new AzLinkCommand(plugin);
+        this.command = new AzLinkCommand(plugin);
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-        command.execute(new BungeeCommandSender(sender), args);
+        this.command.execute(new BungeeCommandSender(sender), args);
     }
 
     @Override
     public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
-        return command.tabComplete(new BungeeCommandSender(sender), args);
+        return this.command.tabComplete(new BungeeCommandSender(sender), args);
     }
 }

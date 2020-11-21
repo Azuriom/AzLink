@@ -13,10 +13,10 @@ public class PlayerData {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public UUID getUuid() {
-        return uuid;
+        return this.uuid;
     }
 }

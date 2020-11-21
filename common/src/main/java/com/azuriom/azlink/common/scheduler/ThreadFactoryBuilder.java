@@ -24,7 +24,7 @@ public class ThreadFactoryBuilder implements ThreadFactory {
     }
 
     public ThreadFactoryBuilder(ThreadFactory threadFactory) {
-        this.originalThreadFactory = threadFactory;
+        this.originalThreadFactory = Objects.requireNonNull(threadFactory, "threadFactory");
     }
 
     public ThreadFactoryBuilder name(String name) {
@@ -52,17 +52,17 @@ public class ThreadFactoryBuilder implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable runnable) {
-        Thread thread = originalThreadFactory.newThread(runnable);
+        Thread thread = this.originalThreadFactory.newThread(runnable);
 
-        if (name != null) {
-            thread.setName(name.replace("%t", Integer.toString(threadCount.getAndIncrement())));
+        if (this.name != null) {
+            thread.setName(this.name.replace("%t", Integer.toString(this.threadCount.getAndIncrement())));
         }
 
-        if (priority > 0) {
-            thread.setPriority(priority);
+        if (this.priority > 0) {
+            thread.setPriority(this.priority);
         }
 
-        if (daemon) {
+        if (this.daemon) {
             thread.setDaemon(true);
         }
 

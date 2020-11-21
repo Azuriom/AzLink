@@ -17,13 +17,13 @@ public class VelocityCommandSender implements CommandSender {
 
     @Override
     public String getName() {
-        return source instanceof Player ? ((Player) source).getUsername() : "Console";
+        return this.source instanceof Player ? ((Player) this.source).getUsername() : "Console";
     }
 
     @Override
     public UUID getUuid() {
-        if (source instanceof Player) {
-            return ((Player) source).getUniqueId();
+        if (this.source instanceof Player) {
+            return ((Player) this.source).getUniqueId();
         }
 
         return UUID.nameUUIDFromBytes(getName().getBytes());
@@ -31,11 +31,11 @@ public class VelocityCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
+        this.source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return source.hasPermission(permission);
+        return this.source.hasPermission(permission);
     }
 }

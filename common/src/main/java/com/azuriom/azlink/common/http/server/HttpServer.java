@@ -24,14 +24,14 @@ public class HttpServer {
     public HttpServer(AzLinkPlugin plugin) {
         this.plugin = plugin;
 
-        bossGroup = new NioEventLoopGroup(1);
-        workerGroup = new NioEventLoopGroup();
+        this.bossGroup = new NioEventLoopGroup(1);
+        this.workerGroup = new NioEventLoopGroup();
     }
 
     public void start() {
-        plugin.getLogger().info("Starting HTTP server");
+        this.plugin.getLogger().info("Starting HTTP server");
 
-        int port = plugin.getConfig().getHttpPort();
+        int port = this.plugin.getConfig().getHttpPort();
 
         if (port < 1 || port > 65535) {
             port = DEFAULT_PORT;
@@ -41,31 +41,31 @@ public class HttpServer {
 
         new ServerBootstrap()
                 .channel(NioServerSocketChannel.class)
-                .group(bossGroup, workerGroup)
-                .childHandler(new HttpChannelInitializer(plugin))
+                .group(this.bossGroup, this.workerGroup)
+                .childHandler(new HttpChannelInitializer(this.plugin))
                 .bind(address)
                 .addListener((ChannelFutureListener) future -> {
                     if (!future.isSuccess()) {
-                        plugin.getLogger().error("Unable to start the HTTP server on " + address, future.cause());
+                        this.plugin.getLogger().error("Unable to start the HTTP server on " + address, future.cause());
                         return;
                     }
 
-                    channel = future.channel();
+                    this.channel = future.channel();
 
-                    plugin.getLogger().info("HTTP server started on " + future.channel().localAddress());
+                    this.plugin.getLogger().info("HTTP server started on " + future.channel().localAddress());
                 });
     }
 
     public void stop() {
         try {
-            if (channel != null) {
-                channel.close().syncUninterruptibly();
+            if (this.channel != null) {
+                this.channel.close().syncUninterruptibly();
             }
         } catch (Exception e) {
-            plugin.getLogger().error("An error occurred while stopping HTTP server", e);
+            this.plugin.getLogger().error("An error occurred while stopping HTTP server", e);
         }
 
-        bossGroup.shutdownGracefully();
-        workerGroup.shutdownGracefully();
+        this.bossGroup.shutdownGracefully();
+        this.workerGroup.shutdownGracefully();
     }
 }

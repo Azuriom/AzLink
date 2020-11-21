@@ -22,6 +22,6 @@ public class HttpChannelInitializer extends ChannelInitializer<SocketChannel> {
         pipeline.addLast("decoder", new HttpRequestDecoder());
         pipeline.addLast("aggregator", new HttpObjectAggregator(1024 * 1024));
         pipeline.addLast("encoder", new HttpResponseEncoder());
-        pipeline.addLast("handler", new HttpHandler(plugin));
+        pipeline.addLast("handler", new HttpHandler(this.plugin));
     }
 }

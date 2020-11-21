@@ -28,44 +28,44 @@ public class FetcherTask implements Runnable {
     public void run() {
         Instant now = Instant.now();
 
-        if (!plugin.getConfig().isValid() || lastRequest.isAfter(now.minusSeconds(5))) {
+        if (!this.plugin.getConfig().isValid() || this.lastRequest.isAfter(now.minusSeconds(5))) {
             return;
         }
 
-        lastRequest = now;
+        this.lastRequest = now;
 
-        plugin.getPlatform().executeSync(() -> {
+        this.plugin.getPlatform().executeSync(() -> {
             LocalDateTime currentTime = LocalDateTime.now();
-            boolean sendFullData = currentTime.getMinute() % 15 == 0 && lastFullDataSent.isBefore(now.minusSeconds(60));
+            boolean sendFullData = currentTime.getMinute() % 15 == 0 && this.lastFullDataSent.isBefore(now.minusSeconds(60));
 
-            ServerData data = plugin.getServerData(sendFullData);
+            ServerData data = this.plugin.getServerData(sendFullData);
 
-            plugin.getPlatform().executeAsync(() -> sendData(data, sendFullData));
+            this.plugin.getPlatform().executeAsync(() -> sendData(data, sendFullData));
         });
     }
 
     private void sendData(ServerData data, boolean sendFullData) {
         try {
-            WebsiteResponse response = plugin.getHttpClient().postData(data);
+            WebsiteResponse response = this.plugin.getHttpClient().postData(data);
 
             if (response.getCommands().isEmpty()) {
                 return;
             }
 
-            plugin.getPlatform().executeSync(() -> dispatchCommands(response.getCommands()));
+            this.plugin.getPlatform().executeSync(() -> dispatchCommands(response.getCommands()));
 
             if (sendFullData) {
-                lastFullDataSent = Instant.now();
+                this.lastFullDataSent = Instant.now();
             }
         } catch (IOException e) {
-            plugin.getLogger().error("Unable to send data to the website: " + e.getMessage() + " - " + e.getClass().getName());
+            this.plugin.getLogger().error("Unable to send data to the website: " + e.getMessage() + " - " + e.getClass().getName());
         }
     }
 
     private void dispatchCommands(Map<String, List<String>> commands) {
-        plugin.getLogger().info("Dispatching commands to " + commands.size() + " players.");
+        this.plugin.getLogger().info("Dispatching commands to " + commands.size() + " players.");
 
-        Map<String, CommandSender> players = plugin.getPlatform()
+        Map<String, CommandSender> players = this.plugin.getPlatform()
                 .getOnlinePlayers()
                 .collect(Collectors.toMap(cs -> cs.getName().toLowerCase(), Function.identity()));
 
@@ -81,9 +81,9 @@ public class FetcherTask implements Runnable {
                 command = command.replace("{player}", playerName)
                         .replace("{uuid}", player != null ? player.getUuid().toString() : "?");
 
-                plugin.getLogger().info("Dispatching command for player " + playerName + ": " + command);
+                this.plugin.getLogger().info("Dispatching command for player " + playerName + ": " + command);
 
-                plugin.getPlatform().dispatchConsoleCommand(command);
+                this.plugin.getPlatform().dispatchConsoleCommand(command);
             }
         }
     }

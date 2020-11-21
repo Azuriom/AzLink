@@ -59,27 +59,27 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
-        plugin = new AzLinkPlugin(this);
-        plugin.init();
+        this.plugin = new AzLinkPlugin(this);
+        this.plugin.init();
 
-        game.getCommandManager().register(this, new SpongeCommandExecutor(plugin), "azlink", "azuriomlink");
+        this.game.getCommandManager().register(this, new SpongeCommandExecutor(this.plugin), "azlink", "azuriomlink");
 
-        Task.builder().intervalTicks(1).execute(tpsTask).submit(this);
+        Task.builder().intervalTicks(1).execute(this.tpsTask).submit(this);
     }
 
     @Listener
     public void onGameStop(GameStoppedEvent event) {
-        plugin.shutdown();
+        this.plugin.shutdown();
     }
 
     @Override
     public AzLinkPlugin getPlugin() {
-        return plugin;
+        return this.plugin;
     }
 
     @Override
     public LoggerAdapter getLoggerAdapter() {
-        return logger;
+        return this.logger;
     }
 
     @Override
@@ -89,7 +89,7 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     @Override
     public PlatformInfo getPlatformInfo() {
-        Platform platform = game.getPlatform();
+        Platform platform = this.game.getPlatform();
         PluginContainer version = platform.getContainer(Platform.Component.IMPLEMENTATION);
 
         return new PlatformInfo(version.getName(), version.getVersion().orElse("unknown"));
@@ -102,35 +102,35 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     @Override
     public Path getDataDirectory() {
-        return configDirectory;
+        return this.configDirectory;
     }
 
     @Override
     public Optional<WorldData> getWorldData() {
-        int loadedChunks = game.getServer().getWorlds().stream()
+        int loadedChunks = this.game.getServer().getWorlds().stream()
                 .mapToInt(w -> Iterables.size(w.getLoadedChunks()))
                 .sum();
 
-        int entities = game.getServer().getWorlds().stream()
+        int entities = this.game.getServer().getWorlds().stream()
                 .mapToInt(w -> w.getEntities().size())
                 .sum();
 
-        return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
+        return Optional.of(new WorldData(this.tpsTask.getTps(), loadedChunks, entities));
     }
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
-        return game.getServer().getOnlinePlayers().stream().map(SpongeCommandSender::new);
+        return this.game.getServer().getOnlinePlayers().stream().map(SpongeCommandSender::new);
     }
 
     @Override
     public void dispatchConsoleCommand(String command) {
-        game.getCommandManager().process(game.getServer().getConsole(), command);
+        this.game.getCommandManager().process(this.game.getServer().getConsole(), command);
     }
 
     @Override
     public int getMaxPlayers() {
-        return game.getServer().getMaxPlayers();
+        return this.game.getServer().getMaxPlayers();
     }
 
     @Override

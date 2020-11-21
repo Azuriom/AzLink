@@ -29,32 +29,32 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
 
     @Override
     public void onLoad() {
-        logger = new NukkitLoggerAdapter(getLogger());
+        this.logger = new NukkitLoggerAdapter(getLogger());
     }
 
     @Override
     public void onEnable() {
-        plugin.init();
+        this.plugin.init();
 
         PluginIdentifiableCommand command = getCommand("azlink");
-        ((PluginCommand<?>) command).setExecutor(new NukkitCommandExecutor(plugin));
+        ((PluginCommand<?>) command).setExecutor(new NukkitCommandExecutor(this.plugin));
 
-        getServer().getScheduler().scheduleDelayedRepeatingTask(this, tpsTask, 0, 1);
+        getServer().getScheduler().scheduleDelayedRepeatingTask(this, this.tpsTask, 0, 1);
     }
 
     @Override
     public void onDisable() {
-        plugin.shutdown();
+        this.plugin.shutdown();
     }
 
     @Override
     public AzLinkPlugin getPlugin() {
-        return plugin;
+        return this.plugin;
     }
 
     @Override
     public LoggerAdapter getLoggerAdapter() {
-        return logger;
+        return this.logger;
     }
 
     @Override
@@ -82,7 +82,7 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
                 .mapToInt(w -> w.getEntities().length)
                 .sum();
 
-        return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
+        return Optional.of(new WorldData(this.tpsTask.getTps(), loadedChunks, entities));
     }
 
     @Override

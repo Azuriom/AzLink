@@ -15,7 +15,7 @@ public class PluginConfig {
     }
 
     public String getSiteKey() {
-        return siteKey;
+        return this.siteKey;
     }
 
     public void setSiteKey(String siteKey) {
@@ -23,7 +23,7 @@ public class PluginConfig {
     }
 
     public String getSiteUrl() {
-        return siteUrl;
+        return this.siteUrl;
     }
 
     public void setSiteUrl(String siteUrl) {
@@ -31,7 +31,7 @@ public class PluginConfig {
     }
 
     public boolean hasInstantCommands() {
-        return instantCommands;
+        return this.instantCommands;
     }
 
     public void setInstantCommands(boolean instantCommands) {
@@ -39,7 +39,7 @@ public class PluginConfig {
     }
 
     public int getHttpPort() {
-        return httpPort;
+        return this.httpPort;
     }
 
     public void setHttpPort(int httpPort) {
@@ -47,11 +47,11 @@ public class PluginConfig {
     }
 
     public boolean isValid() {
-        return siteKey != null && !siteKey.isEmpty() && siteUrl != null && !siteUrl.isEmpty();
+        return this.siteKey != null && !this.siteKey.isEmpty() && this.siteUrl != null && !this.siteUrl.isEmpty();
     }
 
     @Override
     public String toString() {
-        return "PluginConfig{siteKey='" + siteKey + "', siteUrl='" + siteUrl + "', httpPort=" + httpPort + '}';
+        return "PluginConfig{siteKey='" + this.siteKey + "', siteUrl='" + this.siteUrl + "', httpPort=" + this.httpPort + '}';
     }
 }

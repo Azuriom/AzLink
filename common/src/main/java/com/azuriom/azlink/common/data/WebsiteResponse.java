@@ -13,6 +13,6 @@ public class WebsiteResponse {
     }
 
     public Map<String, List<String>> getCommands() {
-        return commands;
+        return this.commands;
     }
 }

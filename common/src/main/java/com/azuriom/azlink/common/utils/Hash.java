@@ -26,22 +26,24 @@ public enum Hash {
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String hash(String text) {
         try {
-            MessageDigest digest = MessageDigest.getInstance(name);
+            MessageDigest digest = MessageDigest.getInstance(this.name);
             byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
-
             StringBuilder result = new StringBuilder(2 * hash.length);
+
             for (byte b : hash) {
-                result.append(Integer.toString((b & 0xff) + 0x100, 16).substring(1));
+                String hex = Integer.toHexString(b & 0xff);
+
+                (hex.length() > 1 ? result : result.append('0')).append(hex);
             }
 
             return result.toString();
         } catch (NoSuchAlgorithmException e) {
-            throw new UnsupportedOperationException(name + " is not supported on this platform", e);
+            throw new UnsupportedOperationException(this.name + " is not supported on this platform", e);
         }
     }
 }

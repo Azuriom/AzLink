@@ -23,7 +23,7 @@ public class SpongeCommandExecutor extends AzLinkCommand implements CommandCalla
     @Override
     @Nonnull
     public CommandResult process(@Nonnull CommandSource source, String arguments) {
-        execute(new SpongeCommandSender(source), arguments.split(" "));
+        execute(new SpongeCommandSender(source), arguments.split(" ", -1));
 
         return CommandResult.success();
     }
@@ -31,7 +31,7 @@ public class SpongeCommandExecutor extends AzLinkCommand implements CommandCalla
     @Override
     @Nonnull
     public List<String> getSuggestions(@Nonnull CommandSource source, String arguments, @Nullable Location<World> targetPosition) {
-        return tabComplete(new SpongeCommandSender(source), arguments.split(" "));
+        return tabComplete(new SpongeCommandSender(source), arguments.split(" ", -1));
     }
 
     @Override

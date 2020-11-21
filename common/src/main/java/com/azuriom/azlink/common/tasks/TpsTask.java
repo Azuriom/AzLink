@@ -7,35 +7,35 @@ public class TpsTask implements Runnable {
     private static final long TPS_TIME = TimeUnit.SECONDS.toNanos(20);
 
     private double tps = 20;
-    private int tick = 0;
+    private int currentTick = 0;
 
     private long lastTickTime = 0;
 
     @Override
     public void run() {
-        tick++;
+        this.currentTick++;
 
-        if (tick % 20 != 0) {
+        if (this.currentTick % 20 != 0) {
             return;
         }
 
         long currentNanoTime = System.nanoTime();
 
-        if (lastTickTime == 0) {
-            lastTickTime = currentNanoTime;
+        if (this.lastTickTime == 0) {
+            this.lastTickTime = currentNanoTime;
             return;
         }
 
-        tps = TPS_TIME / (double) (currentNanoTime - lastTickTime);
+        this.tps = TPS_TIME / (double) (currentNanoTime - this.lastTickTime);
 
-        lastTickTime = currentNanoTime;
+        this.lastTickTime = currentNanoTime;
     }
 
     public double getTps() {
-        return tps;
+        return this.tps;
     }
 
-    public int getTick() {
-        return tick;
+    public int getCurrentTick() {
+        return this.currentTick;
     }
 }

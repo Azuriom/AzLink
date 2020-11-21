@@ -13,14 +13,14 @@ public class WorldData {
     }
 
     public double getTps() {
-        return tps;
+        return this.tps;
     }
 
     public int getChunks() {
-        return chunks;
+        return this.chunks;
     }
 
     public int getEntities() {
-        return entities;
+        return this.entities;
     }
 }

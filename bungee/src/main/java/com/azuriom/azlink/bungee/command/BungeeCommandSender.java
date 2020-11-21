@@ -17,13 +17,13 @@ public class BungeeCommandSender implements CommandSender {
 
     @Override
     public String getName() {
-        return sender.getName();
+        return this.sender.getName();
     }
 
     @Override
     public UUID getUuid() {
-        if (sender instanceof ProxiedPlayer) {
-            return ((ProxiedPlayer) sender).getUniqueId();
+        if (this.sender instanceof ProxiedPlayer) {
+            return ((ProxiedPlayer) this.sender).getUniqueId();
         }
 
         return UUID.nameUUIDFromBytes(getName().getBytes());
@@ -33,11 +33,11 @@ public class BungeeCommandSender implements CommandSender {
     public void sendMessage(String message) {
         String formatted = ChatColor.translateAlternateColorCodes('&', message);
 
-        sender.sendMessage(TextComponent.fromLegacyText(formatted));
+        this.sender.sendMessage(TextComponent.fromLegacyText(formatted));
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return sender.hasPermission(permission);
+        return this.sender.hasPermission(permission);
     }
 }

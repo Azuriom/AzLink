@@ -16,13 +16,13 @@ public class NukkitCommandSender implements CommandSender {
 
     @Override
     public String getName() {
-        return commandSender.getName();
+        return this.commandSender.getName();
     }
 
     @Override
     public UUID getUuid() {
-        if (commandSender instanceof Player) {
-            return ((Player) commandSender).getUniqueId();
+        if (this.commandSender instanceof Player) {
+            return ((Player) this.commandSender).getUniqueId();
         }
 
         return UUID.nameUUIDFromBytes(getName().getBytes());
@@ -30,11 +30,11 @@ public class NukkitCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        commandSender.sendMessage(TextFormat.colorize(message));
+        this.commandSender.sendMessage(TextFormat.colorize(message));
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return commandSender.hasPermission(permission);
+        return this.commandSender.hasPermission(permission);
     }
 }

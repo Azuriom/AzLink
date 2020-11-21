@@ -16,14 +16,14 @@ public class PlatformData {
     }
 
     public PlatformType getType() {
-        return type;
+        return this.type;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getVersion() {
-        return version;
+        return this.version;
     }
 }

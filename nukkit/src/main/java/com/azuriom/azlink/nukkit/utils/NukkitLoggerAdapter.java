@@ -13,31 +13,31 @@ public class NukkitLoggerAdapter implements LoggerAdapter {
 
     @Override
     public void info(String message) {
-        logger.info(message);
+        this.logger.info(message);
     }
 
     @Override
     public void info(String message, Throwable throwable) {
-        logger.info(message, throwable);
+        this.logger.info(message, throwable);
     }
 
     @Override
     public void warn(String message) {
-        logger.warning(message);
+        this.logger.warning(message);
     }
 
     @Override
     public void warn(String message, Throwable throwable) {
-        logger.warning(message, throwable);
+        this.logger.warning(message, throwable);
     }
 
     @Override
     public void error(String message) {
-        logger.error(message);
+        this.logger.error(message);
     }
 
     @Override
     public void error(String message, Throwable throwable) {
-        logger.error(message, throwable);
+        this.logger.error(message, throwable);
     }
 }

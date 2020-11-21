@@ -44,7 +44,7 @@ public class AzLinkCommand {
 
         if (args[0].equalsIgnoreCase("fetch")) {
 
-            plugin.fetchNow();
+            this.plugin.fetchNow();
 
             sender.sendMessage("&6Data has been fetched successfully.");
 
@@ -71,15 +71,15 @@ public class AzLinkCommand {
                 return;
             }
 
-            plugin.getConfig().setHttpPort(port);
+            this.plugin.getConfig().setHttpPort(port);
 
             try {
-                plugin.restartHttpServer();
+                this.plugin.restartHttpServer();
 
                 sender.sendMessage("&aHTTP server started on port " + port);
             } catch (Exception e) {
                 sender.sendMessage("&cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
-                plugin.getLogger().error("Error while starting the HTTP server", e);
+                this.plugin.getLogger().error("Error while starting the HTTP server", e);
             }
 
             return;
@@ -105,7 +105,7 @@ public class AzLinkCommand {
     }
 
     private void sendUsage(CommandSender sender) {
-        String version = plugin.getPlatform().getPluginVersion();
+        String version = this.plugin.getPlatform().getPluginVersion();
         sender.sendMessage("&9AzLink v" + version + "&7. Website: &9https://azuriom.com");
         sender.sendMessage("&8- /azlink setup <url> <key>");
         sender.sendMessage("&8- /azlink port <port>");
@@ -113,28 +113,28 @@ public class AzLinkCommand {
     }
 
     private void setup(CommandSender sender, String url, String key) {
-        plugin.getConfig().setSiteKey(key);
-        plugin.getConfig().setSiteUrl(url);
+        this.plugin.getConfig().setSiteKey(key);
+        this.plugin.getConfig().setSiteUrl(url);
 
         if (showStatus(sender)) {
             try {
-                plugin.saveConfig();
+                this.plugin.saveConfig();
 
-                plugin.restartHttpServer();
+                this.plugin.restartHttpServer();
             } catch (IOException e) {
                 sender.sendMessage("&cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
-                plugin.getLogger().error("Error while saving config", e);
+                this.plugin.getLogger().error("Error while saving config", e);
             }
         }
     }
 
     private boolean showStatus(CommandSender sender) {
         try {
-            plugin.getHttpClient().verifyStatus();
+            this.plugin.getHttpClient().verifyStatus();
 
             sender.sendMessage("&aLinked to the website successfully.");
 
-            plugin.fetchNow();
+            this.plugin.fetchNow();
 
             return true;
         } catch (Exception e) {

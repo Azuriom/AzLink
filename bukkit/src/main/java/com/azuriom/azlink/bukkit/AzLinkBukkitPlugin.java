@@ -27,7 +27,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     @Override
     public void onLoad() {
-        logger = new JavaLoggerAdapter(getLogger());
+        this.logger = new JavaLoggerAdapter(getLogger());
     }
 
     @Override
@@ -37,33 +37,33 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
             Class.forName("io.netty.channel.Channel");
         } catch (ClassNotFoundException e) {
-            logger.error("Your server version is not compatible with this version of AzLink !");
-            logger.error("Please download AzLink Legacy on https://azuriom.com/azlink");
+            this.logger.error("Your server version is not compatible with this version of AzLink !");
+            this.logger.error("Please download AzLink Legacy on https://azuriom.com/azlink");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
 
-        plugin = new AzLinkPlugin(this);
-        plugin.init();
+        this.plugin = new AzLinkPlugin(this);
+        this.plugin.init();
 
-        getCommand("azlink").setExecutor(new BukkitCommandExecutor(plugin));
+        getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
 
-        getServer().getScheduler().runTaskTimer(this, tpsTask, 0, 1);
+        getServer().getScheduler().runTaskTimer(this, this.tpsTask, 0, 1);
     }
 
     @Override
     public void onDisable() {
-        plugin.shutdown();
+        this.plugin.shutdown();
     }
 
     @Override
     public AzLinkPlugin getPlugin() {
-        return plugin;
+        return this.plugin;
     }
 
     @Override
     public LoggerAdapter getLoggerAdapter() {
-        return logger;
+        return this.logger;
     }
 
     @Override
@@ -94,7 +94,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
         int entities = getServer().getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
 
-        return Optional.of(new WorldData(tpsTask.getTps(), loadedChunks, entities));
+        return Optional.of(new WorldData(this.tpsTask.getTps(), loadedChunks, entities));
     }
 
     @Override

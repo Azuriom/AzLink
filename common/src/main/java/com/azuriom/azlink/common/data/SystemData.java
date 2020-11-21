@@ -11,10 +11,10 @@ public class SystemData {
     }
 
     public double getRam() {
-        return ram;
+        return this.ram;
     }
 
     public double getCpu() {
-        return cpu;
+        return this.cpu;
     }
 }

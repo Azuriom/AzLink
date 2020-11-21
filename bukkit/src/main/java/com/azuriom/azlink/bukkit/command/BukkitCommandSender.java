@@ -16,13 +16,13 @@ public class BukkitCommandSender implements CommandSender {
 
     @Override
     public String getName() {
-        return sender.getName();
+        return this.sender.getName();
     }
 
     @Override
     public UUID getUuid() {
-        if (sender instanceof Entity) {
-            return ((Entity) sender).getUniqueId();
+        if (this.sender instanceof Entity) {
+            return ((Entity) this.sender).getUniqueId();
         }
 
         return UUID.nameUUIDFromBytes(getName().getBytes());
@@ -30,11 +30,11 @@ public class BukkitCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+        this.sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return sender.hasPermission(permission);
+        return this.sender.hasPermission(permission);
     }
 }

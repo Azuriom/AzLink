@@ -39,19 +39,19 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
         }
 
         if (method == HttpMethod.POST) {
-            if (!plugin.getConfig().isValid()) {
+            if (!this.plugin.getConfig().isValid()) {
                 close(ctx, writeResponse(HttpResponseStatus.UNPROCESSABLE_ENTITY, "Error: Invalid configuration"));
                 return;
             }
 
-            String siteKeyHash = Hash.SHA_256.hash(plugin.getConfig().getSiteKey());
+            String siteKeyHash = Hash.SHA_256.hash(this.plugin.getConfig().getSiteKey());
 
             if (!siteKeyHash.equals(request.headers().get("Authorization"))) {
                 close(ctx, writeResponse(HttpResponseStatus.UNAUTHORIZED, "Error: Invalid authorization"));
                 return;
             }
 
-            plugin.fetchNow();
+            this.plugin.fetchNow();
 
             close(ctx, writeResponse(HttpResponseStatus.OK, "Status: OK"));
 

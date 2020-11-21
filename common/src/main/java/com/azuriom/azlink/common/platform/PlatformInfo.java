@@ -1,25 +1,27 @@
 package com.azuriom.azlink.common.platform;
 
+import java.util.Objects;
+
 public class PlatformInfo {
 
     private final String name;
     private final String version;
 
     public PlatformInfo(String name, String version) {
-        this.name = name;
-        this.version = version;
+        this.name = Objects.requireNonNull(name, "name");
+        this.version = Objects.requireNonNull(version, "version");
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public String getVersion() {
-        return version;
+        return this.version;
     }
 
     @Override
     public String toString() {
-        return "PlatformInfo{name='" + name + "', version='" + version + "'}";
+        return "PlatformInfo{name='" + this.name + "', version='" + this.version + "'}";
     }
 }

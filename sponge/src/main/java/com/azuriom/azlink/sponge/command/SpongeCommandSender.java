@@ -17,13 +17,13 @@ public class SpongeCommandSender implements CommandSender {
 
     @Override
     public String getName() {
-        return source.getName();
+        return this.source.getName();
     }
 
     @Override
     public UUID getUuid() {
-        if (source instanceof Identifiable) {
-            return ((Identifiable) source).getUniqueId();
+        if (this.source instanceof Identifiable) {
+            return ((Identifiable) this.source).getUniqueId();
         }
 
         return UUID.nameUUIDFromBytes(getName().getBytes());
@@ -31,11 +31,11 @@ public class SpongeCommandSender implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        source.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
+        this.source.sendMessage(TextSerializers.FORMATTING_CODE.deserialize(message));
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return source.hasPermission(permission);
+        return this.source.hasPermission(permission);
     }
 }
