@@ -7,7 +7,7 @@ repositories {
 }
 
 dependencies {
-    compile project(':azlink-common')
+    implementation project(':azlink-common')
     compileOnly 'org.spongepowered:spongeapi:7.3.0'
     annotationProcessor 'org.spongepowered:spongeapi:7.3.0'
 }

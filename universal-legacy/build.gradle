@@ -3,16 +3,16 @@ plugins {
 }
 
 dependencies {
-    compile project(':azlink-common')
-    compile project(':azlink-bukkit')
-    compile project(':azlink-bungee')
-    compile project(':azlink-sponge')
-    compile project(':azlink-velocity')
-    compile project(':azlink-nukkit')
+    implementation project(':azlink-common')
+    implementation project(':azlink-bukkit')
+    implementation project(':azlink-bungee')
+    implementation project(':azlink-sponge')
+    implementation project(':azlink-velocity')
+    implementation project(':azlink-nukkit')
 
-    compile 'com.google.code.gson:gson:2.8.6'
-    compile 'io.netty:netty-handler:4.1.51.Final'
-    compile 'io.netty:netty-codec-http:4.1.51.Final'
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'io.netty:netty-handler:4.1.54.Final'
+    implementation 'io.netty:netty-codec-http:4.1.54.Final'
 }
 
 shadowJar {

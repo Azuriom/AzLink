@@ -10,6 +10,8 @@ import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.platform.PlatformType;
+import com.azuriom.azlink.common.scheduler.JavaSchedulerAdapter;
+import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import com.azuriom.azlink.nukkit.command.NukkitCommandExecutor;
 import com.azuriom.azlink.nukkit.command.NukkitCommandSender;
@@ -21,9 +23,14 @@ import java.util.stream.Stream;
 
 public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatform {
 
-    private final AzLinkPlugin plugin = new AzLinkPlugin(this);
+    private final SchedulerAdapter scheduler = new JavaSchedulerAdapter(
+            r -> getServer().getScheduler().scheduleTask(this, r),
+            r -> getServer().getScheduler().scheduleTask(this, r, true)
+    );
 
     private final TpsTask tpsTask = new TpsTask();
+
+    private AzLinkPlugin plugin;
 
     private LoggerAdapter logger;
 
@@ -34,6 +41,7 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
 
     @Override
     public void onEnable() {
+        this.plugin = new AzLinkPlugin(this);
         this.plugin.init();
 
         PluginIdentifiableCommand command = getCommand("azlink");
@@ -55,6 +63,11 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
     @Override
     public LoggerAdapter getLoggerAdapter() {
         return this.logger;
+    }
+
+    @Override
+    public SchedulerAdapter getSchedulerAdapter() {
+        return this.scheduler;
     }
 
     @Override
@@ -103,15 +116,5 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
     @Override
     public void dispatchConsoleCommand(String command) {
         getServer().dispatchCommand(getServer().getConsoleSender(), command);
-    }
-
-    @Override
-    public void executeAsync(Runnable runnable) {
-        getServer().getScheduler().scheduleTask(this, runnable, true);
-    }
-
-    @Override
-    public void executeSync(Runnable runnable) {
-        getServer().getScheduler().scheduleTask(this, runnable, false);
     }
 }

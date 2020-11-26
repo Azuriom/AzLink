@@ -7,6 +7,7 @@ import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.logger.Slf4jLoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.platform.PlatformType;
+import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.velocity.command.VelocityCommandExecutor;
 import com.azuriom.azlink.velocity.command.VelocityCommandSender;
 import com.google.inject.Inject;
@@ -32,7 +33,9 @@ import java.util.stream.Stream;
 )
 public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
-    private final ProxyServer server;
+    private final SchedulerAdapter scheduler = new VelocitySchedulerAdapter(this);
+
+    private final ProxyServer proxy;
 
     private final Path dataDirectory;
 
@@ -41,8 +44,8 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
     private AzLinkPlugin plugin;
 
     @Inject
-    public AzLinkVelocityPlugin(ProxyServer server, @DataDirectory Path dataDirectory, Logger logger) {
-        this.server = server;
+    public AzLinkVelocityPlugin(ProxyServer proxy, @DataDirectory Path dataDirectory, Logger logger) {
+        this.proxy = proxy;
         this.dataDirectory = dataDirectory;
         this.logger = new Slf4jLoggerAdapter(logger);
     }
@@ -60,7 +63,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
         this.plugin = new AzLinkPlugin(this);
         this.plugin.init();
 
-        this.server.getCommandManager().register("azlink", new VelocityCommandExecutor(this.plugin), "azuriomlink");
+        this.proxy.getCommandManager().register("azlink", new VelocityCommandExecutor(this.plugin), "azuriomlink");
     }
 
     @Subscribe
@@ -79,13 +82,18 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
     }
 
     @Override
+    public SchedulerAdapter getSchedulerAdapter() {
+        return this.scheduler;
+    }
+
+    @Override
     public PlatformType getPlatformType() {
         return PlatformType.VELOCITY;
     }
 
     @Override
     public PlatformInfo getPlatformInfo() {
-        ProxyVersion version = this.server.getVersion();
+        ProxyVersion version = this.proxy.getVersion();
 
         return new PlatformInfo(version.getName(), version.getVersion());
     }
@@ -102,21 +110,20 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
-        return this.server.getAllPlayers().stream().map(VelocityCommandSender::new);
+        return this.proxy.getAllPlayers().stream().map(VelocityCommandSender::new);
     }
 
     @Override
     public int getMaxPlayers() {
-        return this.server.getConfiguration().getShowMaxPlayers();
+        return this.proxy.getConfiguration().getShowMaxPlayers();
     }
 
     @Override
     public void dispatchConsoleCommand(String command) {
-        this.server.getCommandManager().executeAsync(this.server.getConsoleCommandSource(), command);
+        this.proxy.getCommandManager().executeAsync(this.proxy.getConsoleCommandSource(), command);
     }
 
-    @Override
-    public void executeAsync(Runnable runnable) {
-        this.server.getScheduler().buildTask(this, runnable).schedule();
+    public ProxyServer getProxy() {
+        return this.proxy;
     }
 }

@@ -34,13 +34,13 @@ public class FetcherTask implements Runnable {
 
         this.lastRequest = now;
 
-        this.plugin.getPlatform().executeSync(() -> {
+        this.plugin.getScheduler().executeSync(() -> {
             LocalDateTime currentTime = LocalDateTime.now();
             boolean sendFullData = currentTime.getMinute() % 15 == 0 && this.lastFullDataSent.isBefore(now.minusSeconds(60));
 
             ServerData data = this.plugin.getServerData(sendFullData);
 
-            this.plugin.getPlatform().executeAsync(() -> sendData(data, sendFullData));
+            this.plugin.getScheduler().executeAsync(() -> sendData(data, sendFullData));
         });
     }
 
@@ -52,7 +52,7 @@ public class FetcherTask implements Runnable {
                 return;
             }
 
-            this.plugin.getPlatform().executeSync(() -> dispatchCommands(response.getCommands()));
+            this.plugin.getScheduler().executeSync(() -> dispatchCommands(response.getCommands()));
 
             if (sendFullData) {
                 this.lastFullDataSent = Instant.now();

@@ -8,6 +8,8 @@ import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.logger.Slf4jLoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.platform.PlatformType;
+import com.azuriom.azlink.common.scheduler.JavaSchedulerAdapter;
+import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import com.azuriom.azlink.sponge.command.SpongeCommandExecutor;
 import com.azuriom.azlink.sponge.command.SpongeCommandSender;
@@ -23,10 +25,12 @@ import org.spongepowered.api.event.game.state.GameStoppedEvent;
 import org.spongepowered.api.plugin.Dependency;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.plugin.PluginContainer;
+import org.spongepowered.api.scheduler.SpongeExecutorService;
 import org.spongepowered.api.scheduler.Task;
 
 import java.nio.file.Path;
 import java.util.Optional;
+import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 @Plugin(
@@ -40,13 +44,15 @@ import java.util.stream.Stream;
 )
 public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
+    private final TpsTask tpsTask = new TpsTask();
+
     private final Game game;
 
     private final Path configDirectory;
 
     private final LoggerAdapter logger;
 
-    private final TpsTask tpsTask = new TpsTask();
+    private SchedulerAdapter scheduler;
 
     private AzLinkPlugin plugin;
 
@@ -59,6 +65,8 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     @Listener
     public void onGamePreInitialization(GamePreInitializationEvent event) {
+        this.scheduler = initScheduler();
+
         this.plugin = new AzLinkPlugin(this);
         this.plugin.init();
 
@@ -80,6 +88,11 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
     @Override
     public LoggerAdapter getLoggerAdapter() {
         return this.logger;
+    }
+
+    @Override
+    public SchedulerAdapter getSchedulerAdapter() {
+        return this.scheduler;
     }
 
     @Override
@@ -133,13 +146,10 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
         return this.game.getServer().getMaxPlayers();
     }
 
-    @Override
-    public void executeSync(Runnable runnable) {
-        Task.builder().execute(runnable).submit(this);
-    }
+    private SchedulerAdapter initScheduler() {
+        Executor syncExecutor = runnable -> Task.builder().execute(runnable).submit(this);
+        SpongeExecutorService asyncExecutor = this.game.getScheduler().createAsyncExecutor(this);
 
-    @Override
-    public void executeAsync(Runnable runnable) {
-        Task.builder().execute(runnable).async().submit(this);
+        return new JavaSchedulerAdapter(asyncExecutor, syncExecutor, asyncExecutor);
     }
 }

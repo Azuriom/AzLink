@@ -1,8 +1,9 @@
 package com.azuriom.azlink.common;
 
 import com.azuriom.azlink.common.scheduler.ThreadFactoryBuilder;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ThreadFactoryBuilderTest {
 
@@ -15,15 +16,15 @@ public class ThreadFactoryBuilderTest {
         Thread thread0 = factory.newThread(this.voidRunnable);
         Thread thread1 = factory.newThread(this.voidRunnable);
 
-        Assertions.assertEquals("thread-factory-test-0", thread0.getName());
-        Assertions.assertEquals("thread-factory-test-1", thread1.getName());
-        Assertions.assertEquals(2, thread1.getPriority());
-        Assertions.assertFalse(thread0.isDaemon());
+        assertEquals("thread-factory-test-0", thread0.getName());
+        assertEquals("thread-factory-test-1", thread1.getName());
+        assertEquals(2, thread1.getPriority());
+        assertFalse(thread0.isDaemon());
 
         ThreadFactoryBuilder daemonFactory = factory.daemon();
 
         Thread daemonThread = daemonFactory.newThread(this.voidRunnable);
 
-        Assertions.assertTrue(daemonThread.isDaemon());
+        assertTrue(daemonThread.isDaemon());
     }
 }

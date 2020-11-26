@@ -4,12 +4,14 @@ import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
-import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.logger.JavaLoggerAdapter;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
+import com.azuriom.azlink.common.platform.PlatformType;
+import com.azuriom.azlink.common.scheduler.JavaSchedulerAdapter;
+import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -20,6 +22,11 @@ import java.util.stream.Stream;
 public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatform {
 
     private final TpsTask tpsTask = new TpsTask();
+
+    private final SchedulerAdapter scheduler = new JavaSchedulerAdapter(
+            r -> getServer().getScheduler().runTask(this, r),
+            r -> getServer().getScheduler().runTaskAsynchronously(this, r)
+    );
 
     private AzLinkPlugin plugin;
 
@@ -67,6 +74,11 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     }
 
     @Override
+    public SchedulerAdapter getSchedulerAdapter() {
+        return this.scheduler;
+    }
+
+    @Override
     public PlatformType getPlatformType() {
         return PlatformType.BUKKIT;
     }
@@ -92,7 +104,9 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
                 .mapToInt(w -> w.getLoadedChunks().length)
                 .sum();
 
-        int entities = getServer().getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
+        int entities = getServer().getWorlds().stream()
+                .mapToInt(w -> w.getEntities().size())
+                .sum();
 
         return Optional.of(new WorldData(this.tpsTask.getTps(), loadedChunks, entities));
     }
@@ -110,15 +124,5 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     @Override
     public void dispatchConsoleCommand(String command) {
         getServer().dispatchCommand(getServer().getConsoleSender(), command);
-    }
-
-    @Override
-    public void executeSync(Runnable runnable) {
-        getServer().getScheduler().runTask(this, runnable);
-    }
-
-    @Override
-    public void executeAsync(Runnable runnable) {
-        getServer().getScheduler().runTaskAsynchronously(this, runnable);
     }
 }

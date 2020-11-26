@@ -11,9 +11,10 @@ import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.http.client.HttpClient;
 import com.azuriom.azlink.common.http.server.HttpServer;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
-import com.azuriom.azlink.common.scheduler.ThreadFactoryBuilder;
+import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.FetcherTask;
 import com.azuriom.azlink.common.utils.SystemUtils;
+import com.azuriom.azlink.common.utils.UpdateChecker;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -27,20 +28,16 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class AzLinkPlugin {
 
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder().name("azlink-scheduler").daemon());
+    private static final Gson GSON = new Gson();
+    private static final Gson GSON_PRETTY_PRINT = new GsonBuilder().setPrettyPrinting().create();
 
     private final HttpClient httpClient = new HttpClient(this);
     private HttpServer httpServer = new HttpServer(this);
-
-    private final Gson gson = new Gson();
-    private final Gson gsonPrettyPrint = new GsonBuilder().setPrettyPrinting().create();
 
     private final AzLinkCommand command = new AzLinkCommand(this);
 
@@ -48,8 +45,8 @@ public class AzLinkPlugin {
 
     private final AzLinkPlatform platform;
 
+    private PluginConfig config = new PluginConfig(null, null);
     private Path configFile;
-    private PluginConfig config = new PluginConfig(null, null, true, HttpServer.DEFAULT_PORT);
 
     private boolean logCpuError = true;
 
@@ -61,7 +58,7 @@ public class AzLinkPlugin {
         this.configFile = this.platform.getDataDirectory().resolve("config.json");
 
         try (BufferedReader reader = Files.newBufferedReader(this.configFile)) {
-            this.config = this.gson.fromJson(reader, PluginConfig.class);
+            this.config = GSON.fromJson(reader, PluginConfig.class);
         } catch (NoSuchFileException e) {
             // ignore, not setup yet
         } catch (IOException e) {
@@ -72,7 +69,7 @@ public class AzLinkPlugin {
         LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(1);
         long startDelay = Duration.between(LocalDateTime.now(), start).toMillis() + 500; // Add 0.5s to ensure we are not in the previous hour
 
-        this.scheduler.scheduleAtFixedRate(this.fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
+        getScheduler().executeAsyncRepeating(this.fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
         if (!this.config.isValid()) {
             getLogger().warn("Invalid configuration, please use '/azlink' to setup the plugin.");
@@ -83,7 +80,13 @@ public class AzLinkPlugin {
             this.httpServer.start();
         }
 
-        this.platform.executeAsync(() -> {
+        if (this.config.hasUpdatesCheck()) {
+            UpdateChecker updateChecker = new UpdateChecker(this);
+
+            getScheduler().executeAsync(updateChecker::checkUpdates);
+        }
+
+        getScheduler().executeAsync(() -> {
             try {
                 this.httpClient.verifyStatus();
 
@@ -104,10 +107,10 @@ public class AzLinkPlugin {
 
     public void shutdown() {
         getLogger().info("Shutting down scheduler");
-        this.scheduler.shutdown();
+
         try {
-            this.scheduler.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
+            getScheduler().shutdown();
+        } catch (Exception e) {
             getLogger().warn("Error while shutting down scheduler", e);
         }
 
@@ -125,7 +128,7 @@ public class AzLinkPlugin {
         }
 
         try (BufferedWriter writer = Files.newBufferedWriter(this.configFile)) {
-            this.gsonPrettyPrint.toJson(this.config, writer);
+            GSON_PRETTY_PRINT.toJson(this.config, writer);
         }
     }
 
@@ -139,24 +142,25 @@ public class AzLinkPlugin {
                 .collect(Collectors.toList());
         int max = this.platform.getMaxPlayers();
 
-        PlatformData platformData = this.platform.getPlatformData();
+        double cpuUsage = getCpuUsage();
 
-        SystemData system = fullData ? new SystemData(SystemUtils.getMemoryUsage(), getCpuUsage()) : null;
+        SystemData system = fullData ? new SystemData(SystemUtils.getMemoryUsage(), cpuUsage) : null;
         WorldData world = fullData ? this.platform.getWorldData().orElse(null) : null;
+        PlatformData platformData = this.platform.getPlatformData();
 
         return new ServerData(platformData, this.platform.getPluginVersion(), players, max, system, world, fullData);
     }
 
     public void fetchNow() {
-        this.platform.executeAsync(this.fetcherTask);
+        getScheduler().executeAsync(this.fetcherTask);
     }
 
     public LoggerAdapter getLogger() {
         return this.platform.getLoggerAdapter();
     }
 
-    public ScheduledExecutorService getScheduler() {
-        return this.scheduler;
+    public SchedulerAdapter getScheduler() {
+        return this.platform.getSchedulerAdapter();
     }
 
     public PluginConfig getConfig() {
@@ -175,12 +179,12 @@ public class AzLinkPlugin {
         return this.httpServer;
     }
 
-    public Gson getGson() {
-        return this.gson;
+    public static Gson getGson() {
+        return GSON;
     }
 
-    public Gson getGsonPrettyPrint() {
-        return this.gsonPrettyPrint;
+    public static Gson getGsonPrettyPrint() {
+        return GSON_PRETTY_PRINT;
     }
 
     private double getCpuUsage() {

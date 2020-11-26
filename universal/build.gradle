@@ -3,12 +3,12 @@ plugins {
 }
 
 dependencies {
-    compile project(':azlink-common')
-    compile project(':azlink-bukkit')
-    compile project(':azlink-bungee')
-    compile project(':azlink-sponge')
-    compile project(':azlink-velocity')
-    compile project(':azlink-nukkit')
+    implementation project(':azlink-common')
+    implementation project(':azlink-bukkit')
+    implementation project(':azlink-bungee')
+    implementation project(':azlink-sponge')
+    implementation project(':azlink-velocity')
+    implementation project(':azlink-nukkit')
 }
 
 shadowJar {

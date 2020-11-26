@@ -3,7 +3,7 @@ repositories {
 }
 
 dependencies {
-    compile project(':azlink-common')
+    implementation project(':azlink-common')
     compileOnly 'cn.nukkit:nukkit:1.0-SNAPSHOT'
 }
 

@@ -6,6 +6,7 @@ import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.platform.PlatformType;
+import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 
 import java.nio.file.Path;
 import java.util.Optional;
@@ -16,6 +17,8 @@ public interface AzLinkPlatform {
     AzLinkPlugin getPlugin();
 
     LoggerAdapter getLoggerAdapter();
+
+    SchedulerAdapter getSchedulerAdapter();
 
     PlatformType getPlatformType();
 
@@ -34,12 +37,6 @@ public interface AzLinkPlatform {
     }
 
     void dispatchConsoleCommand(String command);
-
-    default void executeSync(Runnable runnable) {
-        executeAsync(runnable);
-    }
-
-    void executeAsync(Runnable runnable);
 
     default PlatformData getPlatformData() {
         return new PlatformData(getPlatformType(), getPlatformInfo());

@@ -5,6 +5,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class BungeeCommandSender implements CommandSender {
@@ -26,7 +27,7 @@ public class BungeeCommandSender implements CommandSender {
             return ((ProxiedPlayer) this.sender).getUniqueId();
         }
 
-        return UUID.nameUUIDFromBytes(getName().getBytes());
+        return UUID.nameUUIDFromBytes(getName().getBytes(StandardCharsets.UTF_8));
     }
 
     @Override

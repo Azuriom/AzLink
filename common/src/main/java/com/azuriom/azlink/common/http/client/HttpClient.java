@@ -12,9 +12,6 @@ import okhttp3.ResponseBody;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 
 public class HttpClient {
 
@@ -42,20 +39,18 @@ public class HttpClient {
 
     public WebsiteResponse postData(ServerData data) throws IOException {
         Request request = new Request.Builder().url(getSiteUrl())
-                .post(RequestBody.create(JSON_TYPE, this.plugin.getGson().toJson(data)))
+                .post(RequestBody.create(JSON_TYPE, AzLinkPlugin.getGson().toJson(data)))
                 .build();
 
         try (Response response = makeCall(request)) {
-            try (ResponseBody body = response.body()) {
-                if (body == null) {
-                    throw new RuntimeException("No body in response");
-                }
+            ResponseBody body = response.body();
 
-                try (InputStream in = body.byteStream()) {
-                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-                        return this.plugin.getGson().fromJson(reader, WebsiteResponse.class);
-                    }
-                }
+            if (body == null) {
+                throw new RuntimeException("No body in response");
+            }
+
+            try (BufferedReader reader = new BufferedReader(body.charStream())) {
+                return AzLinkPlugin.getGson().fromJson(reader, WebsiteResponse.class);
             }
         }
     }
@@ -64,6 +59,7 @@ public class HttpClient {
         Response response = this.httpClient.newCall(request).execute();
 
         if (!response.isSuccessful()) {
+            response.close();
             throw new IOException("Invalid response: " + response.code() + " (" + response.message() + ")");
         }
 

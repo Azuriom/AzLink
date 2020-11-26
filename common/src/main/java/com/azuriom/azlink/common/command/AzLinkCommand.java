@@ -3,10 +3,10 @@ package com.azuriom.azlink.common.command;
 import com.azuriom.azlink.common.AzLinkPlugin;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AzLinkCommand {
 
@@ -80,7 +80,10 @@ public class AzLinkCommand {
             } catch (Exception e) {
                 sender.sendMessage("&cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
                 this.plugin.getLogger().error("Error while starting the HTTP server", e);
+                return;
             }
+
+            saveConfig(sender);
 
             return;
         }
@@ -94,7 +97,9 @@ public class AzLinkCommand {
         }
 
         if (args.length == 1) {
-            return Stream.of(COMPLETIONS).filter(s -> startsWithIgnoreCase(args[0], s)).collect(Collectors.toList());
+            return Arrays.stream(COMPLETIONS)
+                    .filter(s -> startsWithIgnoreCase(args[0], s))
+                    .collect(Collectors.toList());
         }
 
         return Collections.emptyList();
@@ -117,14 +122,18 @@ public class AzLinkCommand {
         this.plugin.getConfig().setSiteUrl(url);
 
         if (showStatus(sender)) {
-            try {
-                this.plugin.saveConfig();
+            saveConfig(sender);
 
-                this.plugin.restartHttpServer();
-            } catch (IOException e) {
-                sender.sendMessage("&cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
-                this.plugin.getLogger().error("Error while saving config", e);
-            }
+            this.plugin.restartHttpServer();
+        }
+    }
+
+    private void saveConfig(CommandSender sender) {
+        try {
+            this.plugin.saveConfig();
+        } catch (IOException e) {
+            sender.sendMessage("&cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
+            this.plugin.getLogger().error("Error while saving config", e);
         }
     }
 

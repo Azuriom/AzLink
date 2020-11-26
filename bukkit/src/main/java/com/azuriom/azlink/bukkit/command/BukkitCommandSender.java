@@ -4,6 +4,7 @@ import com.azuriom.azlink.common.command.CommandSender;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
 
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 
 public class BukkitCommandSender implements CommandSender {
@@ -25,7 +26,7 @@ public class BukkitCommandSender implements CommandSender {
             return ((Entity) this.sender).getUniqueId();
         }
 
-        return UUID.nameUUIDFromBytes(getName().getBytes());
+        return UUID.nameUUIDFromBytes(getName().getBytes(StandardCharsets.UTF_8));
     }
 
     @Override

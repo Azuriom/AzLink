@@ -23,7 +23,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
     }
 
     @Override
-    @SuppressWarnings("deprecation") // Request#uri & Request#method don't exits  on old Netty versions
+    @SuppressWarnings("deprecation") // Request#uri and Request#method don't exits on old Netty versions
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest request) {
         String uri = request.getUri();
         HttpMethod method = request.getMethod();
@@ -40,14 +40,14 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
         if (method == HttpMethod.POST) {
             if (!this.plugin.getConfig().isValid()) {
-                close(ctx, writeResponse(HttpResponseStatus.UNPROCESSABLE_ENTITY, "Error: Invalid configuration"));
+                close(ctx, writeResponse(HttpResponseStatus.SERVICE_UNAVAILABLE, "Error: Invalid configuration"));
                 return;
             }
 
             String siteKeyHash = Hash.SHA_256.hash(this.plugin.getConfig().getSiteKey());
 
             if (!siteKeyHash.equals(request.headers().get("Authorization"))) {
-                close(ctx, writeResponse(HttpResponseStatus.UNAUTHORIZED, "Error: Invalid authorization"));
+                close(ctx, writeResponse(HttpResponseStatus.FORBIDDEN, "Error: Invalid authorization"));
                 return;
             }
 

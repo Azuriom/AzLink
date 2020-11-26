@@ -4,17 +4,20 @@ import com.azuriom.azlink.bungee.command.BungeeCommandExecutor;
 import com.azuriom.azlink.bungee.command.BungeeCommandSender;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
-import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.logger.JavaLoggerAdapter;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
+import com.azuriom.azlink.common.platform.PlatformType;
+import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import net.md_5.bungee.api.plugin.Plugin;
 
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
 public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
+
+    private final SchedulerAdapter scheduler = new BungeeSchedulerAdapter(this);
 
     private AzLinkPlugin plugin;
 
@@ -46,6 +49,11 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
     @Override
     public LoggerAdapter getLoggerAdapter() {
         return this.loggerAdapter;
+    }
+
+    @Override
+    public SchedulerAdapter getSchedulerAdapter() {
+        return this.scheduler;
     }
 
     @Override
@@ -81,10 +89,5 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
     @Override
     public int getMaxPlayers() {
         return getProxy().getConfig().getPlayerLimit();
-    }
-
-    @Override
-    public void executeAsync(Runnable runnable) {
-        getProxy().getScheduler().runAsync(this, runnable);
     }
 }
