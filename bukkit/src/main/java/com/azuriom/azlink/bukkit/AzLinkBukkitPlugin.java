@@ -2,10 +2,12 @@ package com.azuriom.azlink.bukkit;
 
 import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
+import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.WorldData;
+import com.azuriom.azlink.common.http.server.HttpServer;
 import com.azuriom.azlink.common.logger.JavaLoggerAdapter;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
@@ -22,14 +24,12 @@ import java.util.stream.Stream;
 public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatform {
 
     private final TpsTask tpsTask = new TpsTask();
-
     private final SchedulerAdapter scheduler = new JavaSchedulerAdapter(
             r -> getServer().getScheduler().runTask(this, r),
             r -> getServer().getScheduler().runTaskAsynchronously(this, r)
     );
 
     private AzLinkPlugin plugin;
-
     private LoggerAdapter logger;
 
     @Override
@@ -50,7 +50,16 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
             return;
         }
 
-        this.plugin = new AzLinkPlugin(this);
+        this.plugin = new AzLinkPlugin(this) {
+            @Override
+            protected HttpServer createHttpServer() {
+                if (plugin.getConfig().getHttpPort() == getServer().getPort()) {
+                    return new InjectedHttpServer(AzLinkBukkitPlugin.this);
+                }
+
+                return super.createHttpServer();
+            }
+        };
         this.plugin.init();
 
         getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
@@ -60,7 +69,9 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     @Override
     public void onDisable() {
-        this.plugin.shutdown();
+        if (this.plugin != null) {
+            this.plugin.shutdown();
+        }
     }
 
     @Override

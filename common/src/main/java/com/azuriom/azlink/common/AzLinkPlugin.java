@@ -10,6 +10,7 @@ import com.azuriom.azlink.common.data.SystemData;
 import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.http.client.HttpClient;
 import com.azuriom.azlink.common.http.server.HttpServer;
+import com.azuriom.azlink.common.http.server.NettyHttpServer;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.FetcherTask;
@@ -37,7 +38,6 @@ public class AzLinkPlugin {
     private static final Gson GSON_PRETTY_PRINT = new GsonBuilder().setPrettyPrinting().create();
 
     private final HttpClient httpClient = new HttpClient(this);
-    private HttpServer httpServer = new HttpServer(this);
 
     private final AzLinkCommand command = new AzLinkCommand(this);
 
@@ -46,6 +46,7 @@ public class AzLinkPlugin {
     private final AzLinkPlatform platform;
 
     private PluginConfig config = new PluginConfig(null, null);
+    private HttpServer httpServer;
     private Path configFile;
 
     private boolean logCpuError = true;
@@ -66,8 +67,10 @@ public class AzLinkPlugin {
             return;
         }
 
+        this.httpServer = createHttpServer();
+
         LocalDateTime start = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES).plusMinutes(1);
-        long startDelay = Duration.between(LocalDateTime.now(), start).toMillis() + 500; // Add 0.5s to ensure we are not in the previous hour
+        long startDelay = Duration.between(LocalDateTime.now(), start).plusMillis(500).toMillis(); // Add 0.5s to ensure we are not in the previous hour
 
         getScheduler().executeAsyncRepeating(this.fetcherTask, startDelay, TimeUnit.MINUTES.toMillis(1), TimeUnit.MILLISECONDS);
 
@@ -98,9 +101,11 @@ public class AzLinkPlugin {
     }
 
     public void restartHttpServer() {
-        this.httpServer.stop();
+        if (this.httpServer != null) {
+            this.httpServer.stop();
+        }
 
-        this.httpServer = new HttpServer(this);
+        this.httpServer = createHttpServer();
 
         this.httpServer.start();
     }
@@ -114,8 +119,10 @@ public class AzLinkPlugin {
             getLogger().warn("Error while shutting down scheduler", e);
         }
 
-        getLogger().info("Stopping HTTP server");
-        this.httpServer.stop();
+        if (this.httpServer != null) {
+            getLogger().info("Stopping HTTP server");
+            this.httpServer.stop();
+        }
     }
 
     public void setConfig(PluginConfig config) {
@@ -185,6 +192,10 @@ public class AzLinkPlugin {
 
     public static Gson getGsonPrettyPrint() {
         return GSON_PRETTY_PRINT;
+    }
+
+    protected HttpServer createHttpServer() {
+        return new NettyHttpServer(this);
     }
 
     private double getCpuUsage() {

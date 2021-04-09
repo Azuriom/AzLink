@@ -48,7 +48,7 @@ public class FetcherTask implements Runnable {
         try {
             WebsiteResponse response = this.plugin.getHttpClient().postData(data);
 
-            if (response.getCommands().isEmpty()) {
+            if (response == null || response.getCommands().isEmpty()) {
                 return;
             }
 

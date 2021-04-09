@@ -30,7 +30,6 @@ import org.spongepowered.api.scheduler.Task;
 
 import java.nio.file.Path;
 import java.util.Optional;
-import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 @Plugin(
@@ -47,13 +46,10 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
     private final TpsTask tpsTask = new TpsTask();
 
     private final Game game;
-
     private final Path configDirectory;
-
     private final LoggerAdapter logger;
 
     private SchedulerAdapter scheduler;
-
     private AzLinkPlugin plugin;
 
     @Inject
@@ -77,7 +73,9 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
 
     @Listener
     public void onGameStop(GameStoppedEvent event) {
-        this.plugin.shutdown();
+        if (this.plugin != null) {
+            this.plugin.shutdown();
+        }
     }
 
     @Override
@@ -147,7 +145,7 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
     }
 
     private SchedulerAdapter initScheduler() {
-        Executor syncExecutor = runnable -> Task.builder().execute(runnable).submit(this);
+        SpongeExecutorService syncExecutor = this.game.getScheduler().createSyncExecutor(this);
         SpongeExecutorService asyncExecutor = this.game.getScheduler().createAsyncExecutor(this);
 
         return new JavaSchedulerAdapter(asyncExecutor, syncExecutor, asyncExecutor);

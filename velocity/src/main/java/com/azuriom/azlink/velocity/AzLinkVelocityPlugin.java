@@ -36,9 +36,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
     private final SchedulerAdapter scheduler = new VelocitySchedulerAdapter(this);
 
     private final ProxyServer proxy;
-
     private final Path dataDirectory;
-
     private final LoggerAdapter logger;
 
     private AzLinkPlugin plugin;
@@ -68,7 +66,9 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Subscribe
     public void onProxyShutdown(ProxyShutdownEvent event) {
-        this.plugin.shutdown();
+        if (this.plugin != null) {
+            this.plugin.shutdown();
+        }
     }
 
     @Override

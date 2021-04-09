@@ -20,7 +20,6 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
     private final SchedulerAdapter scheduler = new BungeeSchedulerAdapter(this);
 
     private AzLinkPlugin plugin;
-
     private LoggerAdapter loggerAdapter;
 
     @Override
@@ -38,7 +37,9 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
 
     @Override
     public void onDisable() {
-        this.plugin.shutdown();
+        if (this.plugin != null) {
+            this.plugin.shutdown();
+        }
     }
 
     @Override

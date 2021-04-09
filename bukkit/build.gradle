@@ -6,6 +6,7 @@ repositories {
 dependencies {
     implementation project(':azlink-common')
     compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    compileOnly 'io.netty:netty-all:4.1.25.Final'
 }
 
 processResources {

@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class AzLinkCommand {
 
-    private static final String[] COMPLETIONS = {"status", "setup", "fetch", "port"};
+    private static final List<String> COMPLETIONS = Arrays.asList("status", "setup", "fetch", "port");
 
     private final AzLinkPlugin plugin;
 
@@ -19,7 +19,14 @@ public class AzLinkCommand {
     }
 
     public void execute(CommandSender sender, String[] args) {
-        if (args.length == 0 || !sender.hasPermission("azlink.admin")) {
+        if (!sender.hasPermission("azlink.admin")) {
+            String version = this.plugin.getPlatform().getPluginVersion();
+            sender.sendMessage("&9AzLink v" + version + "&7. Website: &9https://azuriom.com");
+            sender.sendMessage("&cYou don't have the permission to use this command.");
+            return;
+        }
+
+        if (args.length == 0) {
             sendUsage(sender);
             return;
         }
@@ -31,23 +38,17 @@ public class AzLinkCommand {
             }
 
             setup(sender, args[1], args[2]);
-
             return;
         }
 
         if (args[0].equalsIgnoreCase("status")) {
-
             showStatus(sender);
-
             return;
         }
 
         if (args[0].equalsIgnoreCase("fetch")) {
-
             this.plugin.fetchNow();
-
             sender.sendMessage("&6Data has been fetched successfully.");
-
             return;
         }
 
@@ -97,7 +98,7 @@ public class AzLinkCommand {
         }
 
         if (args.length == 1) {
-            return Arrays.stream(COMPLETIONS)
+            return COMPLETIONS.stream()
                     .filter(s -> startsWithIgnoreCase(args[0], s))
                     .collect(Collectors.toList());
         }
@@ -118,10 +119,18 @@ public class AzLinkCommand {
     }
 
     private void setup(CommandSender sender, String url, String key) {
+        if (url.endsWith("/")) {
+            url = url.substring(0, url.length() - 1);
+        }
+
         this.plugin.getConfig().setSiteKey(key);
         this.plugin.getConfig().setSiteUrl(url);
 
         if (showStatus(sender)) {
+            if (startsWithIgnoreCase(url, "http://")) {
+                sender.sendMessage("&6You should use https to improve security.");
+            }
+
             saveConfig(sender);
 
             this.plugin.restartHttpServer();
@@ -154,6 +163,10 @@ public class AzLinkCommand {
     }
 
     private static boolean startsWithIgnoreCase(String string, String prefix) {
-        return string.length() >= prefix.length() && string.regionMatches(true, 0, prefix, 0, prefix.length());
+        if (string.length() < prefix.length()) {
+            return false;
+        }
+
+        return string.regionMatches(true, 0, prefix, 0, prefix.length());
     }
 }

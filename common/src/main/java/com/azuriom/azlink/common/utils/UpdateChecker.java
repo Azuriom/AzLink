@@ -67,10 +67,9 @@ public class UpdateChecker {
         for (int i = 0; i < maxLength; i++) {
             int v1 = i < version1Parts.length ? Integer.parseInt(version1Parts[i]) : 0;
             int v2 = i < version2Parts.length ? Integer.parseInt(version2Parts[i]) : 0;
-            int compare = Integer.compare(v1, v2);
 
-            if (compare != 0) {
-                return compare;
+            if (v1 != v2) {
+                return Integer.compare(v1, v2);
             }
         }
 

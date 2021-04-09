@@ -31,7 +31,6 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
     private final TpsTask tpsTask = new TpsTask();
 
     private AzLinkPlugin plugin;
-
     private LoggerAdapter logger;
 
     @Override
@@ -52,7 +51,9 @@ public final class AzLinkNukkitPlugin extends PluginBase implements AzLinkPlatfo
 
     @Override
     public void onDisable() {
-        this.plugin.shutdown();
+        if (this.plugin != null) {
+            this.plugin.shutdown();
+        }
     }
 
     @Override

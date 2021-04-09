@@ -7,7 +7,7 @@ import java.security.NoSuchAlgorithmException;
 /**
  * Simple class to create md5 and sha hash.
  *
- * <p>md5 and sha1 shouldn't be use anymore.</p>
+ * <p>md5 and sha1 shouldn't be used anymore.</p>
  */
 public enum Hash {
 
