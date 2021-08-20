@@ -18,10 +18,6 @@ import java.util.NoSuchElementException;
 
 public class InjectedHttpServer implements HttpServer {
 
-    private static final String OBC = "org.bukkit.craftbukkit.";
-    private static final String NMS = "net.minecraft.server.";
-    private static final String VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(OBC.length());
-
     private final ChannelHandler serverChannelHandler = createChannelHandler();
 
     private final AzLinkBukkitPlugin plugin;
@@ -56,13 +52,12 @@ public class InjectedHttpServer implements HttpServer {
     }
 
     private void inject() throws Exception {
-        Class<?> craftServerClass = Class.forName(OBC + VERSION + ".CraftServer");
-        Class<?> minecraftServerClass = Class.forName(NMS + VERSION + ".MinecraftServer");
-
-        Method serverGetHandle = craftServerClass.getMethod("getServer");
-        Method getServerConnection = minecraftServerClass.getMethod("getServerConnection");
+        Object craftServer = Bukkit.getServer();
+        Method serverGetHandle = craftServer.getClass().getMethod("getServer");
 
         Object minecraftServer = serverGetHandle.invoke(Bukkit.getServer());
+        Method getServerConnection = minecraftServer.getClass().getMethod("getServerConnection");
+
         Object serverConnection = getServerConnection.invoke(minecraftServer);
 
         for (Field field : serverConnection.getClass().getDeclaredFields()) {

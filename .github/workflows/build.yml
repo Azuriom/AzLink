@@ -34,10 +34,10 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: AzLink
-          path: universal/build/libs/AzLink.jar
+          path: universal/build/libs/AzLink-*.jar
 
       - name: Upload AzLink-Legacy.jar
         uses: actions/upload-artifact@v2
         with:
           name: AzLink-Legacy
-          path: universal-legacy/build/libs/AzLink-Legacy.jar
+          path: universal-legacy/build/libs/AzLink-Legacy-*.jar

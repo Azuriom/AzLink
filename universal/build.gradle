@@ -12,7 +12,7 @@ dependencies {
 }
 
 shadowJar {
-    archiveFileName = "AzLink.jar"
+    archiveFileName = "AzLink-${project.version}.jar"
 
     relocate 'okio', 'com.azuriom.azlink.libs.okio'
     relocate 'okhttp3', 'com.azuriom.azlink.libs.okhttp3'

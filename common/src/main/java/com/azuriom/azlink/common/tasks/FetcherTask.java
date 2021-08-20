@@ -10,7 +10,6 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class FetcherTask implements Runnable {
@@ -67,7 +66,12 @@ public class FetcherTask implements Runnable {
 
         Map<String, CommandSender> players = this.plugin.getPlatform()
                 .getOnlinePlayers()
-                .collect(Collectors.toMap(cs -> cs.getName().toLowerCase(), Function.identity()));
+                .collect(Collectors.toMap(cs -> cs.getName().toLowerCase(), p -> p, (p1, p2) -> {
+                    String player1 = p1.getName() + " (" + p1.getUuid() + ')';
+                    String player2 = p2.getName() + " (" + p2.getUuid() + ')';
+                    this.plugin.getLogger().warn("Duplicate players names: " + player1 + " / " + player2);
+                    return p1;
+                }));
 
         for (Map.Entry<String, List<String>> entry : commands.entrySet()) {
             String playerName = entry.getKey();
