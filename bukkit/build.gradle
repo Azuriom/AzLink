@@ -10,7 +10,7 @@ dependencies {
 }
 
 processResources {
-    from(sourceSets.main.resources.srcDirs) {
+    filesMatching('*.yml') {
         expand 'pluginVersion': project.version
     }
 }
