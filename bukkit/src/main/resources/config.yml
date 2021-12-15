@@ -1,0 +1,8 @@
+#
+# AzLink Bukkit config
+#
+
+# When enabled, vanished players will be ignored by AzLink: they won't be
+# included in players count and won't receive commands while vanished.
+# Try disabling this option if you have some issues.
+ignore-vanished-players: false

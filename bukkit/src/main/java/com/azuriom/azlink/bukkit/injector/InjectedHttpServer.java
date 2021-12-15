@@ -30,6 +30,12 @@ public class InjectedHttpServer implements HttpServer {
 
     @Override
     public void start() {
+        // Make sure Netty isn't relocated
+        if (!HttpDecoder.class.getSuperclass().getName().startsWith("io.")) {
+            plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is not supported with AzLink legacy.");
+            return;
+        }
+
         if (!Bukkit.getServer().getClass().getSimpleName().equals("CraftServer")) {
             plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is only supported on CraftBukkit based servers. You can use an other port for AzLink");
             return;
@@ -56,7 +62,7 @@ public class InjectedHttpServer implements HttpServer {
         Method serverGetHandle = craftServer.getClass().getMethod("getServer");
 
         Object minecraftServer = serverGetHandle.invoke(Bukkit.getServer());
-        Method getServerConnection = minecraftServer.getClass().getMethod("getServerConnection");
+        Method getServerConnection = getServerConnectionMethod(minecraftServer);
 
         Object serverConnection = getServerConnection.invoke(minecraftServer);
 
@@ -107,6 +113,22 @@ public class InjectedHttpServer implements HttpServer {
         future.channel().pipeline().addFirst(this.serverChannelHandler);
 
         this.serverChannel = future;
+    }
+
+    private Method getServerConnectionMethod(Object minecraftServer) throws NoSuchMethodException {
+        Class<?> serverClass = minecraftServer.getClass();
+
+        try {
+            return serverClass.getMethod("getServerConnection");
+        } catch (NoSuchMethodException e) {
+            for (Method method : serverClass.getMethods()) {
+                if (method.getReturnType().getSimpleName().equals("ServerConnection")) {
+                    return method;
+                }
+            }
+        }
+
+        throw new NoSuchMethodException("Unable to find server connection method in " + serverClass.getName());
     }
 
     private ChannelHandler createChannelHandler() {

@@ -151,11 +151,12 @@ public class AzLinkPlugin {
 
         double cpuUsage = getCpuUsage();
 
+        String version = this.platform.getPluginVersion();
         SystemData system = fullData ? new SystemData(SystemUtils.getMemoryUsage(), cpuUsage) : null;
         WorldData world = fullData ? this.platform.getWorldData().orElse(null) : null;
         PlatformData platformData = this.platform.getPlatformData();
 
-        return new ServerData(platformData, this.platform.getPluginVersion(), players, max, system, world, fullData);
+        return new ServerData(platformData, version, players, max, system, world, fullData);
     }
 
     public void fetchNow() {

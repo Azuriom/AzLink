@@ -17,6 +17,7 @@ import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.net.InetAddress;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -65,6 +66,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
 
         getServer().getScheduler().runTaskTimer(this, this.tpsTask, 0, 1);
+
+        saveDefaultConfig();
     }
 
     @Override
@@ -124,6 +127,17 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
+        if (getConfig().getBoolean("ignore-vanished-players", false)) {
+            ServerPingEvent event = new ServerPingEvent(InetAddress.getLoopbackAddress(), getServer());
+
+            getServer().getPluginManager().callEvent(event);
+
+            return getServer().getOnlinePlayers()
+                    .stream()
+                    .filter(p -> event.getPlayers().contains(p))
+                    .map(BukkitCommandSender::new);
+        }
+
         return getServer().getOnlinePlayers().stream().map(BukkitCommandSender::new);
     }
 
