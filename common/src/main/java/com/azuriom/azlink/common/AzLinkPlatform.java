@@ -41,4 +41,7 @@ public interface AzLinkPlatform {
     default PlatformData getPlatformData() {
         return new PlatformData(getPlatformType(), getPlatformInfo());
     }
+
+    default void prepareDataAsync() {
+    }
 }

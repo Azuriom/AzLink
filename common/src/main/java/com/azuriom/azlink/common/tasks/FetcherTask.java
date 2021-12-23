@@ -31,6 +31,7 @@ public class FetcherTask implements Runnable {
             return;
         }
 
+        this.plugin.getPlatform().prepareDataAsync();
         this.lastRequest = now;
 
         this.plugin.getScheduler().executeSync(() -> {

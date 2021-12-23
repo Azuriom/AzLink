@@ -19,11 +19,15 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.net.InetAddress;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatform {
 
+    private final Set<UUID> ignoredPlayers = new HashSet<>();
     private final TpsTask tpsTask = new TpsTask();
     private final SchedulerAdapter scheduler = new JavaSchedulerAdapter(
             r -> getServer().getScheduler().runTask(this, r),
@@ -127,18 +131,29 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
-        if (getConfig().getBoolean("ignore-vanished-players", false)) {
-            ServerPingEvent event = new ServerPingEvent(InetAddress.getLoopbackAddress(), getServer());
-
-            getServer().getPluginManager().callEvent(event);
-
+        if (!this.ignoredPlayers.isEmpty()) {
             return getServer().getOnlinePlayers()
                     .stream()
-                    .filter(p -> event.getPlayers().contains(p))
+                    .filter(p -> !this.ignoredPlayers.contains(p.getUniqueId()))
                     .map(BukkitCommandSender::new);
         }
 
         return getServer().getOnlinePlayers().stream().map(BukkitCommandSender::new);
+    }
+
+    @Override
+    public void prepareDataAsync() {
+        if (!getConfig().getBoolean("ignore-vanished-players", false)) {
+            this.ignoredPlayers.clear();
+            return;
+        }
+
+        ServerPingEvent event = new ServerPingEvent(InetAddress.getLoopbackAddress(), getServer());
+
+        getServer().getPluginManager().callEvent(event);
+
+        this.ignoredPlayers.clear();
+        this.ignoredPlayers.addAll(event.getRemovedPlayers());
     }
 
     @Override

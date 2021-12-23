@@ -10,7 +10,7 @@ This plugin currently supports the following platforms:
 * [Bukkit/Spigot/Paper](https://papermc.io/)
 * [BungeeCord](https://github.com/SpigotMC/BungeeCord)
 * [Sponge](https://www.spongepowered.org/)
-* [Velocity](https://www.velocitypowered.com/)
+* [Velocity](https://velocitypowered.com/)
 * [Nukkit](https://nukkitx.com/)
 
 ## Setup
@@ -18,4 +18,4 @@ This plugin currently supports the following platforms:
 ### Installation
 The plugin works with the same .jar for all the platforms, except Bukkit/Spigot 1.7.10 which requires the legacy version of the plugin.
 
-You just need to download the plugin, add it to the plugins folder of your server, and restart your server.
+You just need to download the plugin, add it to the `plugins` folder of your server, and restart your server.
