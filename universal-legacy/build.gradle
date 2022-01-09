@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '7.1.1'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
 dependencies {
@@ -7,6 +7,7 @@ dependencies {
     implementation project(':azlink-bukkit')
     implementation project(':azlink-bungee')
     implementation project(':azlink-sponge')
+    implementation project(':azlink-sponge-legacy')
     implementation project(':azlink-velocity')
     implementation project(':azlink-nukkit')
 

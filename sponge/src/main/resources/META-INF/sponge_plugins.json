@@ -1,0 +1,34 @@
+{
+  "loader": {
+    "name": "java_plain",
+    "version": "1.0"
+  },
+  "license": "MIT",
+  "plugins": [
+    {
+      "loader": "java_plain",
+      "id": "azlink",
+      "name": "AzLink",
+      "version": "${pluginVersion}",
+      "entrypoint": "com.azuriom.azlink.sponge.AzLinkSpongePlugin",
+      "description": "The plugin to link your Azuriom website with your server.",
+      "links": {
+        "homepage": "https://azuriom.com",
+        "source": "https://github.com/Azuriom/AzLink",
+        "issues": "https://github.com/Azuriom/AzLink/issues"
+      },
+      "contributors": [
+        {
+          "name": "Azuriom",
+          "description": "Developper"
+        }
+      ],
+      "dependencies": [
+        {
+          "id": "spongeapi",
+          "version": "8.0.0"
+        }
+      ]
+    }
+  ]
+}

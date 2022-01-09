@@ -99,7 +99,7 @@ public class AzLinkCommand {
 
         if (args.length == 1) {
             return COMPLETIONS.stream()
-                    .filter(s -> startsWithIgnoreCase(args[0], s))
+                    .filter(s -> startsWithIgnoreCase(s, args[0]))
                     .collect(Collectors.toList());
         }
 
