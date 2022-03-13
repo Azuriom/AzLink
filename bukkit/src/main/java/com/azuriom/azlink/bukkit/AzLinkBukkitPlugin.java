@@ -3,6 +3,7 @@ package com.azuriom.azlink.bukkit;
 import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
+import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -72,6 +73,11 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         getServer().getScheduler().runTaskTimer(this, this.tpsTask, 0, 1);
 
         saveDefaultConfig();
+
+        if (getConfig().getBoolean("authme-integration")
+                && getServer().getPluginManager().getPlugin("AuthMe") != null) {
+            getServer().getPluginManager().registerEvents(new AuthMeIntegration(this), this);
+        }
     }
 
     @Override

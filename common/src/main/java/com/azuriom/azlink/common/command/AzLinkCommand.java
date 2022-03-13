@@ -37,12 +37,12 @@ public class AzLinkCommand {
                 return;
             }
 
-            setup(sender, args[1], args[2]);
+            plugin.getScheduler().executeAsync(() -> setup(sender, args[1], args[2]));
             return;
         }
 
         if (args[0].equalsIgnoreCase("status")) {
-            showStatus(sender);
+            plugin.getScheduler().executeAsync(() -> showStatus(sender));
             return;
         }
 
