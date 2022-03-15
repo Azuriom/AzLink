@@ -16,19 +16,16 @@ import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.scheduler.JavaSchedulerAdapter;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
+import org.bukkit.entity.Player;
+import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.net.InetAddress;
 import java.nio.file.Path;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Stream;
 
 public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatform {
 
-    private final Set<UUID> ignoredPlayers = new HashSet<>();
     private final TpsTask tpsTask = new TpsTask();
     private final SchedulerAdapter scheduler = new JavaSchedulerAdapter(
             r -> getServer().getScheduler().runTask(this, r),
@@ -137,29 +134,14 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
-        if (!this.ignoredPlayers.isEmpty()) {
+        if (getConfig().getBoolean("ignore-vanished-players", false)) {
             return getServer().getOnlinePlayers()
                     .stream()
-                    .filter(p -> !this.ignoredPlayers.contains(p.getUniqueId()))
+                    .filter(this::isPlayerVisible)
                     .map(BukkitCommandSender::new);
         }
 
         return getServer().getOnlinePlayers().stream().map(BukkitCommandSender::new);
-    }
-
-    @Override
-    public void prepareDataAsync() {
-        if (!getConfig().getBoolean("ignore-vanished-players", false)) {
-            this.ignoredPlayers.clear();
-            return;
-        }
-
-        ServerPingEvent event = new ServerPingEvent(InetAddress.getLoopbackAddress(), getServer());
-
-        getServer().getPluginManager().callEvent(event);
-
-        this.ignoredPlayers.clear();
-        this.ignoredPlayers.addAll(event.getRemovedPlayers());
     }
 
     @Override
@@ -170,5 +152,14 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     @Override
     public void dispatchConsoleCommand(String command) {
         getServer().dispatchCommand(getServer().getConsoleSender(), command);
+    }
+
+    private boolean isPlayerVisible(Player player) {
+        for (MetadataValue meta : player.getMetadata("vanished")) {
+            if (meta.asBoolean()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
