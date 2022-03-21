@@ -4,6 +4,7 @@ import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
 import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
+import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -74,6 +75,10 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         if (getConfig().getBoolean("authme-integration")
                 && getServer().getPluginManager().getPlugin("AuthMe") != null) {
             getServer().getPluginManager().registerEvents(new AuthMeIntegration(this), this);
+        }
+
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            MoneyPlaceholderExpansion.enable(this);
         }
     }
 

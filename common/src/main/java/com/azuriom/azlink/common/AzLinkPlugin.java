@@ -7,6 +7,7 @@ import com.azuriom.azlink.common.data.PlatformData;
 import com.azuriom.azlink.common.data.PlayerData;
 import com.azuriom.azlink.common.data.ServerData;
 import com.azuriom.azlink.common.data.SystemData;
+import com.azuriom.azlink.common.data.UserInfo;
 import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.http.client.HttpClient;
 import com.azuriom.azlink.common.http.server.HttpServer;
@@ -29,6 +30,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -193,6 +195,10 @@ public class AzLinkPlugin {
 
     public static Gson getGsonPrettyPrint() {
         return GSON_PRETTY_PRINT;
+    }
+
+    public Optional<UserInfo> getUser(String name) {
+        return this.fetcherTask.getUser(name);
     }
 
     protected HttpServer createHttpServer() {

@@ -3,6 +3,7 @@ package com.azuriom.azlink.common.tasks;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.ServerData;
+import com.azuriom.azlink.common.data.UserInfo;
 import com.azuriom.azlink.common.data.WebsiteResponse;
 
 import java.io.IOException;
@@ -10,10 +11,13 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class FetcherTask implements Runnable {
 
+    private final Map<String, UserInfo> usersByName = new ConcurrentHashMap<>();
     private final AzLinkPlugin plugin;
 
     private Instant lastFullDataSent = Instant.MIN;
@@ -44,11 +48,25 @@ public class FetcherTask implements Runnable {
         });
     }
 
+    public Optional<UserInfo> getUser(String name) {
+        return Optional.ofNullable(usersByName.get(name));
+    }
+
     private void sendData(ServerData data, boolean sendFullData) {
         try {
             WebsiteResponse response = this.plugin.getHttpClient().postData(data);
 
-            if (response == null || response.getCommands().isEmpty()) {
+            if (response == null) {
+                return;
+            }
+
+            if (response.getUsers() != null) {
+                for (UserInfo user : response.getUsers()) {
+                    this.usersByName.put(user.getName(), user);
+                }
+            }
+
+            if (response.getCommands().isEmpty()) {
                 return;
             }
 
