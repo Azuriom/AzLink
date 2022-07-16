@@ -20,6 +20,10 @@ import java.util.NoSuchElementException;
  */
 public class HttpDecoder extends ByteToMessageDecoder {
 
+    // Since Spigot 1.19, netty-codec-http is no longer included in SpigotMC.
+    // PaperMC must be used instead to have instant commands.
+    private final boolean supported = isSupported();
+
     private final AzLinkPlugin plugin;
 
     public HttpDecoder(AzLinkPlugin plugin) {
@@ -64,6 +68,11 @@ public class HttpDecoder extends ByteToMessageDecoder {
             // ignore
         }
 
+        if (!supported) {
+            logUnsupported();
+            return;
+        }
+
         pipeline.addLast("codec-http", new HttpServerCodec());
         pipeline.addLast("aggregator", new HttpObjectAggregator(65536));
         pipeline.addLast("handler", new HttpHandler(this.plugin));
@@ -73,8 +82,26 @@ public class HttpDecoder extends ByteToMessageDecoder {
         in.release();
     }
 
+    private void logUnsupported() {
+        this.plugin.getLogger().error("AzLink is not compatible with your server software, please use Paper instead!");
+        this.plugin.getLogger().error("Paper offers significant performance improvements, bug fixes, security");
+        this.plugin.getLogger().error("enhancements and optional features for server owners to enhance their server.");
+        this.plugin.getLogger().error("");
+        this.plugin.getLogger().error("Download: https://papermc.io/downloads");
+    }
+
     private boolean isHttp(int magic1, int magic2, int magic3, int magic4) {
         return magic1 == 'G' && magic2 == 'E' && magic3 == 'T' && magic4 == ' ' || // GET
                 magic1 == 'P' && magic2 == 'O' && magic3 == 'S' && magic4 == 'T'; // POST
+    }
+
+    private boolean isSupported() {
+        try {
+            Class.forName("io.netty.handler.codec.http.HttpServerCodec");
+
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
     }
 }
