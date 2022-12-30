@@ -1,12 +1,21 @@
 package com.azuriom.azlink.common.scheduler;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public interface SchedulerAdapter {
 
-    void executeSync(Runnable runnable);
+    default void executeSync(Runnable runnable) {
+        syncExecutor().execute(runnable);
+    }
 
-    void executeAsync(Runnable runnable);
+    default void executeAsync(Runnable runnable) {
+        asyncExecutor().execute(runnable);
+    }
+
+    Executor syncExecutor();
+
+    Executor asyncExecutor();
 
     CancellableTask executeAsyncLater(Runnable runnable, long delay, TimeUnit unit);
 

@@ -2,17 +2,17 @@ package com.azuriom.azlink.common.tasks;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
-import com.azuriom.azlink.common.data.ServerData;
 import com.azuriom.azlink.common.data.UserInfo;
 import com.azuriom.azlink.common.data.WebsiteResponse;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 public class FetcherTask implements Runnable {
@@ -29,54 +29,59 @@ public class FetcherTask implements Runnable {
 
     @Override
     public void run() {
+        fetch().exceptionally(ex -> {
+            this.plugin.getLogger().error("Unable to send data to the website: " + ex.getMessage());
+
+            return null;
+        });
+    }
+
+    public CompletableFuture<Void> fetch() {
         Instant now = Instant.now();
 
-        if (!this.plugin.getConfig().isValid() || this.lastRequest.isAfter(now.minusSeconds(5))) {
-            return;
+        if (!this.plugin.getConfig().isValid()
+                || this.lastRequest.isAfter(now.minusSeconds(5))) {
+            return CompletableFuture.completedFuture(null);
         }
 
         this.plugin.getPlatform().prepareDataAsync();
         this.lastRequest = now;
 
-        this.plugin.getScheduler().executeSync(() -> {
-            LocalDateTime currentTime = LocalDateTime.now();
-            boolean sendFullData = currentTime.getMinute() % 15 == 0 && this.lastFullDataSent.isBefore(now.minusSeconds(60));
+        Executor sync = this.plugin.getScheduler().syncExecutor();
+        Executor async = this.plugin.getScheduler().asyncExecutor();
 
-            ServerData data = this.plugin.getServerData(sendFullData);
+        LocalDateTime currentTime = LocalDateTime.now();
+        boolean sendFullData = currentTime.getMinute() % 15 == 0
+                && this.lastFullDataSent.isBefore(now.minusSeconds(60));
 
-            this.plugin.getScheduler().executeAsync(() -> sendData(data, sendFullData));
-        });
+        return CompletableFuture.supplyAsync(() -> this.plugin.getServerData(sendFullData), sync)
+                .thenComposeAsync(this.plugin.getHttpClient()::postData, async)
+                .thenAcceptAsync(res -> handleResponse(res, sendFullData), sync);
     }
 
     public Optional<UserInfo> getUser(String name) {
         return Optional.ofNullable(usersByName.get(name));
     }
 
-    private void sendData(ServerData data, boolean sendFullData) {
-        try {
-            WebsiteResponse response = this.plugin.getHttpClient().postData(data);
+    private void handleResponse(WebsiteResponse response, boolean sendFullData) {
+        if (response == null) {
+            return;
+        }
 
-            if (response == null) {
-                return;
+        if (response.getUsers() != null) {
+            for (UserInfo user : response.getUsers()) {
+                this.usersByName.put(user.getName(), user);
             }
+        }
 
-            if (response.getUsers() != null) {
-                for (UserInfo user : response.getUsers()) {
-                    this.usersByName.put(user.getName(), user);
-                }
-            }
+        if (response.getCommands().isEmpty()) {
+            return;
+        }
 
-            if (response.getCommands().isEmpty()) {
-                return;
-            }
+        dispatchCommands(response.getCommands());
 
-            this.plugin.getScheduler().executeSync(() -> dispatchCommands(response.getCommands()));
-
-            if (sendFullData) {
-                this.lastFullDataSent = Instant.now();
-            }
-        } catch (IOException e) {
-            this.plugin.getLogger().error("Unable to send data to the website: " + e.getMessage() + " - " + e.getClass().getName());
+        if (sendFullData) {
+            this.lastFullDataSent = Instant.now();
         }
     }
 

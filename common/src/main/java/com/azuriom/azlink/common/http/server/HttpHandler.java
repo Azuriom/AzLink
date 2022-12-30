@@ -51,7 +51,7 @@ public class HttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
                 return;
             }
 
-            this.plugin.fetchNow();
+            this.plugin.fetch();
 
             close(ctx, writeResponse(HttpResponseStatus.OK, "Status: OK"));
 

@@ -4,27 +4,23 @@ import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.data.ServerData;
 import com.azuriom.azlink.common.data.WebsiteResponse;
 import com.google.gson.JsonObject;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.InetAddress;
-import java.time.Duration;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 public class HttpClient {
 
-    public static final MediaType JSON_TYPE = MediaType.parse("application/json; charset=utf-8");
-
-    private final OkHttpClient httpClient = new OkHttpClient.Builder()
-            .callTimeout(Duration.ofSeconds(5))
-            .addInterceptor(chain -> chain.proceed(addHeadersToRequest(chain.request())))
-            .build();
+    private static final int CONNECT_TIMEOUT = 5000; // 5 seconds
+    private static final int REQUEST_TIMEOUT = 1000; // 1 second
 
     private final AzLinkPlugin plugin;
 
@@ -32,91 +28,103 @@ public class HttpClient {
         this.plugin = plugin;
     }
 
-    public void verifyStatus() throws IOException {
-        makeCallAndClose(new Request.Builder().url(getSiteUrl()).build());
+    public CompletableFuture<Void> verifyStatus() {
+        return request(RequestMethod.GET, "/azlink", null);
     }
 
-    public void registerUser(String name, String email, UUID uuid, String password, InetAddress address)
+    public CompletableFuture<Void> registerUser(String name, String email, UUID uuid, String password, InetAddress address) {
+        JsonObject params = new JsonObject();
+        params.addProperty("name", name);
+        params.addProperty("email", email);
+        params.addProperty("game_id", uuid.toString());
+        params.addProperty("password", password);
+        params.addProperty("ip", address != null ? address.getHostAddress() : null);
+
+        return request(RequestMethod.POST, "/azlink/register", params);
+    }
+
+    public CompletableFuture<Void> updateEmail(UUID uuid, String email) {
+        JsonObject params = new JsonObject();
+        params.addProperty("game_id", uuid.toString());
+        params.addProperty("email", email);
+
+        return request(RequestMethod.POST, "/azlink/email", params);
+    }
+
+    public CompletableFuture<WebsiteResponse> postData(ServerData data) {
+        return request(RequestMethod.POST, "/azlink", data, WebsiteResponse.class);
+    }
+
+    public CompletableFuture<Void> request(RequestMethod method, String endpoint, Object params) {
+        return request(method, endpoint, params, Void.class);
+    }
+
+    public <T> CompletableFuture<T> request(RequestMethod method, String endpoint, Object params, Class<T> clazz) {
+        String body = AzLinkPlugin.getGson().toJson(params);
+
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return rawRequest(method, endpoint, body, clazz);
+            } catch (IOException e) {
+                throw new CompletionException(e);
+            }
+        }, this.plugin.getScheduler().asyncExecutor());
+    }
+
+    private <T> T rawRequest(RequestMethod method, String endpoint, String body, Class<T> clazz)
             throws IOException {
-        JsonObject body = new JsonObject();
-        body.addProperty("name", name);
-        body.addProperty("email", email);
-        body.addProperty("game_id", uuid.toString());
-        body.addProperty("password", password);
-        body.addProperty("ip", address != null ? address.getHostAddress() : null);
+        HttpURLConnection conn = prepareConnection(method, endpoint);
 
-        Request request = new Request.Builder().url(getSiteUrl() + "/register")
-                .post(RequestBody.create(JSON_TYPE, body.toString()))
-                .build();
+        if (method != RequestMethod.GET && body != null && !body.isEmpty()) {
+            conn.setDoOutput(true);
 
-        makeCallAndClose(request);
-    }
-
-    public void updateEmail(UUID uuid, String email) throws IOException {
-        JsonObject body = new JsonObject();
-        body.addProperty("game_id", uuid.toString());
-        body.addProperty("email", email);
-
-        Request request = new Request.Builder().url(getSiteUrl() + "/email")
-                .post(RequestBody.create(JSON_TYPE, body.toString()))
-                .build();
-
-        makeCallAndClose(request);
-    }
-
-    public Response getStatus() throws IOException {
-        return makeCall(new Request.Builder().url(getSiteUrl()).build());
-    }
-
-    public WebsiteResponse postData(ServerData data) throws IOException {
-        Request request = new Request.Builder().url(getSiteUrl())
-                .post(RequestBody.create(JSON_TYPE, AzLinkPlugin.getGson().toJson(data)))
-                .build();
-
-        try (Response response = makeCall(request)) {
-            ResponseBody body = response.body();
-
-            if (body == null) {
-                throw new IllegalStateException("No body in response");
-            }
-
-            try (BufferedReader reader = new BufferedReader(body.charStream())) {
-                return AzLinkPlugin.getGson().fromJson(reader, WebsiteResponse.class);
+            try (OutputStream out = conn.getOutputStream()) {
+                out.write(body.getBytes(StandardCharsets.UTF_8));
             }
         }
-    }
 
-    public void makeCallAndClose(Request request) throws IOException {
-        try (Response response = makeCall(request)) {
-            // ignore
+        if (conn.getResponseCode() >= 400) {
+            int status = conn.getResponseCode();
+            String message = conn.getResponseMessage();
+
+            throw new IOException("Invalid response code (" + status + " - " + message + ")");
+        }
+
+        if (clazz == null || clazz == Void.class) {
+            return null;
+        }
+
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            T response = AzLinkPlugin.getGson().fromJson(reader, clazz);
+
+            if (response == null) {
+                throw new IllegalStateException("Empty JSON response from API.");
+            }
+
+            return response;
         }
     }
 
-    public Response makeCall(Request request) throws IOException {
-        Response response = this.httpClient.newCall(request).execute();
+    private HttpURLConnection prepareConnection(RequestMethod method, String endpoint) throws IOException {
+        String baseUrl = this.plugin.getConfig().getSiteUrl();
+        String version = this.plugin.getPlatform().getPluginVersion();
+        String token = this.plugin.getConfig().getSiteKey();
+        URL url = new URL(baseUrl + "/api" + endpoint);
 
-        if (!response.isSuccessful()) {
-            response.close();
-            throw new IOException("Invalid response: " + response.code() + " (" + response.message() + ")");
-        }
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setUseCaches(false);
+        conn.setInstanceFollowRedirects(true);
+        conn.setConnectTimeout(CONNECT_TIMEOUT);
+        conn.setReadTimeout(REQUEST_TIMEOUT);
+        conn.setRequestMethod(method.name());
+        conn.addRequestProperty("Azuriom-Link-Token", token);
+        conn.addRequestProperty("Content-Type", "application/json; charset=utf-8");
+        conn.addRequestProperty("User-Agent", "AzLink java v" + version);
 
-        return response;
+        return conn;
     }
 
-    public OkHttpClient getHttpClient() {
-        return this.httpClient;
-    }
-
-    private Request addHeadersToRequest(Request request) {
-        return request.newBuilder()
-                .header("Accept", "application/json")
-                .header("Content-Type", "application/json")
-                .header("Azuriom-Link-Token", this.plugin.getConfig().getSiteKey())
-                .header("User-Agent", "AzLink v" + this.plugin.getPlatform().getPluginVersion())
-                .build();
-    }
-
-    private String getSiteUrl() {
-        return this.plugin.getConfig().getSiteUrl() + "/api/azlink";
+    public enum RequestMethod {
+        GET, POST, PATCH, PUT, DELETE
     }
 }

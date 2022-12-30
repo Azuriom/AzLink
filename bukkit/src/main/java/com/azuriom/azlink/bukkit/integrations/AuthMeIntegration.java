@@ -10,12 +10,10 @@ import fr.xephi.authme.events.RegisterEvent;
 import fr.xephi.authme.security.crypts.EncryptionMethod;
 import fr.xephi.authme.security.crypts.HashedPassword;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -55,13 +53,14 @@ public class AuthMeIntegration implements Listener {
     public void onEmailChanged(EmailChangedEvent event) {
         Player player = event.getPlayer();
 
-        runAsync(event, () -> {
-            try {
-                this.plugin.getPlugin().getHttpClient().updateEmail(player.getUniqueId(), event.getNewEmail());
-            } catch (IOException e) {
-                this.plugin.getLoggerAdapter().error("Unable to update email for " + player.getName(), e);
-            }
-        });
+        this.plugin.getPlugin()
+                .getHttpClient()
+                .updateEmail(player.getUniqueId(), event.getNewEmail())
+                .exceptionally(ex -> {
+                    this.plugin.getLoggerAdapter().error("Unable to update email for " + player.getName(), ex);
+
+                    return null;
+                });
     }
 
     @EventHandler
@@ -80,24 +79,14 @@ public class AuthMeIntegration implements Listener {
             return;
         }
 
-        runAsync(event, () -> {
-            try {
-                this.plugin.getPlugin()
-                        .getHttpClient()
-                        .registerUser(player.getName(), email, player.getUniqueId(), password, ip);
-            } catch (IOException e) {
-                this.plugin.getLoggerAdapter().error("Unable to register " + player.getName(), e);
-            }
-        });
-    }
+        this.plugin.getPlugin()
+                .getHttpClient()
+                .registerUser(player.getName(), email, player.getUniqueId(), password, ip)
+                .exceptionally(ex -> {
+                    this.plugin.getLoggerAdapter().error("Unable to register " + player.getName(), ex);
 
-    private void runAsync(Event event, Runnable runnable) {
-        if (event.isAsynchronous()) {
-            runnable.run();
-            return;
-        }
-
-        this.plugin.getSchedulerAdapter().executeAsync(runnable);
+                    return null;
+                });
     }
 
     public class ForwardingEncryptionMethod implements EncryptionMethod {

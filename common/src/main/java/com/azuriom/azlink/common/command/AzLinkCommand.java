@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class AzLinkCommand {
@@ -42,13 +43,18 @@ public class AzLinkCommand {
         }
 
         if (args[0].equalsIgnoreCase("status")) {
-            plugin.getScheduler().executeAsync(() -> showStatus(sender));
+            showStatus(sender);
             return;
         }
 
         if (args[0].equalsIgnoreCase("fetch")) {
-            this.plugin.fetchNow();
-            sender.sendMessage("&6Data has been fetched successfully.");
+            this.plugin.fetch()
+                    .thenRun(() -> sender.sendMessage("&6Data has been fetched successfully."))
+                    .exceptionally(ex -> {
+                        sender.sendMessage("&cUnable to fetch data: " + ex.getMessage());
+
+                        return null;
+                    });
             return;
         }
 
@@ -79,7 +85,8 @@ public class AzLinkCommand {
 
                 sender.sendMessage("&aHTTP server started on port " + port);
             } catch (Exception e) {
-                sender.sendMessage("&cAn error occurred while starting the HTTP server: " + e.getMessage() + " - " + e.getClass().getName());
+                String info = e.getMessage() + " - " + e.getClass().getName();
+                sender.sendMessage("&cAn error occurred while starting the HTTP server: " + info);
                 this.plugin.getLogger().error("Error while starting the HTTP server", e);
                 return;
             }
@@ -123,43 +130,38 @@ public class AzLinkCommand {
             url = url.substring(0, url.length() - 1);
         }
 
+        if (startsWithIgnoreCase(url, "http:")) {
+            sender.sendMessage("&6You should use https to improve security!");
+        }
+
         this.plugin.getConfig().setSiteKey(key);
         this.plugin.getConfig().setSiteUrl(url);
 
-        if (showStatus(sender)) {
-            if (startsWithIgnoreCase(url, "http://")) {
-                sender.sendMessage("&6You should use https to improve security.");
-            }
-
-            saveConfig(sender);
-
-            this.plugin.restartHttpServer();
-        }
+        showStatus(sender)
+                .thenRun(() -> saveConfig(sender))
+                .thenRun(this.plugin::restartHttpServer);
     }
 
     private void saveConfig(CommandSender sender) {
         try {
             this.plugin.saveConfig();
         } catch (IOException e) {
-            sender.sendMessage("&cAn error occurred while saving config: " + e.getMessage() + " - " + e.getClass().getName());
+            String info = e.getMessage() + " - " + e.getClass().getName();
+            sender.sendMessage("&cAn error occurred while saving config: " + info);
             this.plugin.getLogger().error("Error while saving config", e);
         }
     }
 
-    private boolean showStatus(CommandSender sender) {
-        try {
-            this.plugin.getHttpClient().verifyStatus();
-
-            sender.sendMessage("&aLinked to the website successfully.");
-
-            this.plugin.fetchNow();
-
-            return true;
-        } catch (Exception e) {
-            sender.sendMessage("&cUnable to connect to the website: " + e.getMessage() + " - " + e.getClass().getName());
-
-            return false;
-        }
+    private CompletableFuture<Void> showStatus(CommandSender sender) {
+        return this.plugin.getHttpClient()
+                .verifyStatus()
+                .thenRun(() -> sender.sendMessage("&aLinked to the website successfully."))
+                .thenRun(this.plugin::fetch)
+                .whenComplete((v, ex) -> {
+                    if (ex != null) {
+                        sender.sendMessage("&cUnable to connect to the website: " + ex.getMessage());
+                    }
+                });
     }
 
     private static boolean startsWithIgnoreCase(String string, String prefix) {

@@ -4,9 +4,12 @@ import com.azuriom.azlink.common.scheduler.CancellableTask;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.velocitypowered.api.scheduler.ScheduledTask;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class VelocitySchedulerAdapter implements SchedulerAdapter {
+
+    private final Executor executor = this::executeAsync;
 
     private final AzLinkVelocityPlugin plugin;
 
@@ -22,6 +25,16 @@ public class VelocitySchedulerAdapter implements SchedulerAdapter {
     @Override
     public void executeAsync(Runnable runnable) {
         this.plugin.getProxy().getScheduler().buildTask(this.plugin, runnable).schedule();
+    }
+
+    @Override
+    public Executor syncExecutor() {
+        return this.executor;
+    }
+
+    @Override
+    public Executor asyncExecutor() {
+        return this.executor;
     }
 
     @Override

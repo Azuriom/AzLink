@@ -12,15 +12,13 @@ dependencies {
     implementation project(':azlink-nukkit')
 
     implementation 'com.google.code.gson:gson:2.8.9'
-    implementation 'io.netty:netty-handler:4.1.72.Final'
+    implementation 'io.netty:netty-handler:4.1.86.Final'
     implementation 'io.netty:netty-codec-http:4.1.72.Final'
 }
 
 shadowJar {
     archiveFileName = "AzLink-Legacy-${project.version}.jar"
 
-    relocate 'okio', 'com.azuriom.azlink.libs.okio'
-    relocate 'okhttp3', 'com.azuriom.azlink.libs.okhttp3'
     relocate 'com.google.gson', 'com.azuriom.azlink.libs.gson'
     relocate 'io.netty', 'com.azuriom.azlink.libs.netty'
 }

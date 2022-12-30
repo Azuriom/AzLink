@@ -25,13 +25,13 @@ public class JavaSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public void executeSync(Runnable runnable) {
-        this.syncExecutor.execute(runnable);
+    public Executor syncExecutor() {
+        return this.syncExecutor;
     }
 
     @Override
-    public void executeAsync(Runnable runnable) {
-        this.asyncExecutor.execute(runnable);
+    public Executor asyncExecutor() {
+        return this.asyncExecutor;
     }
 
     @Override

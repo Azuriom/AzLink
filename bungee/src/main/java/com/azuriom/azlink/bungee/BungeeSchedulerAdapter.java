@@ -4,9 +4,12 @@ import com.azuriom.azlink.common.scheduler.CancellableTask;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import net.md_5.bungee.api.scheduler.ScheduledTask;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 public class BungeeSchedulerAdapter implements SchedulerAdapter {
+
+    private final Executor executor = this::executeAsync;
 
     private final AzLinkBungeePlugin plugin;
 
@@ -22,6 +25,16 @@ public class BungeeSchedulerAdapter implements SchedulerAdapter {
     @Override
     public void executeAsync(Runnable runnable) {
         this.plugin.getProxy().getScheduler().runAsync(this.plugin, runnable);
+    }
+
+    @Override
+    public Executor syncExecutor() {
+        return this.executor;
+    }
+
+    @Override
+    public Executor asyncExecutor() {
+        return this.executor;
     }
 
     @Override
