@@ -12,10 +12,16 @@ public class JavaSchedulerAdapter implements SchedulerAdapter {
     private final Executor syncExecutor;
     private final Executor asyncExecutor;
 
+    public JavaSchedulerAdapter(Executor syncExecutor) {
+        this(createScheduler(), syncExecutor);
+    }
+
     public JavaSchedulerAdapter(Executor syncExecutor, Executor asyncExecutor) {
-        this(Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
-                .name("azlink-scheduler")
-                .daemon()), syncExecutor, asyncExecutor);
+        this(createScheduler(), syncExecutor, asyncExecutor);
+    }
+
+    public JavaSchedulerAdapter(ScheduledExecutorService scheduler, Executor syncExecutor) {
+        this(scheduler, syncExecutor, scheduler);
     }
 
     public JavaSchedulerAdapter(ScheduledExecutorService scheduler, Executor syncExecutor, Executor asyncExecutor) {
@@ -49,6 +55,12 @@ public class JavaSchedulerAdapter implements SchedulerAdapter {
         this.scheduler.shutdown();
 
         this.scheduler.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    private static ScheduledExecutorService createScheduler() {
+        return Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
+                .name("azlink-scheduler")
+                .daemon());
     }
 
     private static class CancellableFuture implements CancellableTask {

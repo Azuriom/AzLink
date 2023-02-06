@@ -1,0 +1,40 @@
+plugins {
+    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':azlink-common')
+    implementation 'net.kyori:adventure-api:4.12.0'
+    implementation 'net.kyori:adventure-text-serializer-gson:4.12.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.12.0'
+    minecraft 'com.mojang:minecraft:1.19.3'
+    mappings 'net.fabricmc:yarn:1.19.3+build.1:v2'
+    modImplementation 'net.fabricmc:fabric-loader:0.14.11'
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.68.1+1.19.3'
+}
+
+processResources {
+    filesMatching('**/*.json') {
+        expand 'version': project.version
+    }
+}
+
+shadowJar {
+    archiveFileName = "AzLink-Fabric-${project.version}.jar"
+
+    relocate 'net.kyori.examination', 'com.azuriom.azlink.libs.examination'
+    relocate 'net.kyori.adventure', 'com.azuriom.azlink.libs.adventure'
+}
+
+artifacts {
+    archives shadowJar
+}
