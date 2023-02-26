@@ -9,15 +9,12 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 public class FetcherTask implements Runnable {
 
-    private final Map<String, UserInfo> usersByName = new ConcurrentHashMap<>();
     private final AzLinkPlugin plugin;
 
     private Instant lastFullDataSent = Instant.MIN;
@@ -59,10 +56,6 @@ public class FetcherTask implements Runnable {
                 .thenAcceptAsync(res -> handleResponse(res, sendFullData), sync);
     }
 
-    public Optional<UserInfo> getUser(String name) {
-        return Optional.ofNullable(usersByName.get(name));
-    }
-
     private void handleResponse(WebsiteResponse response, boolean sendFullData) {
         if (response == null) {
             return;
@@ -70,7 +63,7 @@ public class FetcherTask implements Runnable {
 
         if (response.getUsers() != null) {
             for (UserInfo user : response.getUsers()) {
-                this.usersByName.put(user.getName(), user);
+                this.plugin.getUserManager().addUser(user);
             }
         }
 

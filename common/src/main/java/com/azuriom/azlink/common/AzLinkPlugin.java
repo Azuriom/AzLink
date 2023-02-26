@@ -7,7 +7,6 @@ import com.azuriom.azlink.common.data.PlatformData;
 import com.azuriom.azlink.common.data.PlayerData;
 import com.azuriom.azlink.common.data.ServerData;
 import com.azuriom.azlink.common.data.SystemData;
-import com.azuriom.azlink.common.data.UserInfo;
 import com.azuriom.azlink.common.data.WorldData;
 import com.azuriom.azlink.common.http.client.HttpClient;
 import com.azuriom.azlink.common.http.server.HttpServer;
@@ -15,6 +14,7 @@ import com.azuriom.azlink.common.http.server.NettyHttpServer;
 import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.FetcherTask;
+import com.azuriom.azlink.common.users.UserManager;
 import com.azuriom.azlink.common.utils.SystemUtils;
 import com.azuriom.azlink.common.utils.UpdateChecker;
 import com.google.gson.Gson;
@@ -30,7 +30,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -41,6 +40,7 @@ public class AzLinkPlugin {
     private static final Gson GSON_PRETTY_PRINT = new GsonBuilder().setPrettyPrinting().create();
 
     private final HttpClient httpClient = new HttpClient(this);
+    private final UserManager userManager = new UserManager(this);
 
     private final AzLinkCommand command = new AzLinkCommand(this);
 
@@ -190,8 +190,8 @@ public class AzLinkPlugin {
         return this.httpServer;
     }
 
-    public Optional<UserInfo> getUser(String name) {
-        return this.fetcherTask.getUser(name);
+    public UserManager getUserManager() {
+        return this.userManager;
     }
 
     protected HttpServer createHttpServer() {

@@ -54,7 +54,8 @@ public class MoneyPlaceholderExpansion extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer player, String params) {
         if (params.equalsIgnoreCase("money")) {
             return this.plugin.getPlugin()
-                    .getUser(player.getName())
+                    .getUserManager()
+                    .getUserByName(player.getName())
                     .map(user -> FORMATTER.format(user.getMoney()))
                     .orElse("?");
         }
