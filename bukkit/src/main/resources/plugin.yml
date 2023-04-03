@@ -5,6 +5,7 @@ description: The plugin to link your Azuriom website with your server.
 website: https://azuriom.com
 main: com.azuriom.azlink.bukkit.AzLinkBukkitPlugin
 api-version: 1.13
+folia-supported: true
 softdepend: [PlaceholderAPI]
 loadbefore: [AuthMe]
 commands:

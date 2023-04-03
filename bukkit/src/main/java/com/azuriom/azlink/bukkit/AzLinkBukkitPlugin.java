@@ -5,6 +5,7 @@ import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
 import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
 import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
+import com.azuriom.azlink.bukkit.util.Compatibility;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -29,8 +30,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     private final TpsTask tpsTask = new TpsTask();
     private final SchedulerAdapter scheduler = new JavaSchedulerAdapter(
-            r -> getServer().getScheduler().runTask(this, r),
-            r -> getServer().getScheduler().runTaskAsynchronously(this, r)
+            r -> Compatibility.runTask(this, r),
+            r -> Compatibility.runTaskAsync(this, r)
     );
 
     private AzLinkPlugin plugin;
@@ -68,7 +69,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
         getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
 
-        getServer().getScheduler().runTaskTimer(this, this.tpsTask, 0, 1);
+        Compatibility.runTaskAtFixedRate(this, this.tpsTask, 1, 1);
 
         saveDefaultConfig();
 

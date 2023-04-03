@@ -1,6 +1,7 @@
 package com.azuriom.azlink.bukkit.integrations;
 
 import com.azuriom.azlink.bukkit.AzLinkBukkitPlugin;
+import com.azuriom.azlink.bukkit.util.Compatibility;
 import fr.xephi.authme.api.v3.AuthMeApi;
 import fr.xephi.authme.api.v3.AuthMePlayer;
 import fr.xephi.authme.datasource.DataSource;
@@ -32,7 +33,7 @@ public class AuthMeIntegration implements Listener {
 
         this.plugin.getLoggerAdapter().info("AuthMe integration enabled.");
 
-        this.plugin.getServer().getScheduler().runTask(this.plugin, () -> {
+        Compatibility.runTask(this.plugin, () -> {
             try {
                 Field field = AuthMeApi.class.getDeclaredField("dataSource");
                 field.setAccessible(true);
