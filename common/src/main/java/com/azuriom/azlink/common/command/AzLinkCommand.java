@@ -1,17 +1,20 @@
 package com.azuriom.azlink.common.command;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
+import com.azuriom.azlink.common.data.UserInfo;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class AzLinkCommand {
 
-    private static final List<String> COMPLETIONS = Arrays.asList("status", "setup", "fetch", "port");
+    private static final List<String> COMPLETIONS = Arrays.asList("status", "setup", "fetch", "money", "port");
+    private static final List<String> MONEY_ACTIONS = Arrays.asList("add", "remove", "set");
 
     private final AzLinkPlugin plugin;
 
@@ -44,6 +47,15 @@ public class AzLinkCommand {
 
         if (args[0].equalsIgnoreCase("status")) {
             showStatus(sender);
+            return;
+        }
+
+        if (args[0].equalsIgnoreCase("money")) {
+            try {
+                editMoney(sender, args);
+            } catch (NumberFormatException e) {
+                sender.sendMessage("&c'" + args[3] + "' is not a valid number !");
+            }
             return;
         }
 
@@ -110,7 +122,52 @@ public class AzLinkCommand {
                     .collect(Collectors.toList());
         }
 
+        if (args.length == 2 && args[0].equalsIgnoreCase("money")) {
+            return MONEY_ACTIONS.stream()
+                    .filter(s -> startsWithIgnoreCase(s, args[1]))
+                    .collect(Collectors.toList());
+        }
+
+        if (args.length == 3 && args[0].equalsIgnoreCase("money")) {
+            return this.plugin.getPlatform().getOnlinePlayers()
+                    .map(CommandSender::getName)
+                    .filter(name -> startsWithIgnoreCase(name, args[2]))
+                    .collect(Collectors.toList());
+        }
+
         return Collections.emptyList();
+    }
+
+    public void editMoney(CommandSender sender, String[] args) throws NumberFormatException {
+        if (args.length < 4 || !MONEY_ACTIONS.contains(args[1].toLowerCase())) {
+            sender.sendMessage("&cUsage: /azlink money <add|remove|set> <player> <amount>");
+            return;
+        }
+
+        String action = args[1].toLowerCase();
+        double amount = Double.parseDouble(args[3]);
+        Optional<UserInfo> user = this.plugin.getUserManager().getUserByName(args[2]);
+
+        if (amount <= 0) {
+            sender.sendMessage("&cThe amount must be positive.");
+            return;
+        }
+
+        if (!user.isPresent()) {
+            sender.sendMessage("&cUnable to find player '" + args[2] + "', please try again in few seconds or use '/azlink fetch'.");
+            return;
+        }
+
+        this.plugin.getUserManager().editMoney(user.get(), action, amount)
+                .thenAccept(u -> {
+                    sender.sendMessage("&aMoney has been edited successfully.");
+                    sender.sendMessage("&aNew balance: " + u.getMoney());
+                })
+                .exceptionally(ex -> {
+                    sender.sendMessage("&cUnable to edit money: " + ex.getMessage());
+
+                    return null;
+                });
     }
 
     public String getUsage() {

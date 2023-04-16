@@ -2,7 +2,9 @@ package com.azuriom.azlink.common.http.client;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.data.ServerData;
+import com.azuriom.azlink.common.data.UserInfo;
 import com.azuriom.azlink.common.data.WebsiteResponse;
+import com.azuriom.azlink.common.users.EditMoneyResult;
 import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
@@ -49,6 +51,14 @@ public class HttpClient {
         params.addProperty("email", email);
 
         return request(RequestMethod.POST, "/azlink/email", params);
+    }
+
+    public CompletableFuture<EditMoneyResult> editMoney(UserInfo user, String action, double amount) {
+        String endpoint = "/azlink/user/" + user.getId() + "/money/" + action;
+        JsonObject params = new JsonObject();
+        params.addProperty("amount", amount);
+
+        return request(RequestMethod.POST, endpoint, params, EditMoneyResult.class);
     }
 
     public CompletableFuture<WebsiteResponse> postData(ServerData data) {
