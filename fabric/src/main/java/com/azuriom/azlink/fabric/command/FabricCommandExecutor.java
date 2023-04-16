@@ -24,26 +24,34 @@ public class FabricCommandExecutor<S extends ServerCommandSource>
 
     @Override
     public int run(CommandContext<S> context) {
-        String args = context.getArgument("args", String.class);
-        FabricCommandSource source = new FabricCommandSource(context.getSource());
+        try {
+            String args = getArguments(context);
+            FabricCommandSource source = new FabricCommandSource(context.getSource());
 
-        this.execute(source, args.split(" ", -1));
+            this.execute(source, args.split(" ", -1));
+        } catch (Exception e) {
+            this.plugin.getLogger().error("An error occurred while executing command", e);
+        }
 
         return Command.SINGLE_SUCCESS;
     }
 
     @Override
     public CompletableFuture<Suggestions> getSuggestions(CommandContext<S> context, SuggestionsBuilder builder) {
-        String args = context.getArgument("args", String.class);
-        FabricCommandSource source = new FabricCommandSource(context.getSource());
+        try {
+            String args = getArguments(context);
+            FabricCommandSource source = new FabricCommandSource(context.getSource());
 
-        this.tabComplete(source, args.split(" ", -1)).forEach(builder::suggest);
+            this.tabComplete(source, args.split(" ", -1)).forEach(builder::suggest);
+        } catch (Exception e) {
+            this.plugin.getLogger().error("An error occurred while getting suggestions", e);
+        }
 
         return builder.buildFuture();
     }
 
     public void register(CommandDispatcher<S> dispatcher) {
-        LiteralArgumentBuilder<S> command = LiteralArgumentBuilder.<S>literal("")
+        LiteralArgumentBuilder<S> command = LiteralArgumentBuilder.<S>literal("azlink")
                 .then(RequiredArgumentBuilder
                         .<S, String>argument("args", StringArgumentType.greedyString())
                         .executes(this)
@@ -52,5 +60,13 @@ public class FabricCommandExecutor<S extends ServerCommandSource>
                 .executes(this);
 
         dispatcher.register(command);
+    }
+
+    private String getArguments(CommandContext<S> context) {
+        try {
+            return context.getArgument("args", String.class);
+        } catch (IllegalArgumentException e) {
+            return "";
+        }
     }
 }

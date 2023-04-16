@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.0-SNAPSHOT'
+    id 'fabric-loom' version '1.1-SNAPSHOT'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
@@ -35,11 +35,23 @@ processResources {
 }
 
 shadowJar {
-    archiveFileName = "AzLink-Fabric-${project.version}.jar"
+    dependencies {
+        exclude 'net.fabricmc:.*'
+        include dependency('net.kyori:.*')
+        include dependency('com.azuriom:.*')
+    }
 
     relocate 'net.kyori', 'com.azuriom.azlink.libs'
 }
 
+remapJar {
+    dependsOn tasks.shadowJar
+    mustRunAfter tasks.shadowJar
+    inputFile = shadowJar.archiveFile
+    addNestedDependencies = true
+    archiveFileName = "AzLink-Fabric-${project.version}-Remapped.jar"
+}
+
 artifacts {
-    archives shadowJar
+    archives remapJar
 }

@@ -44,3 +44,9 @@ jobs:
         with:
           name: AzLink-Legacy
           path: universal-legacy/build/libs/AzLink-Legacy-*.jar
+
+      - name: Upload AzLink-Fabric.jar
+        uses: actions/upload-artifact@v3
+        with:
+          name: AzLink-Legacy
+          path: fabric/build/libs/AzLink-Fabric-*-Remapped.jar

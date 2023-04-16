@@ -15,7 +15,7 @@ import com.azuriom.azlink.fabric.command.FabricCommandExecutor;
 import com.azuriom.azlink.fabric.command.FabricPlayer;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
-import net.fabricmc.api.ModInitializer;
+import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -30,7 +30,7 @@ import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public final class AzLinkFabricMod implements AzLinkPlatform, ModInitializer {
+public final class AzLinkFabricMod implements AzLinkPlatform, DedicatedServerModInitializer {
 
     private static final Logger LOGGER = LoggerFactory.getLogger("azlink");
 
@@ -49,7 +49,7 @@ public final class AzLinkFabricMod implements AzLinkPlatform, ModInitializer {
     }
 
     @Override
-    public void onInitialize() {
+    public void onInitializeServer() {
         var command = new FabricCommandExecutor<>(this.plugin);
 
         ServerLifecycleEvents.SERVER_STARTING.register(this::onServerStart);

@@ -12,11 +12,10 @@
     "sources": "https://github.com/Azuriom/AzLink"
   },
   "license": "MIT",
-  "icon": "assets/azlink/icon.png",
   "environment": "server",
   "entrypoints": {
-    "main": [
-      "com.azuriom/azlink.fabric.AzLinkFabricMod"
+    "server": [
+      "com.azuriom.azlink.fabric.AzLinkFabricMod"
     ]
   },
   "mixins": [],
