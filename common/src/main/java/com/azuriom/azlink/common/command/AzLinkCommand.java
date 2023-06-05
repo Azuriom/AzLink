@@ -180,6 +180,7 @@ public class AzLinkCommand {
         sender.sendMessage("&8- /azlink setup <url> <key>");
         sender.sendMessage("&8- /azlink port <port>");
         sender.sendMessage("&8- /azlink status");
+        sender.sendMessage("&8- /azlink money <add;remove;set> <player> <amount>");
     }
 
     private void setup(CommandSender sender, String url, String key) {
