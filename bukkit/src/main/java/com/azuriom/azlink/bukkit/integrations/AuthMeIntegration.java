@@ -32,7 +32,7 @@ public class AuthMeIntegration implements Listener {
 
         this.plugin.getLoggerAdapter().info("AuthMe integration enabled.");
 
-        this.plugin.getServer().getScheduler().runTask(this.plugin, () -> {
+        this.plugin.getPlugin().getScheduler().executeSync(() -> {
             try {
                 Field field = AuthMeApi.class.getDeclaredField("dataSource");
                 field.setAccessible(true);

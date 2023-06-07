@@ -30,7 +30,7 @@ public class FabricCommandSource implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        this.source.sendFeedback(TextAdapter.toText(message), false);
+        this.source.sendMessage(TextAdapter.toText(message));
     }
 
     @Override

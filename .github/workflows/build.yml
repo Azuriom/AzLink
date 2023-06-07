@@ -49,4 +49,4 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: AzLink-Fabric
-          path: fabric/build/libs/AzLink-Fabric-*-Remapped.jar
+          path: fabric/build/libs/AzLink-Fabric-*.jar
