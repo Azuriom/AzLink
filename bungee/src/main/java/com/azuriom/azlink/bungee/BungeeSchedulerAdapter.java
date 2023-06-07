@@ -38,7 +38,7 @@ public class BungeeSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public CancellableTask executeAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
+    public CancellableTask scheduleAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
         ScheduledTask task = this.plugin.getProxy()
                 .getScheduler()
                 .schedule(this.plugin, runnable, delay, unit);
@@ -47,7 +47,7 @@ public class BungeeSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public CancellableTask executeAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
+    public CancellableTask scheduleAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
         ScheduledTask task = this.plugin.getProxy()
                 .getScheduler()
                 .schedule(this.plugin, runnable, delay, interval, unit);

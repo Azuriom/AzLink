@@ -41,12 +41,12 @@ public class JavaSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public CancellableTask executeAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
+    public CancellableTask scheduleAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
         return new CancellableFuture(this.scheduler.schedule(runnable, delay, unit));
     }
 
     @Override
-    public CancellableTask executeAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
+    public CancellableTask scheduleAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
         return new CancellableFuture(this.scheduler.scheduleAtFixedRate(runnable, delay, interval, unit));
     }
 

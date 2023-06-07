@@ -38,7 +38,7 @@ public class VelocitySchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public CancellableTask executeAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
+    public CancellableTask scheduleAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
         ScheduledTask task = this.plugin.getProxy().getScheduler()
                 .buildTask(this.plugin, runnable)
                 .delay(delay, unit)
@@ -48,7 +48,7 @@ public class VelocitySchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public CancellableTask executeAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
+    public CancellableTask scheduleAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
         ScheduledTask task = this.plugin.getProxy().getScheduler()
                 .buildTask(this.plugin, runnable)
                 .delay(delay, unit)

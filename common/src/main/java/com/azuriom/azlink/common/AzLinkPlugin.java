@@ -81,7 +81,7 @@ public class AzLinkPlugin {
         long startDelay = Duration.between(LocalDateTime.now(), start).toMillis();
         long repeatDelay = TimeUnit.MINUTES.toMillis(1);
 
-        getScheduler().executeAsyncRepeating(this.fetcherTask, startDelay, repeatDelay, TimeUnit.MILLISECONDS);
+        getScheduler().scheduleAsyncRepeating(this.fetcherTask, startDelay, repeatDelay, TimeUnit.MILLISECONDS);
 
         if (!this.config.isValid()) {
             getLogger().warn("Invalid configuration, please use '/azlink' to setup the plugin.");
