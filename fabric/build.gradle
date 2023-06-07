@@ -1,0 +1,57 @@
+plugins {
+    id 'fabric-loom' version '1.1-SNAPSHOT'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+}
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+ext {
+    minecraft_version = '1.20'
+    yarn_mappings = '1.20+build.1'
+    loader_version = '0.14.21'
+    fabric_version = '0.83.0+1.20'
+}
+
+repositories {
+    maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+}
+
+dependencies {
+    implementation project(':azlink-common')
+    implementation 'net.kyori:adventure-api:4.12.0'
+    implementation 'net.kyori:adventure-text-serializer-gson:4.12.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.12.0'
+    minecraft "com.mojang:minecraft:${project.ext.minecraft_version}"
+    mappings "net.fabricmc:yarn:${project.ext.yarn_mappings}:v2"
+    modImplementation "net.fabricmc:fabric-loader:${project.ext.loader_version}"
+    modImplementation "net.fabricmc.fabric-api:fabric-api:${project.ext.fabric_version}"
+}
+
+processResources {
+    filesMatching('**/*.json') {
+        expand 'version': project.version
+    }
+}
+
+shadowJar {
+    dependencies {
+        exclude 'net.fabricmc:.*'
+        include dependency('com.azuriom:.*')
+        include dependency('net.kyori:.*')
+    }
+
+    relocate 'net.kyori', 'com.azuriom.azlink.libs'
+}
+
+remapJar {
+    dependsOn tasks.shadowJar
+    mustRunAfter tasks.shadowJar
+    inputFile = shadowJar.archiveFile
+    addNestedDependencies = true
+    archiveFileName = "AzLink-Fabric-${project.version}-${project.ext.minecraft_version}.jar"
+}
+
+artifacts {
+    archives remapJar
+}

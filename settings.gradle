@@ -1,6 +1,30 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = 'azlink'
 
-['common', 'bukkit', 'bungee', 'sponge', 'sponge-legacy', 'velocity', 'nukkit', 'universal', 'universal-legacy'].each {
+def modules = [
+        'common',
+        'bukkit',
+        'bungee',
+        'sponge',
+        'sponge-legacy',
+        'velocity',
+        'nukkit',
+        'fabric',
+        'universal',
+        'universal-legacy',
+]
+
+modules.each {
     include ":azlink-${it}"
     project(":azlink-${it}").projectDir = file(it)
 }

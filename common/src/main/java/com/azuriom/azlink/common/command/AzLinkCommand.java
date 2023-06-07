@@ -16,7 +16,7 @@ public class AzLinkCommand {
     private static final List<String> COMPLETIONS = Arrays.asList("status", "setup", "fetch", "money", "port");
     private static final List<String> MONEY_ACTIONS = Arrays.asList("add", "remove", "set");
 
-    private final AzLinkPlugin plugin;
+    protected final AzLinkPlugin plugin;
 
     public AzLinkCommand(AzLinkPlugin plugin) {
         this.plugin = plugin;

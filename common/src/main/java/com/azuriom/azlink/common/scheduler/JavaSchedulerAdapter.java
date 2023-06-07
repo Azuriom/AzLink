@@ -12,10 +12,16 @@ public class JavaSchedulerAdapter implements SchedulerAdapter {
     private final Executor syncExecutor;
     private final Executor asyncExecutor;
 
+    public JavaSchedulerAdapter(Executor syncExecutor) {
+        this(createScheduler(), syncExecutor);
+    }
+
     public JavaSchedulerAdapter(Executor syncExecutor, Executor asyncExecutor) {
-        this(Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
-                .name("azlink-scheduler")
-                .daemon()), syncExecutor, asyncExecutor);
+        this(createScheduler(), syncExecutor, asyncExecutor);
+    }
+
+    public JavaSchedulerAdapter(ScheduledExecutorService scheduler, Executor syncExecutor) {
+        this(scheduler, syncExecutor, scheduler);
     }
 
     public JavaSchedulerAdapter(ScheduledExecutorService scheduler, Executor syncExecutor, Executor asyncExecutor) {
@@ -35,12 +41,12 @@ public class JavaSchedulerAdapter implements SchedulerAdapter {
     }
 
     @Override
-    public CancellableTask executeAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
+    public CancellableTask scheduleAsyncLater(Runnable runnable, long delay, TimeUnit unit) {
         return new CancellableFuture(this.scheduler.schedule(runnable, delay, unit));
     }
 
     @Override
-    public CancellableTask executeAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
+    public CancellableTask scheduleAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit) {
         return new CancellableFuture(this.scheduler.scheduleAtFixedRate(runnable, delay, interval, unit));
     }
 
@@ -49,6 +55,12 @@ public class JavaSchedulerAdapter implements SchedulerAdapter {
         this.scheduler.shutdown();
 
         this.scheduler.awaitTermination(5, TimeUnit.SECONDS);
+    }
+
+    private static ScheduledExecutorService createScheduler() {
+        return Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
+                .name("azlink-scheduler")
+                .daemon());
     }
 
     private static class CancellableFuture implements CancellableTask {

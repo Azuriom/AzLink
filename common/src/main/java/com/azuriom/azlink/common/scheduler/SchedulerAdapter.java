@@ -17,9 +17,9 @@ public interface SchedulerAdapter {
 
     Executor asyncExecutor();
 
-    CancellableTask executeAsyncLater(Runnable runnable, long delay, TimeUnit unit);
+    CancellableTask scheduleAsyncLater(Runnable runnable, long delay, TimeUnit unit);
 
-    CancellableTask executeAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit);
+    CancellableTask scheduleAsyncRepeating(Runnable runnable, long delay, long interval, TimeUnit unit);
 
     default void shutdown() throws Exception {
 
