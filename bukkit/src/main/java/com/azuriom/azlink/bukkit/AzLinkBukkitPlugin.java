@@ -4,6 +4,7 @@ import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
 import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
+import com.azuriom.azlink.bukkit.integrations.FoliaSchedulerAdapter;
 import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
@@ -28,10 +29,7 @@ import java.util.stream.Stream;
 public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatform {
 
     private final TpsTask tpsTask = new TpsTask();
-    private final SchedulerAdapter scheduler = new JavaSchedulerAdapter(
-            r -> getServer().getScheduler().runTask(this, r),
-            r -> getServer().getScheduler().runTaskAsynchronously(this, r)
-    );
+    private final SchedulerAdapter scheduler = createSchedulerAdapter();
 
     private AzLinkPlugin plugin;
     private LoggerAdapter logger;
@@ -45,7 +43,6 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     public void onEnable() {
         try {
             Class.forName("com.google.gson.JsonObject");
-
             Class.forName("io.netty.channel.Channel");
         } catch (ClassNotFoundException e) {
             this.logger.error("Your server version is not compatible with this version of AzLink !");
@@ -68,7 +65,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
         getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
 
-        getServer().getScheduler().runTaskTimer(this, this.tpsTask, 0, 1);
+        scheduleTpsTask();
 
         saveDefaultConfig();
 
@@ -115,6 +112,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     }
 
     @Override
+    @SuppressWarnings("deprecation") // Folia support
     public String getPluginVersion() {
         return getDescription().getVersion();
     }
@@ -166,5 +164,30 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
             }
         }
         return true;
+    }
+
+    @SuppressWarnings("deprecation") // Folia support
+    private void scheduleTpsTask() {
+        if (this.scheduler instanceof FoliaSchedulerAdapter) {
+            FoliaSchedulerAdapter.scheduleSyncTask(this, this.tpsTask, 1, 1);
+
+            return;
+        }
+
+        getServer().getScheduler().runTaskTimer(this, this.tpsTask, 1, 1);
+    }
+
+    @SuppressWarnings("deprecation") // Folia support
+    private SchedulerAdapter createSchedulerAdapter() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
+
+            return FoliaSchedulerAdapter.create(this);
+        } catch (ClassNotFoundException e) {
+            return new JavaSchedulerAdapter(
+                    r -> getServer().getScheduler().runTask(this, r),
+                    r -> getServer().getScheduler().runTaskAsynchronously(this, r)
+            );
+        }
     }
 }

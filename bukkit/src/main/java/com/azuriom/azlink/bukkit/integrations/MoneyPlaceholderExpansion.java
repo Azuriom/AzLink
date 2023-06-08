@@ -27,7 +27,7 @@ public class MoneyPlaceholderExpansion extends PlaceholderExpansion {
 
     @Override
     public String getAuthor() {
-        return String.join(", ", this.plugin.getDescription().getAuthors());
+        return String.join("Azuriom");
     }
 
     @Override

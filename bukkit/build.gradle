@@ -1,17 +1,20 @@
 repositories {
-    maven { url 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/' }
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://repo.codemc.io/repository/maven-public/' }
     maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
 dependencies {
     implementation project(':azlink-common')
-    compileOnly 'org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT'
+    compileOnly 'dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'io.netty:netty-all:4.1.25.Final'
     compileOnly 'fr.xephi:authme:5.6.0-beta2'
     compileOnly 'me.clip:placeholderapi:2.11.1'
 }
+
+// Folia is compiled with Java 17
+disableAutoTargetJvm()
 
 processResources {
     filesMatching('*.yml') {
