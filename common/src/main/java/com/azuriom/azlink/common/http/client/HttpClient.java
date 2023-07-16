@@ -53,6 +53,14 @@ public class HttpClient {
         return request(RequestMethod.POST, "/azlink/email", params);
     }
 
+    public CompletableFuture<Void> updatePassword(UUID uuid, String password) {
+        JsonObject params = new JsonObject();
+        params.addProperty("game_id", uuid.toString());
+        params.addProperty("password", password);
+
+        return request(RequestMethod.POST, "/azlink/password", params);
+    }
+
     public CompletableFuture<EditMoneyResult> editMoney(UserInfo user, String action, double amount) {
         String endpoint = "/azlink/user/" + user.getId() + "/money/" + action;
         JsonObject params = new JsonObject();

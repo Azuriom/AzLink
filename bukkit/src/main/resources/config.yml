@@ -12,3 +12,7 @@ ignore-vanished-players: false
 # If you are using multiples serves, you should use the same database for AuthMe to prevent users
 # from registering multiple times
 authme-integration: false
+
+# When enabled, if SkinRestorer is installed, and the SkinAPI plugin is present on the website,
+# the player's skin will be updated to the website's skin
+skinrestorer-integration: false

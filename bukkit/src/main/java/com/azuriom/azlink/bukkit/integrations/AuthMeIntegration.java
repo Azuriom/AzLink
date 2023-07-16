@@ -19,6 +19,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class AuthMeIntegration implements Listener {
 
@@ -89,6 +90,33 @@ public class AuthMeIntegration implements Listener {
                 });
     }
 
+    private void handlePasswordHash(String playerName, String password, String hash) {
+        Player player = this.plugin.getServer().getPlayer(playerName);
+
+        if (player == null || !AuthMeApi.getInstance().isAuthenticated(player)) {
+            this.passwords.put(hash, password);
+
+            return;
+        }
+
+        this.plugin.getSchedulerAdapter().scheduleAsyncLater(() -> {
+            HashedPassword hashedPassword = this.dataSource.getPassword(playerName);
+
+            if (!hashedPassword.getHash().equals(hash)) {
+                return;
+            }
+
+            this.plugin.getPlugin()
+                    .getHttpClient()
+                    .updatePassword(player.getUniqueId(), password)
+                    .exceptionally(ex -> {
+                        this.plugin.getLoggerAdapter().error("Unable to update password for " + player.getName(), ex);
+
+                        return null;
+                    });
+        }, 1, TimeUnit.SECONDS);
+    }
+
     public class ForwardingEncryptionMethod implements EncryptionMethod {
 
         private final EncryptionMethod method;
@@ -100,14 +128,14 @@ public class AuthMeIntegration implements Listener {
         @Override
         public HashedPassword computeHash(String password, String name) {
             HashedPassword hash = this.method.computeHash(password, name);
-            AuthMeIntegration.this.passwords.put(hash.getHash(), password);
+            handlePasswordHash(name, password, hash.getHash());
             return hash;
         }
 
         @Override
         public String computeHash(String password, String salt, String name) {
             String hash = this.method.computeHash(password, salt, name);
-            AuthMeIntegration.this.passwords.put(hash, password);
+            handlePasswordHash(name, password, hash);
             return hash;
         }
 

@@ -6,6 +6,7 @@ import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
 import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
 import com.azuriom.azlink.bukkit.integrations.FoliaSchedulerAdapter;
 import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
+import com.azuriom.azlink.bukkit.integrations.SkinRestorerIntegration;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -72,6 +73,11 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         if (getConfig().getBoolean("authme-integration")
                 && getServer().getPluginManager().getPlugin("AuthMe") != null) {
             getServer().getPluginManager().registerEvents(new AuthMeIntegration(this), this);
+        }
+
+        if (getConfig().getBoolean("skinrestorer-integration")
+                && getServer().getPluginManager().getPlugin("SkinsRestorer") != null) {
+            getServer().getPluginManager().registerEvents(new SkinRestorerIntegration(this), this);
         }
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {

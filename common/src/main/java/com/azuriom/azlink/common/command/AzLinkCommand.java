@@ -37,7 +37,7 @@ public class AzLinkCommand {
 
         if (args[0].equalsIgnoreCase("setup")) {
             if (args.length < 3) {
-                sender.sendMessage("&cUsage: /azlink setup <url> <key>");
+                sender.sendMessage("&6You must first add this server in your Azuriom admin dashboard, in the 'Servers' section.");
                 return;
             }
 
@@ -177,7 +177,7 @@ public class AzLinkCommand {
     private void sendUsage(CommandSender sender) {
         String version = this.plugin.getPlatform().getPluginVersion();
         sender.sendMessage("&9AzLink v" + version + "&7. Website: &9https://azuriom.com");
-        sender.sendMessage("&8- /azlink setup <url> <key>");
+        sender.sendMessage("&8- /azlink setup");
         sender.sendMessage("&8- /azlink port <port>");
         sender.sendMessage("&8- /azlink status");
         sender.sendMessage("&8- /azlink money <add|remove|set> <player> <amount>");

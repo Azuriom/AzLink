@@ -10,10 +10,12 @@ import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.velocity.command.VelocityCommandExecutor;
 import com.azuriom.azlink.velocity.command.VelocityCommandSender;
+import com.azuriom.azlink.velocity.integrations.LimboAuthIntegration;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
+import com.velocitypowered.api.plugin.Dependency;
 import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -29,7 +31,10 @@ import java.util.stream.Stream;
         version = "${pluginVersion}",
         description = "The plugin to link your Azuriom website with your server.",
         url = "https://azuriom.com",
-        authors = "Azuriom Team"
+        authors = "Azuriom Team",
+        dependencies = {
+                @Dependency(id = "limboauth", optional = true),
+        }
 )
 public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
@@ -61,7 +66,12 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
         this.plugin = new AzLinkPlugin(this);
         this.plugin.init();
 
-        this.proxy.getCommandManager().register("azlink", new VelocityCommandExecutor(this.plugin), "azuriomlink");
+        this.proxy.getCommandManager()
+                .register("azlink", new VelocityCommandExecutor(this.plugin), "azuriomlink");
+
+        if (this.proxy.getPluginManager().getPlugin("limboauth").isPresent()) {
+            this.proxy.getEventManager().register(this, new LimboAuthIntegration(this));
+        }
     }
 
     @Subscribe
