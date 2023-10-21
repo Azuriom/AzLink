@@ -3,6 +3,7 @@ package com.azuriom.azlink.bukkit;
 import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
+import com.azuriom.azlink.bukkit.injector.NettyLibraryLoader;
 import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
 import com.azuriom.azlink.bukkit.integrations.FoliaSchedulerAdapter;
 import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
@@ -55,6 +56,15 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         this.plugin = new AzLinkPlugin(this) {
             @Override
             protected HttpServer createHttpServer() {
+                NettyLibraryLoader libraryLoader = new NettyLibraryLoader(this);
+
+                try {
+                    libraryLoader.loadRequiredLibraries();
+                } catch (Exception e) {
+                    getLogger().error("Unable to load required libraries for instant commands", e);
+                    return null;
+                }
+
                 if (plugin.getConfig().getHttpPort() == getServer().getPort()) {
                     return new InjectedHttpServer(AzLinkBukkitPlugin.this);
                 }

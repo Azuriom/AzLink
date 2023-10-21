@@ -88,7 +88,7 @@ public class AzLinkPlugin {
             return;
         }
 
-        if (this.config.hasInstantCommands()) {
+        if (this.config.hasInstantCommands() && this.httpServer != null) {
             this.httpServer.start();
         }
 
@@ -184,10 +184,6 @@ public class AzLinkPlugin {
 
     public HttpClient getHttpClient() {
         return this.httpClient;
-    }
-
-    public HttpServer getHttpServer() {
-        return this.httpServer;
     }
 
     public UserManager getUserManager() {
