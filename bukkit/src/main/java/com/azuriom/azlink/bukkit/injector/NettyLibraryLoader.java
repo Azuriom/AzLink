@@ -62,12 +62,11 @@ public class NettyLibraryLoader {
         }
 
         URL[] urls = {jar.toUri().toURL()};
-        ClassLoader pluginClassLoader = plugin.getClass().getClassLoader();
-        Field classLoaderField = pluginClassLoader.getClass().getDeclaredField("libraryLoader");
-        ClassLoader libraryLoader = new URLClassLoader(urls, pluginClassLoader.getParent());
+        ClassLoader classLoader = plugin.getClass().getClassLoader();
+        Field classLoaderField = classLoader.getClass().getDeclaredField("libraryLoader");
 
         classLoaderField.setAccessible(true);
-        classLoaderField.set(pluginClassLoader, libraryLoader);
+        classLoaderField.set(classLoader, new URLClassLoader(urls, classLoader.getParent()));
     }
 
     private String identifyNettyVersion() {

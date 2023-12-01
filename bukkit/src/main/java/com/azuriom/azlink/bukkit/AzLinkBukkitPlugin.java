@@ -87,7 +87,13 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
         if (getConfig().getBoolean("skinrestorer-integration")
                 && getServer().getPluginManager().getPlugin("SkinsRestorer") != null) {
-            getServer().getPluginManager().registerEvents(new SkinRestorerIntegration(this), this);
+            try {
+                Class.forName("net.skinsrestorer.api.SkinsRestorer");
+
+                getServer().getPluginManager().registerEvents(new SkinRestorerIntegration(this), this);
+            } catch (ClassNotFoundException e) {
+                getLogger().severe("SkinsRestorer integration requires SkinsRestorer v15.0.0 or higher");
+            }
         }
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {

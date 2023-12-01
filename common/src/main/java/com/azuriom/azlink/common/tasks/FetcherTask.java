@@ -8,6 +8,7 @@ import com.azuriom.azlink.common.data.WebsiteResponse;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -83,7 +84,7 @@ public class FetcherTask implements Runnable {
 
         Map<String, CommandSender> players = this.plugin.getPlatform()
                 .getOnlinePlayers()
-                .collect(Collectors.toMap(cs -> cs.getName().toLowerCase(), p -> p, (p1, p2) -> {
+                .collect(Collectors.toMap(cs -> cs.getName().toLowerCase(Locale.ROOT), p -> p, (p1, p2) -> {
                     String player1 = p1.getName() + " (" + p1.getUuid() + ')';
                     String player2 = p2.getName() + " (" + p2.getUuid() + ')';
                     this.plugin.getLogger().warn("Duplicate players names: " + player1 + " / " + player2);
@@ -92,7 +93,7 @@ public class FetcherTask implements Runnable {
 
         for (Map.Entry<String, List<String>> entry : commands.entrySet()) {
             String playerName = entry.getKey();
-            CommandSender player = players.get(playerName.toLowerCase());
+            CommandSender player = players.get(playerName.toLowerCase(Locale.ROOT));
 
             if (player != null) {
                 playerName = player.getName();

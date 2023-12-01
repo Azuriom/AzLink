@@ -22,7 +22,7 @@ import java.util.concurrent.CompletionException;
 public class HttpClient {
 
     private static final int CONNECT_TIMEOUT = 5000; // 5 seconds
-    private static final int REQUEST_TIMEOUT = 1000; // 1 second
+    private static final int READ_TIMEOUT = 5000; // 5 seconds
 
     private final AzLinkPlugin plugin;
 
@@ -133,7 +133,7 @@ public class HttpClient {
         conn.setUseCaches(false);
         conn.setInstanceFollowRedirects(true);
         conn.setConnectTimeout(CONNECT_TIMEOUT);
-        conn.setReadTimeout(REQUEST_TIMEOUT);
+        conn.setReadTimeout(READ_TIMEOUT);
         conn.setRequestMethod(method.name());
         conn.addRequestProperty("Azuriom-Link-Token", token);
         conn.addRequestProperty("Content-Type", "application/json; charset=utf-8");

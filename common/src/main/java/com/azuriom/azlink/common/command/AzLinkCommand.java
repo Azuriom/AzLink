@@ -2,6 +2,7 @@ package com.azuriom.azlink.common.command;
 
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.data.UserInfo;
+import com.azuriom.azlink.common.users.MoneyAction;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -14,7 +15,6 @@ import java.util.stream.Collectors;
 public class AzLinkCommand {
 
     private static final List<String> COMPLETIONS = Arrays.asList("status", "setup", "fetch", "money", "port");
-    private static final List<String> MONEY_ACTIONS = Arrays.asList("add", "remove", "set");
 
     protected final AzLinkPlugin plugin;
 
@@ -123,7 +123,8 @@ public class AzLinkCommand {
         }
 
         if (args.length == 2 && args[0].equalsIgnoreCase("money")) {
-            return MONEY_ACTIONS.stream()
+            return Arrays.stream(MoneyAction.values())
+                    .map(Enum::toString)
                     .filter(s -> startsWithIgnoreCase(s, args[1]))
                     .collect(Collectors.toList());
         }
@@ -139,12 +140,13 @@ public class AzLinkCommand {
     }
 
     public void editMoney(CommandSender sender, String[] args) throws NumberFormatException {
-        if (args.length < 4 || !MONEY_ACTIONS.contains(args[1].toLowerCase())) {
+        MoneyAction action;
+
+        if (args.length < 4 || (action = MoneyAction.fromString(args[1])) == null) {
             sender.sendMessage("&cUsage: /azlink money <add|remove|set> <player> <amount>");
             return;
         }
 
-        String action = args[1].toLowerCase();
         double amount = Double.parseDouble(args[3]);
         Optional<UserInfo> user = this.plugin.getUserManager().getUserByName(args[2]);
 

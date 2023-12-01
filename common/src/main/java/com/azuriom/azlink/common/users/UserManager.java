@@ -25,11 +25,19 @@ public class UserManager {
         this.usersByName.put(user.getName(), user);
     }
 
-    public CompletableFuture<UserInfo> editMoney(UserInfo user, String action, double amount) {
-        return this.plugin.getHttpClient().editMoney(user, action, amount)
+    public CompletableFuture<UserInfo> editMoney(UserInfo user, MoneyAction action, double amount) {
+        return this.plugin.getHttpClient().editMoney(user, action.toString(), amount)
                 .thenApply(result -> {
                     user.setMoney(result.getNewBalance());
                     return user;
                 });
+    }
+
+    /**
+     * @deprecated Use {@link #editMoney(UserInfo, MoneyAction, double)} instead.
+     */
+    @Deprecated
+    public CompletableFuture<UserInfo> editMoney(UserInfo user, String action, double amount) {
+        return editMoney(user, MoneyAction.valueOf(action.toUpperCase()), amount);
     }
 }
