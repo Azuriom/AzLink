@@ -7,7 +7,7 @@ import com.azuriom.azlink.bukkit.injector.NettyLibraryLoader;
 import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
 import com.azuriom.azlink.bukkit.integrations.FoliaSchedulerAdapter;
 import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
-import com.azuriom.azlink.bukkit.integrations.SkinRestorerIntegration;
+import com.azuriom.azlink.bukkit.integrations.SkinsRestorerIntegration;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -90,7 +90,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
             try {
                 Class.forName("net.skinsrestorer.api.SkinsRestorer");
 
-                getServer().getPluginManager().registerEvents(new SkinRestorerIntegration(this), this);
+                getServer().getPluginManager().registerEvents(new SkinsRestorerIntegration(this), this);
             } catch (ClassNotFoundException e) {
                 getLogger().severe("SkinsRestorer integration requires SkinsRestorer v15.0.0 or higher");
             }

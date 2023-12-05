@@ -13,6 +13,6 @@ ignore-vanished-players: false
 # from registering multiple times
 authme-integration: false
 
-# When enabled, if SkinRestorer is installed, and the SkinAPI plugin is present on the website,
+# When enabled, if SkinsRestorer is installed, and the SkinAPI plugin is present on the website,
 # the player's skin will be updated to the website's skin
 skinrestorer-integration: false

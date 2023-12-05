@@ -11,16 +11,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-public class SkinRestorerIntegration implements Listener {
+public class SkinsRestorerIntegration implements Listener {
 
-    private final SkinsRestorer skinsRestorer;
     private final AzLinkBukkitPlugin plugin;
 
-    public SkinRestorerIntegration(AzLinkBukkitPlugin plugin) {
+    public SkinsRestorerIntegration(AzLinkBukkitPlugin plugin) {
         this.plugin = plugin;
-        this.skinsRestorer = SkinsRestorerProvider.get();
 
-        this.plugin.getLoggerAdapter().info("SkinRestorer integration enabled.");
+        this.plugin.getLoggerAdapter().info("SkinsRestorer integration enabled.");
     }
 
     @EventHandler
@@ -35,9 +33,10 @@ public class SkinRestorerIntegration implements Listener {
 
         try {
             String url = baseUrl + "/api/skin-api/skins/" + player.getName();
-            MineSkinResponse skin = this.skinsRestorer.getMineSkinAPI().genSkin(url, null);
+            SkinsRestorer skins = SkinsRestorerProvider.get();
+            MineSkinResponse res = skins.getMineSkinAPI().genSkin(url, null);
 
-            this.skinsRestorer.getSkinApplier(Player.class).applySkin(player, skin.getProperty());
+            skins.getSkinApplier(Player.class).applySkin(player, res.getProperty());
         } catch (DataRequestException | MineSkinException ex) {
             this.plugin.getLoggerAdapter().warn("Unable to apply skin for " + player.getName() + ": " + ex.getMessage());
         }
