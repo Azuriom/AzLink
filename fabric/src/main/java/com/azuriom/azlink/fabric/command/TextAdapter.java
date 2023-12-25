@@ -20,6 +20,6 @@ public final class TextAdapter {
         TextComponent component = LEGACY_SERIALIZER.deserialize(message);
         String json = GsonComponentSerializer.gson().serialize(component);
 
-        return Text.Serializer.fromJson(json);
+        return Text.Serialization.fromJson(json);
     }
 }

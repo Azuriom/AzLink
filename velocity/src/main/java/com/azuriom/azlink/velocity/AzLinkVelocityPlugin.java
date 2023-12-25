@@ -11,6 +11,7 @@ import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.velocity.command.VelocityCommandExecutor;
 import com.azuriom.azlink.velocity.command.VelocityCommandSender;
 import com.azuriom.azlink.velocity.integrations.LimboAuthIntegration;
+import com.azuriom.azlink.velocity.integrations.SkinsRestorerIntegration;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
@@ -20,8 +21,11 @@ import com.velocitypowered.api.plugin.Plugin;
 import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.util.ProxyVersion;
+import ninja.leaping.configurate.ConfigurationNode;
+import ninja.leaping.configurate.yaml.YAMLConfigurationLoader;
 import org.slf4j.Logger;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -34,6 +38,7 @@ import java.util.stream.Stream;
         authors = "Azuriom Team",
         dependencies = {
                 @Dependency(id = "limboauth", optional = true),
+                @Dependency(id = "skinsrestorer", optional = true),
         }
 )
 public final class AzLinkVelocityPlugin implements AzLinkPlatform {
@@ -45,6 +50,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
     private final LoggerAdapter logger;
 
     private AzLinkPlugin plugin;
+    private ConfigurationNode config;
 
     @Inject
     public AzLinkVelocityPlugin(ProxyServer proxy, @DataDirectory Path dataDirectory, Logger logger) {
@@ -69,8 +75,15 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
         this.proxy.getCommandManager()
                 .register("azlink", new VelocityCommandExecutor(this.plugin), "azuriomlink");
 
+        loadConfig();
+
         if (this.proxy.getPluginManager().getPlugin("limboauth").isPresent()) {
             this.proxy.getEventManager().register(this, new LimboAuthIntegration(this));
+        }
+
+        if (this.proxy.getPluginManager().getPlugin("skinsrestorer").isPresent()
+                && this.config.getNode("skinsrestorer-integration").getBoolean()) {
+            this.proxy.getEventManager().register(this, new SkinsRestorerIntegration(this));
         }
     }
 
@@ -135,5 +148,20 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     public ProxyServer getProxy() {
         return this.proxy;
+    }
+
+    private void loadConfig() {
+        Path configPath = this.dataDirectory.resolve("config.yml");
+
+        try {
+            saveResource(configPath, "velocity-config.yml");
+
+            this.config = YAMLConfigurationLoader.builder()
+                    .setPath(configPath)
+                    .build()
+                    .load();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load configuration", e);
+        }
     }
 }

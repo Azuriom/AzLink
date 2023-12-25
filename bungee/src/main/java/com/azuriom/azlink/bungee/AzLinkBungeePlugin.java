@@ -2,6 +2,7 @@ package com.azuriom.azlink.bungee;
 
 import com.azuriom.azlink.bungee.command.BungeeCommandExecutor;
 import com.azuriom.azlink.bungee.command.BungeeCommandSender;
+import com.azuriom.azlink.bungee.integrations.SkinsRestorerIntegration;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -11,7 +12,12 @@ import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import net.md_5.bungee.api.plugin.Plugin;
+import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.config.ConfigurationProvider;
+import net.md_5.bungee.config.YamlConfiguration;
 
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
@@ -21,6 +27,7 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
 
     private AzLinkPlugin plugin;
     private LoggerAdapter loggerAdapter;
+    private Configuration config;
 
     @Override
     public void onLoad() {
@@ -33,6 +40,13 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
         this.plugin.init();
 
         getProxy().getPluginManager().registerCommand(this, new BungeeCommandExecutor(this.plugin));
+
+        loadConfig();
+
+        if (this.config.getBoolean("skinsrestorer-integration")
+                && getProxy().getPluginManager().getPlugin("SkinsRestorer") != null) {
+            getProxy().getPluginManager().registerListener(this, new SkinsRestorerIntegration(this));
+        }
     }
 
     @Override
@@ -90,5 +104,17 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
     @Override
     public int getMaxPlayers() {
         return getProxy().getConfig().getPlayerLimit();
+    }
+
+    private void loadConfig() {
+        File configFile = new File(getDataFolder(), "config.yml");
+
+        try {
+            saveResource(configFile.toPath(), "bungee-config.yml");
+
+            this.config = ConfigurationProvider.getProvider(YamlConfiguration.class).load(configFile);
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load configuration", e);
+        }
     }
 }

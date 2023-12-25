@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ThreadFactoryBuilderTest {
+class ThreadFactoryBuilderTest {
 
     private final Runnable voidRunnable = () -> {};
 
     @Test
-    public void testThreadFactoryBuilder() {
+    void testThreadFactoryBuilder() {
         ThreadFactoryBuilder factory = new ThreadFactoryBuilder().name("thread-factory-test-%t").priority(2);
 
         Thread thread0 = factory.newThread(this.voidRunnable);

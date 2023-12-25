@@ -8,6 +8,9 @@ import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -40,6 +43,20 @@ public interface AzLinkPlatform {
 
     default PlatformData getPlatformData() {
         return new PlatformData(getPlatformType(), getPlatformInfo());
+    }
+
+    default void saveResource(Path target, String name) throws IOException {
+        if (Files.exists(target)) {
+            return;
+        }
+
+        if (!Files.isDirectory(target.getParent())) {
+            Files.createDirectory(target.getParent());
+        }
+
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(name)) {
+            Files.copy(in, target);
+        }
     }
 
     default void prepareDataAsync() {

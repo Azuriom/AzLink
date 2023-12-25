@@ -3,3 +3,4 @@ version: ${pluginVersion}
 author: Azuriom Team
 description: The plugin to link your Azuriom website with your server.
 main: com.azuriom.azlink.bungee.AzLinkBungeePlugin
+softdepend: [SkinsRestorer]

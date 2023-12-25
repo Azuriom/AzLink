@@ -12,6 +12,7 @@ import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
 import com.azuriom.azlink.sponge.command.SpongeCommandExecutor;
 import com.azuriom.azlink.sponge.command.SpongeCommandSender;
+import com.azuriom.azlink.sponge.integrations.SkinsRestorerIntegration;
 import com.azuriom.azlink.sponge.logger.Log4jLoggerAdapter;
 import com.google.common.collect.Iterables;
 import com.google.inject.Inject;
@@ -30,10 +31,13 @@ import org.spongepowered.api.event.lifecycle.StoppingEngineEvent;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.scheduler.TaskExecutorService;
 import org.spongepowered.api.util.Ticks;
+import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.hocon.HoconConfigurationLoader;
 import org.spongepowered.plugin.PluginContainer;
 import org.spongepowered.plugin.builtin.jvm.Plugin;
 import org.spongepowered.plugin.metadata.PluginMetadata;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -48,6 +52,7 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
     private final LoggerAdapter logger;
     private final AzLinkPlugin plugin;
     private SchedulerAdapter scheduler;
+    private ConfigurationNode config;
 
     @Inject
     public AzLinkSpongePlugin(PluginContainer pluginContainer, Game game, @ConfigDir(sharedRoot = false) Path configDirectory, Logger logger) {
@@ -70,6 +75,13 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
                 .build();
 
         event.engine().scheduler().submit(task);
+
+        loadConfig();
+
+        if (this.game.pluginManager().plugin("skinsrestorer").isPresent()
+                && this.config.node("skinsrestorer-integration").getBoolean()) {
+            this.game.eventManager().registerListeners(this.pluginContainer, new SkinsRestorerIntegration(this));
+        }
     }
 
     @Listener
@@ -163,5 +175,20 @@ public final class AzLinkSpongePlugin implements AzLinkPlatform {
         TaskExecutorService asyncExecutor = this.game.asyncScheduler().executor(this.pluginContainer);
 
         return new JavaSchedulerAdapter(asyncExecutor, syncExecutor, asyncExecutor);
+    }
+
+    private void loadConfig() {
+        Path configPath = this.configDirectory.resolve("azlink.conf");
+
+        try {
+            saveResource(configPath, "azlink.conf");
+
+            this.config = HoconConfigurationLoader.builder()
+                    .path(configPath)
+                    .build()
+                    .load();
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to load configuration", e);
+        }
     }
 }
