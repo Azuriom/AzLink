@@ -8,6 +8,7 @@ import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
 import com.azuriom.azlink.bukkit.integrations.FoliaSchedulerAdapter;
 import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
 import com.azuriom.azlink.bukkit.integrations.SkinsRestorerIntegration;
+import com.azuriom.azlink.bukkit.integrations.NLoginIntegration;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -20,6 +21,7 @@ import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.scheduler.JavaSchedulerAdapter;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.common.tasks.TpsTask;
+import com.nickuc.login.api.nLoginAPI;
 import org.bukkit.entity.Player;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -83,6 +85,15 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         if (getConfig().getBoolean("authme-integration")
                 && getServer().getPluginManager().getPlugin("AuthMe") != null) {
             getServer().getPluginManager().registerEvents(new AuthMeIntegration(this), this);
+        }
+
+        if (getConfig().getBoolean("nlogin-integration")
+                && getServer().getPluginManager().getPlugin("nLogin") != null) {
+            if (nLoginAPI.getApi().getApiVersion() >= 5) {
+                getServer().getPluginManager().registerEvents(new NLoginIntegration(this), this);
+            } else {
+                this.plugin.getLogger().warn("nLogin integration requires API version v5 or higher");
+            }
         }
 
         if (getConfig().getBoolean("skinrestorer-integration")

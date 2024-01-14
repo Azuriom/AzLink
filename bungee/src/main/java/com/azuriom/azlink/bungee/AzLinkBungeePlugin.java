@@ -2,6 +2,7 @@ package com.azuriom.azlink.bungee;
 
 import com.azuriom.azlink.bungee.command.BungeeCommandExecutor;
 import com.azuriom.azlink.bungee.command.BungeeCommandSender;
+import com.azuriom.azlink.bungee.integrations.NLoginIntegration;
 import com.azuriom.azlink.bungee.integrations.SkinsRestorerIntegration;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
@@ -11,6 +12,7 @@ import com.azuriom.azlink.common.logger.LoggerAdapter;
 import com.azuriom.azlink.common.platform.PlatformInfo;
 import com.azuriom.azlink.common.platform.PlatformType;
 import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
+import com.nickuc.login.api.nLoginAPI;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
 import net.md_5.bungee.config.ConfigurationProvider;
@@ -42,6 +44,15 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
         getProxy().getPluginManager().registerCommand(this, new BungeeCommandExecutor(this.plugin));
 
         loadConfig();
+
+        if (this.config.getBoolean("nlogin-integration")
+                && getProxy().getPluginManager().getPlugin("nLogin") != null) {
+            if (nLoginAPI.getApi().getApiVersion() >= 5) {
+                getProxy().getPluginManager().registerListener(this, new NLoginIntegration(this));
+            } else {
+                this.plugin.getLogger().warn("nLogin integration requires API version v5 or higher");
+            }
+        }
 
         if (this.config.getBoolean("skinsrestorer-integration")
                 && getProxy().getPluginManager().getPlugin("SkinsRestorer") != null) {

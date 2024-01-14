@@ -11,8 +11,10 @@ import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.velocity.command.VelocityCommandExecutor;
 import com.azuriom.azlink.velocity.command.VelocityCommandSender;
 import com.azuriom.azlink.velocity.integrations.LimboAuthIntegration;
+import com.azuriom.azlink.velocity.integrations.NLoginIntegration;
 import com.azuriom.azlink.velocity.integrations.SkinsRestorerIntegration;
 import com.google.inject.Inject;
+import com.nickuc.login.api.nLoginAPI;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.event.proxy.ProxyShutdownEvent;
@@ -79,6 +81,14 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
         if (this.proxy.getPluginManager().getPlugin("limboauth").isPresent()) {
             this.proxy.getEventManager().register(this, new LimboAuthIntegration(this));
+        }
+
+        if (this.proxy.getPluginManager().getPlugin("nlogin").isPresent()) {
+            if (nLoginAPI.getApi().getApiVersion() >= 5) {
+                this.proxy.getEventManager().register(this, new NLoginIntegration(this));
+            } else {
+                this.plugin.getLogger().warn("nLogin integration requires API version v5 or higher");
+            }
         }
 
         if (this.proxy.getPluginManager().getPlugin("skinsrestorer").isPresent()
