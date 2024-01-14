@@ -2,7 +2,13 @@ package com.azuriom.azlink.bukkit.injector;
 
 import com.azuriom.azlink.bukkit.AzLinkBukkitPlugin;
 import com.azuriom.azlink.common.http.server.HttpServer;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInboundHandler;
+import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.ChannelInitializer;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
