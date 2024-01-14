@@ -8,6 +8,8 @@ import com.nickuc.login.api.event.velocity.auth.RegisterEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
 
+import java.net.InetAddress;
+
 public class NLoginIntegration extends BaseNLogin {
 
     public NLoginIntegration(AzLinkVelocityPlugin plugin) {
@@ -26,7 +28,14 @@ public class NLoginIntegration extends BaseNLogin {
     @Subscribe
     public void onRegister(RegisterEvent event) {
         Player player = event.getPlayer();
+        InetAddress address = player.getRemoteAddress().getAddress();
 
-        handleRegister(player.getUniqueId(), player.getUsername(), event.getPassword(), player.getRemoteAddress().getAddress());
+        handleRegister(player.getUniqueId(), player.getUsername(), event.getPassword(), address);
+    }
+
+    public static void register(AzLinkVelocityPlugin plugin) {
+        if (ensureApiVersion(plugin)) {
+            plugin.getProxy().getEventManager().register(plugin, new NLoginIntegration(plugin));
+        }
     }
 }

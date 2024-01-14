@@ -13,8 +13,7 @@ import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
-public class NLoginIntegration
-        extends BaseNLogin implements Listener {
+public class NLoginIntegration extends BaseNLogin implements Listener {
 
     public NLoginIntegration(AzLinkBungeePlugin plugin) {
         super(plugin.getPlugin());
@@ -33,8 +32,15 @@ public class NLoginIntegration
     public void onRegister(RegisterEvent event) {
         ProxiedPlayer player = event.getPlayer();
         SocketAddress socketAddress = player.getSocketAddress();
-        InetAddress ip = socketAddress instanceof InetSocketAddress ? ((InetSocketAddress) socketAddress).getAddress() : null;
+        InetAddress address = socketAddress instanceof InetSocketAddress
+                ? ((InetSocketAddress) socketAddress).getAddress() : null;
 
-        handleRegister(player.getUniqueId(), player.getName(), event.getPassword(), ip);
+        handleRegister(player.getUniqueId(), player.getName(), event.getPassword(), address);
+    }
+
+    public static void register(AzLinkBungeePlugin plugin) {
+        if (ensureApiVersion(plugin)) {
+            plugin.getProxy().getPluginManager().registerListener(plugin, new NLoginIntegration(plugin));
+        }
     }
 }

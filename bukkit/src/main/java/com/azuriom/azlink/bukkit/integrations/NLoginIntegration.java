@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
 public class NLoginIntegration
@@ -30,8 +31,15 @@ public class NLoginIntegration
     @EventHandler
     public void onRegister(RegisterEvent event) {
         Player player = event.getPlayer();
-        InetSocketAddress ip = player.getAddress();
+        InetSocketAddress socketAddress = player.getAddress();
+        InetAddress address = socketAddress != null ? socketAddress.getAddress() : null;
 
-        handleRegister(player.getUniqueId(), player.getName(), event.getPassword(), ip != null ? ip.getAddress() : null);
+        handleRegister(player.getUniqueId(), player.getName(), event.getPassword(), address);
+    }
+
+    public static void register(AzLinkBukkitPlugin plugin) {
+        if (ensureApiVersion(plugin)) {
+            plugin.getServer().getPluginManager().registerEvents(new NLoginIntegration(plugin), plugin);
+        }
     }
 }
