@@ -4,7 +4,7 @@ import com.azuriom.azlink.bukkit.AzLinkBukkitPlugin;
 import com.azuriom.azlink.common.integrations.BaseNLogin;
 import com.nickuc.login.api.enums.TwoFactorType;
 import com.nickuc.login.api.event.bukkit.auth.RegisterEvent;
-import com.nickuc.login.api.event.bungee.twofactor.TwoFactorAddEvent;
+import com.nickuc.login.api.event.bukkit.twofactor.TwoFactorAddEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

@@ -1,6 +1,6 @@
 # When enabled, new users registered with the nLogin plugin will automatically be registered on the website
 # WARNING: You need nLogin version 10.2.43 or newer!
-# If you are using multiples serves, you should use the same database for nLogin to prevent users
+# If you are using multiples servers, you should use the same database for nLogin to prevent users
 # from registering multiple times
 nlogin-integration: false
 

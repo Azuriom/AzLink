@@ -3,7 +3,7 @@ package com.azuriom.azlink.velocity.integrations;
 import com.azuriom.azlink.common.integrations.BaseNLogin;
 import com.azuriom.azlink.velocity.AzLinkVelocityPlugin;
 import com.nickuc.login.api.enums.TwoFactorType;
-import com.nickuc.login.api.event.bungee.twofactor.TwoFactorAddEvent;
+import com.nickuc.login.api.event.velocity.twofactor.TwoFactorAddEvent;
 import com.nickuc.login.api.event.velocity.auth.RegisterEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
