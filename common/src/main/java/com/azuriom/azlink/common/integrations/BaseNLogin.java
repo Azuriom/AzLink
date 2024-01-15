@@ -39,7 +39,7 @@ public class BaseNLogin {
 
     protected static boolean ensureApiVersion(AzLinkPlatform platform) {
         if (nLoginAPI.getApi().getApiVersion() < 5) {
-            platform.getPlugin().getLogger().warn("nLogin integration requires API version v5 or higher");
+            platform.getPlugin().getLogger().warn("nLogin integration requires API v5 or higher");
             return false;
         }
 

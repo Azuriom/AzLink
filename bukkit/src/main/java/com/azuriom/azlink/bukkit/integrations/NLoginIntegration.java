@@ -12,8 +12,7 @@ import org.bukkit.event.Listener;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
-public class NLoginIntegration
-        extends BaseNLogin implements Listener {
+public class NLoginIntegration extends BaseNLogin implements Listener {
 
     public NLoginIntegration(AzLinkBukkitPlugin plugin) {
         super(plugin.getPlugin());

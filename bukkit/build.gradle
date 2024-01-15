@@ -2,8 +2,8 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://repo.codemc.io/repository/maven-public/' }
-    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url 'https://repo.nickuc.com/maven-releases/' }
+    maven { url 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
 dependencies {
