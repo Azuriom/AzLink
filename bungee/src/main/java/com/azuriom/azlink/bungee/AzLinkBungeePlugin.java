@@ -2,6 +2,7 @@ package com.azuriom.azlink.bungee;
 
 import com.azuriom.azlink.bungee.command.BungeeCommandExecutor;
 import com.azuriom.azlink.bungee.command.BungeeCommandSender;
+import com.azuriom.azlink.bungee.integrations.NLoginIntegration;
 import com.azuriom.azlink.bungee.integrations.SkinsRestorerIntegration;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
@@ -42,6 +43,11 @@ public final class AzLinkBungeePlugin extends Plugin implements AzLinkPlatform {
         getProxy().getPluginManager().registerCommand(this, new BungeeCommandExecutor(this.plugin));
 
         loadConfig();
+
+        if (this.config.getBoolean("nlogin-integration")
+                && getProxy().getPluginManager().getPlugin("nLogin") != null) {
+            NLoginIntegration.register(this);
+        }
 
         if (this.config.getBoolean("skinsrestorer-integration")
                 && getProxy().getPluginManager().getPlugin("SkinsRestorer") != null) {

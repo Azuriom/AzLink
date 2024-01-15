@@ -1,10 +1,12 @@
 repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+    maven { url 'https://repo.nickuc.com/maven-releases/' }
 }
 
 dependencies {
     implementation project(':azlink-common')
     compileOnly 'net.md-5:bungeecord-api:1.16-R0.4'
+    compileOnly 'com.nickuc.login:nlogin-api:10.2'
 }
 
 processResources {

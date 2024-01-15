@@ -11,6 +11,7 @@ import com.azuriom.azlink.common.scheduler.SchedulerAdapter;
 import com.azuriom.azlink.velocity.command.VelocityCommandExecutor;
 import com.azuriom.azlink.velocity.command.VelocityCommandSender;
 import com.azuriom.azlink.velocity.integrations.LimboAuthIntegration;
+import com.azuriom.azlink.velocity.integrations.NLoginIntegration;
 import com.azuriom.azlink.velocity.integrations.SkinsRestorerIntegration;
 import com.google.inject.Inject;
 import com.velocitypowered.api.event.Subscribe;
@@ -79,6 +80,11 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
         if (this.proxy.getPluginManager().getPlugin("limboauth").isPresent()) {
             this.proxy.getEventManager().register(this, new LimboAuthIntegration(this));
+        }
+
+        if (this.proxy.getPluginManager().getPlugin("nlogin").isPresent()
+                && this.config.getNode("nlogin-integration").getBoolean()) {
+            NLoginIntegration.register(this);
         }
 
         if (this.proxy.getPluginManager().getPlugin("skinsrestorer").isPresent()
