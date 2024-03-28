@@ -101,11 +101,16 @@ public class HttpClient {
             }
         }
 
-        if (conn.getResponseCode() >= 400) {
-            int status = conn.getResponseCode();
-            String message = conn.getResponseMessage();
+        int status = conn.getResponseCode();
 
-            throw new IOException("Invalid response code (" + status + " - " + message + ")");
+        if (status >= 400) {
+            throw new IOException("Unexpected HTTP error " + status);
+        }
+
+        if (status >= 300) {
+            String dest = conn.getHeaderField("Location");
+
+            throw new IOException("Unexpected redirect status - " + status + ": " + dest);
         }
 
         if (clazz == null || clazz == Void.class) {
@@ -131,7 +136,7 @@ public class HttpClient {
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setUseCaches(false);
-        conn.setInstanceFollowRedirects(true);
+        conn.setInstanceFollowRedirects(false); // POST requests are redirected as GET requests
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setReadTimeout(READ_TIMEOUT);
         conn.setRequestMethod(method.name());

@@ -26,14 +26,16 @@ public class BaseSkinsRestorer<P> {
             return;
         }
 
-        try {
-            String url = baseUrl + "/api/skin-api/skins/" + playerName;
-            SkinsRestorer skins = SkinsRestorerProvider.get();
-            MineSkinResponse res = skins.getMineSkinAPI().genSkin(url, null);
+        this.plugin.getScheduler().executeAsync(() -> {
+            try {
+                String url = baseUrl + "/api/skin-api/skins/" + playerName;
+                SkinsRestorer skins = SkinsRestorerProvider.get();
+                MineSkinResponse res = skins.getMineSkinAPI().genSkin(url, null);
 
-            skins.getSkinApplier(this.playerClass).applySkin(player, res.getProperty());
-        } catch (DataRequestException | MineSkinException ex) {
-            this.plugin.getLogger().warn("Unable to apply skin for " + playerName + ": " + ex.getMessage());
-        }
+                skins.getSkinApplier(this.playerClass).applySkin(player, res.getProperty());
+            } catch (DataRequestException | MineSkinException e) {
+                this.plugin.getLogger().warn("Unable to apply skin for " + playerName + ": " + e.getMessage());
+            }
+        });
     }
 }
