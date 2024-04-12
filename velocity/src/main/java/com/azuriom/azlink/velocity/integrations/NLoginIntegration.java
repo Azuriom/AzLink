@@ -4,6 +4,7 @@ import com.azuriom.azlink.common.integrations.BaseNLogin;
 import com.azuriom.azlink.velocity.AzLinkVelocityPlugin;
 import com.nickuc.login.api.enums.TwoFactorType;
 import com.nickuc.login.api.event.velocity.twofactor.TwoFactorAddEvent;
+import com.nickuc.login.api.event.velocity.account.PasswordUpdateEvent;
 import com.nickuc.login.api.event.velocity.auth.RegisterEvent;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.proxy.Player;
@@ -31,6 +32,11 @@ public class NLoginIntegration extends BaseNLogin {
         InetAddress address = player.getRemoteAddress().getAddress();
 
         handleRegister(player.getUniqueId(), player.getUsername(), event.getPassword(), address);
+    }
+
+    @Subscribe
+    public void onPasswordUpdate(PasswordUpdateEvent event) {
+        handleUpdatePassword(event.getPlayerId(), event.getPlayerName(), event.getNewPassword());
     }
 
     public static void register(AzLinkVelocityPlugin plugin) {

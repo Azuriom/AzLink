@@ -3,6 +3,7 @@ package com.azuriom.azlink.bungee.integrations;
 import com.azuriom.azlink.bungee.AzLinkBungeePlugin;
 import com.azuriom.azlink.common.integrations.BaseNLogin;
 import com.nickuc.login.api.enums.TwoFactorType;
+import com.nickuc.login.api.event.bungee.account.PasswordUpdateEvent;
 import com.nickuc.login.api.event.bungee.auth.RegisterEvent;
 import com.nickuc.login.api.event.bungee.twofactor.TwoFactorAddEvent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -36,6 +37,11 @@ public class NLoginIntegration extends BaseNLogin implements Listener {
                 ? ((InetSocketAddress) socketAddress).getAddress() : null;
 
         handleRegister(player.getUniqueId(), player.getName(), event.getPassword(), address);
+    }
+
+    @EventHandler
+    public void onPasswordUpdate(PasswordUpdateEvent event) {
+        handleUpdatePassword(event.getPlayerId(), event.getPlayerName(), event.getNewPassword());
     }
 
     public static void register(AzLinkBungeePlugin plugin) {
