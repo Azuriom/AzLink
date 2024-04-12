@@ -39,6 +39,7 @@ import java.util.stream.Stream;
         authors = "Azuriom Team",
         dependencies = {
                 @Dependency(id = "limboauth", optional = true),
+                @Dependency(id = "nlogin", optional = true),
                 @Dependency(id = "skinsrestorer", optional = true),
         }
 )
