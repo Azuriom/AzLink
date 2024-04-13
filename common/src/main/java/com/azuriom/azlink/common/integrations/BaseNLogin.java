@@ -37,6 +37,16 @@ public class BaseNLogin {
                 });
     }
 
+    protected void handleUpdatePassword(UUID uuid, String name, String password) {
+        this.plugin.getHttpClient()
+                .updatePassword(uuid, password)
+                .exceptionally(ex -> {
+                    this.plugin.getLogger().error("Unable to update password for " + name, ex);
+
+                    return null;
+                });
+    }
+
     protected static boolean ensureApiVersion(AzLinkPlatform platform) {
         if (nLoginAPI.getApi().getApiVersion() < 5) {
             platform.getPlugin().getLogger().warn("nLogin integration requires API v5 or higher");

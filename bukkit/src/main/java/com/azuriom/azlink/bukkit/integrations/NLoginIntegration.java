@@ -3,6 +3,7 @@ package com.azuriom.azlink.bukkit.integrations;
 import com.azuriom.azlink.bukkit.AzLinkBukkitPlugin;
 import com.azuriom.azlink.common.integrations.BaseNLogin;
 import com.nickuc.login.api.enums.TwoFactorType;
+import com.nickuc.login.api.event.bukkit.account.PasswordUpdateEvent;
 import com.nickuc.login.api.event.bukkit.auth.RegisterEvent;
 import com.nickuc.login.api.event.bukkit.twofactor.TwoFactorAddEvent;
 import org.bukkit.entity.Player;
@@ -34,6 +35,11 @@ public class NLoginIntegration extends BaseNLogin implements Listener {
         InetAddress address = socketAddress != null ? socketAddress.getAddress() : null;
 
         handleRegister(player.getUniqueId(), player.getName(), event.getPassword(), address);
+    }
+
+    @EventHandler
+    public void onPasswordUpdate(PasswordUpdateEvent event) {
+        handleUpdatePassword(event.getPlayerId(), event.getPlayerName(), event.getNewPassword());
     }
 
     public static void register(AzLinkBukkitPlugin plugin) {
