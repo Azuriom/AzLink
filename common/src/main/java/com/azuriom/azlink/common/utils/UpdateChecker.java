@@ -5,7 +5,9 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URI;
 import java.net.URL;
 import java.util.Objects;
 
@@ -46,7 +48,7 @@ public class UpdateChecker {
 
     public void checkUpdates() {
         try {
-            URL url = new URL(RELEASE_URL);
+            URL url = URI.create(RELEASE_URL).toURL();
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
                 JsonObject json = AzLinkPlugin.getGson().fromJson(reader, JsonObject.class);
@@ -64,8 +66,8 @@ public class UpdateChecker {
                     this.plugin.getLogger().warn("You can download it on https://azuriom.com/azlink");
                 }
             }
-        } catch (Exception e) {
-            // ignore
+        } catch (IOException e) {
+            this.plugin.getLogger().warn("Failed to check for updates: " + e.getMessage());
         }
     }
 }

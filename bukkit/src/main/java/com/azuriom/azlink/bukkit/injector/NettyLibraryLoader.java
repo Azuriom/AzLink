@@ -5,6 +5,7 @@ import io.netty.util.Version;
 
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Files;
@@ -52,9 +53,9 @@ public class NettyLibraryLoader {
 
             this.plugin.getLogger().warn("Downloading " + artifactId + " v" + version + "...");
 
-            URL url = new URL(String.format(MAVEN_CENTRAL, groupId.replace('.', '/'), artifactId, version, artifactId, version));
+            String url = String.format(MAVEN_CENTRAL, groupId.replace('.', '/'), artifactId, version, artifactId, version);
 
-            try (InputStream in = url.openStream()) {
+            try (InputStream in = URI.create(url).toURL().openStream()) {
                 Files.copy(in, jar);
             }
 

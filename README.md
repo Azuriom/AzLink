@@ -11,7 +11,6 @@ This plugin currently supports the following platforms:
 * [Sponge](https://www.spongepowered.org/)
 * [Velocity](https://velocitypowered.com/)
 * [Nukkit](https://cloudburstmc.org/articles/)
-* [FabricMC](https://fabricmc.net/)
 
 ## Setup
 

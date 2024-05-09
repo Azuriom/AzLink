@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.net.URI;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.UUID;
@@ -104,7 +105,10 @@ public class HttpClient {
         int status = conn.getResponseCode();
 
         if (status >= 400) {
-            throw new IOException("Unexpected HTTP error " + status);
+            String info = status == 401 || status == 403
+                    ? ". Try to do again the link command given on the admin panel." : "";
+
+            throw new IOException("Unexpected HTTP error " + status + info);
         }
 
         if (status >= 300) {
@@ -132,7 +136,7 @@ public class HttpClient {
         String baseUrl = this.plugin.getConfig().getSiteUrl();
         String version = this.plugin.getPlatform().getPluginVersion();
         String token = this.plugin.getConfig().getSiteKey();
-        URL url = new URL(baseUrl + "/api" + endpoint);
+        URL url = URI.create(baseUrl + "/api" + endpoint).toURL();
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setUseCaches(false);

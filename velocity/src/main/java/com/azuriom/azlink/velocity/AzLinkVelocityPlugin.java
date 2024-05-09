@@ -79,7 +79,8 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
         loadConfig();
 
-        if (this.proxy.getPluginManager().getPlugin("limboauth").isPresent()) {
+        if (this.proxy.getPluginManager().getPlugin("limboauth").isPresent()
+                && this.config.getNode("limboauth-integration").getBoolean()) {
             this.proxy.getEventManager().register(this, new LimboAuthIntegration(this));
         }
 

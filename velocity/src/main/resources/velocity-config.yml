@@ -2,6 +2,11 @@
 # the player's skin will be updated to the website's skin
 skinsrestorer-integration: false
 
+# When enabled, new users registered with the LimboAuth plugin will automatically be registered on the website
+# If you are using multiples servers, you should use the same database for AuthMe to prevent users
+# from registering multiple times
+limboauth-integration: false
+
 # When enabled, new users registered with the nLogin plugin will automatically be registered on the website
 # WARNING: You need nLogin version 10.2.43 or newer!
 # If you are using multiples servers, you should use the same database for nLogin to prevent users

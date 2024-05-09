@@ -10,9 +10,8 @@ dependencies {
     compileOnly 'net.skinsrestorer:skinsrestorer-api:15.0.2'
     compileOnly 'com.nickuc.login:nlogin-api:10.3'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.10.1'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:5.10.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {

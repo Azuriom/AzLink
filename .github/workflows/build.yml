@@ -25,10 +25,10 @@ jobs:
           java-version: ${{ matrix.java-version }}
 
       - name: Validate Gradle Wrapper
-        uses: gradle/wrapper-validation-action@v1
+        uses: gradle/actions/wrapper-validation@v3
 
       - name: Setup Gradle
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/actions/setup-gradle@v3
 
       - name: Build
         run: ./gradlew build
@@ -45,11 +45,4 @@ jobs:
         with:
           name: AzLink-Legacy
           path: universal-legacy/build/libs/AzLink-Legacy-*.jar
-          overwrite: true
-
-      - name: Upload AzLink-Fabric.jar
-        uses: actions/upload-artifact@v4
-        with:
-          name: AzLink-Fabric
-          path: fabric/build/libs/AzLink-Fabric-*.jar
           overwrite: true
