@@ -1,20 +1,20 @@
 plugins {
-    id 'net.kyori.blossom' version '1.3.1'
+    alias(libs.plugins.blossom)
 }
 
 repositories {
-    maven { url 'https://nexus.velocitypowered.com/repository/maven-public/' }
+    maven { url 'https://repo.papermc.io/repository/maven-public/' }
     maven { url 'https://maven.elytrium.net/repo/' }
     maven { url 'https://repo.nickuc.com/maven-releases/' }
 }
 
 dependencies {
     implementation project(':azlink-common')
-    compileOnly 'com.velocitypowered:velocity-api:3.1.1'
-    compileOnly 'net.elytrium.limboapi:api:1.1.13'
-    compileOnly 'net.elytrium:limboauth:1.1.1'
-    compileOnly 'com.nickuc.login:nlogin-api:10.3'
-    annotationProcessor 'com.velocitypowered:velocity-api:3.1.1'
+    compileOnly libs.velocity
+    compileOnly libs.limboapi
+    compileOnly libs.limboauth
+    compileOnly libs.nlogin
+    annotationProcessor libs.velocity
 }
 
 // LimboAuth support
