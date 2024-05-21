@@ -4,7 +4,7 @@ repositories {
 
 dependencies {
     implementation project(':azlink-common')
-    compileOnly libs.sponge
+    compileOnly 'org.spongepowered:spongeapi:8.0.0'
 }
 
 processResources {

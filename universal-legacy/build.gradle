@@ -1,5 +1,5 @@
 plugins {
-    alias(libs.plugins.shadow)
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 
 dependencies {
@@ -11,8 +11,9 @@ dependencies {
     implementation project(':azlink-velocity')
     implementation project(':azlink-nukkit')
 
-    implementation libs.gson
-    implementation libs.bundles.netty
+    implementation 'com.google.code.gson:gson:2.8.9'
+    implementation 'io.netty:netty-handler:4.1.100.Final'
+    implementation 'io.netty:netty-codec-http:4.1.100.Final'
 }
 
 shadowJar {

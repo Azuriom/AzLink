@@ -4,14 +4,14 @@ repositories {
 }
 
 dependencies {
-    compileOnly libs.slf4j
-    compileOnly libs.gson
-    compileOnly libs.bundles.netty
-    compileOnly libs.skinsrestorer
-    compileOnly libs.nlogin
+    compileOnly 'org.slf4j:slf4j-api:1.7.36'
+    compileOnly 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'io.netty:netty-all:4.1.42.Final'
+    compileOnly 'net.skinsrestorer:skinsrestorer-api:15.0.2'
+    compileOnly 'com.nickuc.login:nlogin-api:10.3'
 
-    testImplementation libs.junit.jupiter
-    testRuntimeOnly libs.junit.platform
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 test {
