@@ -67,7 +67,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
             Class.forName("com.velocitypowered.api.command.SimpleCommand");
         } catch (ClassNotFoundException e) {
             this.logger.error("AzLink requires Velocity 1.1.0 or higher");
-            this.logger.error("You can download the latest version of Velocity on https://velocitypowered.com/downloads");
+            this.logger.error("You can download the latest version of Velocity on https://papermc.io/downloads/velocity");
             return;
         }
 
