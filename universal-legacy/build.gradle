@@ -21,6 +21,10 @@ shadowJar {
 
     relocate 'com.google.gson', 'com.azuriom.azlink.libs.gson'
     relocate 'io.netty', 'com.azuriom.azlink.libs.netty'
+
+    manifest {
+        attributes 'Paperweight-Mappings-Namespace': 'mojang'
+    }
 }
 
 artifacts {

@@ -37,7 +37,7 @@ public class InjectedHttpServer implements HttpServer {
         }
 
         if (!Bukkit.getServer().getClass().getSimpleName().equals("CraftServer")) {
-            plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is only supported on CraftBukkit based servers. You can use an other port for AzLink");
+            plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is only supported on CraftBukkit based servers. You can use an other port for AzLink.");
             return;
         }
 
@@ -122,7 +122,9 @@ public class InjectedHttpServer implements HttpServer {
             return serverClass.getMethod("getServerConnection");
         } catch (NoSuchMethodException e) {
             for (Method method : serverClass.getMethods()) {
-                if (method.getReturnType().getSimpleName().equals("ServerConnection")) {
+                String type = method.getReturnType().getSimpleName();
+
+                if (type.equals("ServerConnection") || type.equals("ServerConnectionListener")) {
                     return method;
                 }
             }

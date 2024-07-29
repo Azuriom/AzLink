@@ -15,8 +15,10 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.1'
 }
 
-// Folia is compiled with Java 17
-disableAutoTargetJvm()
+java {
+    // Folia is compiled with Java 17
+    disableAutoTargetJvm()
+}
 
 processResources {
     filesMatching('*.yml') {

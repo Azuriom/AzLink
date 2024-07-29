@@ -48,7 +48,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
             Class.forName("com.google.gson.JsonObject");
             Class.forName("io.netty.channel.Channel");
         } catch (ClassNotFoundException e) {
-            this.logger.error("Your server version is not compatible with this version of AzLink !");
+            this.logger.error("Your server version is not compatible with this version of AzLink.");
             this.logger.error("Please download AzLink Legacy on https://azuriom.com/azlink");
             getServer().getPluginManager().disablePlugin(this);
             return;
@@ -73,13 +73,14 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
                 return super.createHttpServer();
             }
         };
+
+        saveDefaultConfig();
+
         this.plugin.init();
 
         getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
 
         scheduleTpsTask();
-
-        saveDefaultConfig();
 
         if (getConfig().getBoolean("authme-integration")
                 && getServer().getPluginManager().getPlugin("AuthMe") != null) {
