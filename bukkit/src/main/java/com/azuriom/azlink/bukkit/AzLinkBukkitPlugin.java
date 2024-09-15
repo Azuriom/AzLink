@@ -157,7 +157,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
                 .mapToInt(w -> w.getLoadedChunks().length)
                 .sum();
 
-        int entities = getServer().getWorlds().stream()
+        // Prevent 'Accessing entity state off owning region's thread' exception on Folia
+        int entities = isFolia() ? 0 : getServer().getWorlds().stream()
                 .mapToInt(w -> w.getEntities().size())
                 .sum();
 
@@ -195,9 +196,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         return true;
     }
 
-    @SuppressWarnings("deprecation") // Folia support
     private void scheduleTpsTask() {
-        if (this.scheduler instanceof FoliaSchedulerAdapter) {
+        if (isFolia()) {
             FoliaSchedulerAdapter.scheduleSyncTask(this, this.tpsTask, 1, 1);
 
             return;
@@ -206,7 +206,6 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         getServer().getScheduler().runTaskTimer(this, this.tpsTask, 1, 1);
     }
 
-    @SuppressWarnings("deprecation") // Folia support
     private SchedulerAdapter createSchedulerAdapter() {
         try {
             Class.forName("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
@@ -218,5 +217,9 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
                     r -> getServer().getScheduler().runTaskAsynchronously(this, r)
             );
         }
+    }
+
+    private boolean isFolia() {
+        return this.scheduler instanceof FoliaSchedulerAdapter;
     }
 }

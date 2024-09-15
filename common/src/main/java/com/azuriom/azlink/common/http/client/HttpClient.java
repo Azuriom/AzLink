@@ -144,6 +144,7 @@ public class HttpClient {
         conn.setConnectTimeout(CONNECT_TIMEOUT);
         conn.setReadTimeout(READ_TIMEOUT);
         conn.setRequestMethod(method.name());
+        conn.addRequestProperty("Accept", "application/json");
         conn.addRequestProperty("Azuriom-Link-Token", token);
         conn.addRequestProperty("Content-Type", "application/json; charset=utf-8");
         conn.addRequestProperty("User-Agent", "AzLink java v" + version);
