@@ -49,7 +49,7 @@ public class NettyLibraryLoader {
         Path jar = this.libsFolder.resolve(artifactId + "-" + version + ".jar");
 
         if (!Files.exists(jar)) {
-            Files.createDirectory(jar.getParent());
+            Files.createDirectories(jar.getParent());
 
             this.plugin.getLogger().warn("Downloading " + artifactId + " v" + version + "...");
 
