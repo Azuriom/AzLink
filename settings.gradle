@@ -1,3 +1,14 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
 rootProject.name = 'azlink'
 
 def modules = [
@@ -10,6 +21,7 @@ def modules = [
         'nukkit',
         'universal',
         'universal-legacy',
+        'fabric',
 ]
 
 modules.each {

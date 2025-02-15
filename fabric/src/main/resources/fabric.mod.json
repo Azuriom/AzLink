@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "azlink",
+  "version": "${version}",
+  "name": "AzLink",
+  "description": "The mod to link your Azuriom website with your Fabric server.",
+  "authors": [
+    "Azuriom"
+  ],
+  "contact": {
+    "homepage": "https://azuriom.com/",
+    "sources": "https://github.com/Azuriom/AzLink"
+  },
+  "license": "MIT",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "com.azuriom.azlink.fabric.AzLinkFabricMod"
+    ]
+  },
+  "mixins": [],
+  "depends": {
+    "fabricloader": ">=0.14.11",
+    "fabric-api": "*",
+    "minecraft": "~1.21"
+  }
+}
