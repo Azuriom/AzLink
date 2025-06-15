@@ -1,0 +1,11 @@
+modLoader = "javafml"
+loaderVersion = "[1,)"
+license = "MIT"
+
+[[mods]]
+modId = "azlink"
+version = "${version}"
+displayName = "AzLink"
+displayURL = "https://github.com/Azuriom/AzLink"
+authors = "Azuriom"
+description = "Link Azuriom to your Minecraft server."

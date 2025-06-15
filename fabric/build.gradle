@@ -1,6 +1,6 @@
 plugins {
-    id 'fabric-loom' version '1.2.7'
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'fabric-loom' version '1.9.2'
+    id 'com.gradleup.shadow' version '8.3.5'
 }
 
 java {
@@ -9,17 +9,17 @@ java {
 }
 
 ext {
-    minecraft_version = '1.21.1'
-    yarn_mappings = '1.21.1+build.3'
-    loader_version = '0.16.7'
-    fabric_version = '0.106.0+1.21.1'
+    minecraft_version = '1.21.4'
+    yarn_mappings = '1.21.4+build.8'
+    loader_version = '0.16.14'
+    fabric_version = '0.119.3+1.21.4'
 }
 
 dependencies {
     implementation project(':azlink-common')
-    implementation 'net.kyori:adventure-api:4.12.0'
-    implementation 'net.kyori:adventure-text-serializer-gson:4.14.0'
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.14.0'
+    implementation 'net.kyori:adventure-api:4.21.0'
+    implementation 'net.kyori:adventure-text-serializer-gson:4.21.0'
+    implementation 'net.kyori:adventure-text-serializer-legacy:4.21.0'
     minecraft "com.mojang:minecraft:${project.ext.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.ext.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.ext.loader_version}"

@@ -53,3 +53,10 @@ jobs:
           name: AzLink-Fabric
           path: fabric/build/libs/AzLink-Fabric-*.jar
           overwrite: true
+
+      - name: Upload AzLink-NeoForge.jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: AzLink-NeoForge
+          path: neoforge/build/libs/AzLink-NeoForge-*.jar
+          overwrite: true

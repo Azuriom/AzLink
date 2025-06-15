@@ -1,0 +1,65 @@
+plugins {
+    id 'net.neoforged.moddev' version '2.0.82'
+    id 'com.gradleup.shadow' version '8.3.5'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+ext {
+    minecraft_version = '1.21.4'
+    neo_version = '21.4.10-beta'
+}
+
+neoForge {
+    version = project.ext.neo_version
+    validateAccessTransformers = true
+
+    runs {
+        server {
+            server()
+        }
+    }
+
+    mods {
+        azlink {
+            sourceSet(sourceSets.main)
+        }
+    }
+}
+
+configurations {
+    shade
+    implementation.extendsFrom shade
+}
+
+dependencies {
+    shade project(':azlink-common')
+    shade 'net.kyori:adventure-api:4.21.0'
+    shade 'net.kyori:adventure-text-serializer-gson:4.21.0'
+    shade 'net.kyori:adventure-text-serializer-legacy:4.21.0'
+}
+
+processResources {
+    filesMatching('**/*.toml') {
+        expand 'version': project.version
+    }
+}
+
+shadowJar {
+    archiveFileName = "AzLink-NeoForge-${project.version}-${project.ext.minecraft_version}.jar"
+    configurations = [project.configurations.shade]
+
+    dependencies {
+        include dependency('com.azuriom:.*')
+        include dependency('net.kyori:.*')
+    }
+
+    relocate 'net.kyori', 'com.azuriom.azlink.libs'
+}
+
+artifacts {
+    archives shadowJar
+}
