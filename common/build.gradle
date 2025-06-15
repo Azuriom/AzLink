@@ -5,12 +5,12 @@ repositories {
 
 dependencies {
     compileOnly 'org.slf4j:slf4j-api:1.7.36'
-    compileOnly 'com.google.code.gson:gson:2.10.1'
+    compileOnly 'com.google.code.gson:gson:2.13.1'
     compileOnly 'io.netty:netty-all:4.1.42.Final'
     compileOnly 'net.skinsrestorer:skinsrestorer-api:15.0.2'
     compileOnly 'com.nickuc.login:nlogin-api:10.3'
 
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.12.2'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
