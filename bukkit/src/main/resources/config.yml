@@ -22,3 +22,13 @@ nlogin-integration: false
 # When enabled, if SkinsRestorer is installed, and the SkinAPI plugin is present on the website,
 # the player's skin will be updated to the website's skin
 skinrestorer-integration: false
+
+# Database configuration for the Vote & Shop PlaceholderAPI expansion
+# These settings are used to connect to your website's database to retrieve vote and shop data
+database:
+  host: localhost
+  port: 3306
+  name: nomdelabdd
+  username: username
+  password: "motdepasse"
+  debug: false  # Set to true for detailed logging

@@ -4,11 +4,7 @@ import com.azuriom.azlink.bukkit.command.BukkitCommandExecutor;
 import com.azuriom.azlink.bukkit.command.BukkitCommandSender;
 import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
 import com.azuriom.azlink.bukkit.injector.NettyLibraryLoader;
-import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
-import com.azuriom.azlink.bukkit.integrations.FoliaSchedulerAdapter;
-import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
-import com.azuriom.azlink.bukkit.integrations.SkinsRestorerIntegration;
-import com.azuriom.azlink.bukkit.integrations.NLoginIntegration;
+import com.azuriom.azlink.bukkit.integrations.*;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -58,45 +54,39 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
             @Override
             protected HttpServer createHttpServer() {
                 NettyLibraryLoader libraryLoader = new NettyLibraryLoader(this);
-
                 try {
                     libraryLoader.loadRequiredLibraries();
                 } catch (Exception e) {
                     getLogger().error("Unable to load required libraries for instant commands", e);
                     return null;
                 }
-
                 if (plugin.getConfig().getHttpPort() == getServer().getPort()) {
                     return new InjectedHttpServer(AzLinkBukkitPlugin.this);
                 }
-
                 return super.createHttpServer();
             }
         };
 
         saveDefaultConfig();
-
         this.plugin.init();
 
-        getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
+        if (getCommand("azlink") != null) {
+            getCommand("azlink").setExecutor(new BukkitCommandExecutor(this.plugin));
+        }
 
         scheduleTpsTask();
 
-        if (getConfig().getBoolean("authme-integration")
-                && getServer().getPluginManager().getPlugin("AuthMe") != null) {
+        if (getConfig().getBoolean("authme-integration") && getServer().getPluginManager().getPlugin("AuthMe") != null) {
             getServer().getPluginManager().registerEvents(new AuthMeIntegration(this), this);
         }
 
-        if (getConfig().getBoolean("nlogin-integration")
-                && getServer().getPluginManager().getPlugin("nLogin") != null) {
+        if (getConfig().getBoolean("nlogin-integration") && getServer().getPluginManager().getPlugin("nLogin") != null) {
             NLoginIntegration.register(this);
         }
 
-        if (getConfig().getBoolean("skinrestorer-integration")
-                && getServer().getPluginManager().getPlugin("SkinsRestorer") != null) {
+        if (getConfig().getBoolean("skinrestorer-integration") && getServer().getPluginManager().getPlugin("SkinsRestorer") != null) {
             try {
                 Class.forName("net.skinsrestorer.api.SkinsRestorer");
-
                 getServer().getPluginManager().registerEvents(new SkinsRestorerIntegration(this), this);
             } catch (ClassNotFoundException e) {
                 getLogger().severe("SkinsRestorer integration requires SkinsRestorer v15.0.0 or higher");
@@ -105,6 +95,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
             MoneyPlaceholderExpansion.enable(this);
+            VoteAndShopPlaceholderExpansion.enable(this);
         }
     }
 
@@ -141,9 +132,8 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     }
 
     @Override
-    @SuppressWarnings("deprecation") // Folia support
     public String getPluginVersion() {
-        return getDescription().getVersion();
+        return getPluginMeta().getVersion();
     }
 
     @Override
@@ -153,27 +143,16 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
 
     @Override
     public Optional<WorldData> getWorldData() {
-        int loadedChunks = getServer().getWorlds().stream()
-                .mapToInt(w -> w.getLoadedChunks().length)
-                .sum();
-
-        // Prevent 'Accessing entity state off owning region's thread' exception on Folia
-        int entities = isFolia() ? 0 : getServer().getWorlds().stream()
-                .mapToInt(w -> w.getEntities().size())
-                .sum();
-
+        int loadedChunks = getServer().getWorlds().stream().mapToInt(w -> w.getLoadedChunks().length).sum();
+        int entities = isFolia() ? 0 : getServer().getWorlds().stream().mapToInt(w -> w.getEntities().size()).sum();
         return Optional.of(new WorldData(this.tpsTask.getTps(), loadedChunks, entities));
     }
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
         if (getConfig().getBoolean("ignore-vanished-players", false)) {
-            return getServer().getOnlinePlayers()
-                    .stream()
-                    .filter(this::isPlayerVisible)
-                    .map(BukkitCommandSender::new);
+            return getServer().getOnlinePlayers().stream().filter(this::isPlayerVisible).map(BukkitCommandSender::new);
         }
-
         return getServer().getOnlinePlayers().stream().map(BukkitCommandSender::new);
     }
 
@@ -181,6 +160,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     public int getMaxPlayers() {
         return getServer().getMaxPlayers();
     }
+
 
     @Override
     public void dispatchConsoleCommand(String command) {
@@ -199,17 +179,14 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
     private void scheduleTpsTask() {
         if (isFolia()) {
             FoliaSchedulerAdapter.scheduleSyncTask(this, this.tpsTask, 1, 1);
-
             return;
         }
-
         getServer().getScheduler().runTaskTimer(this, this.tpsTask, 1, 1);
     }
 
     private SchedulerAdapter createSchedulerAdapter() {
         try {
             Class.forName("io.papermc.paper.threadedregions.scheduler.ScheduledTask");
-
             return FoliaSchedulerAdapter.create(this);
         } catch (ClassNotFoundException e) {
             return new JavaSchedulerAdapter(
