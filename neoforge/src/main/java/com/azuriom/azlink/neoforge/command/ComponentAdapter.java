@@ -1,11 +1,12 @@
 package com.azuriom.azlink.neoforge.command;
 
-import com.google.gson.JsonElement;
+import com.mojang.serialization.JsonOps;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ComponentSerialization;
 
 public final class ComponentAdapter {
 
@@ -20,7 +21,12 @@ public final class ComponentAdapter {
 
     public static Component toComponent(String message) {
         TextComponent component = LEGACY_SERIALIZER.deserialize(message);
-        JsonElement json = GsonComponentSerializer.gson().serializeToTree(component);
 
-        return Component.Serializer.fromJson(json, RegistryAccess.EMPTY);    }
+        // Code from LuckPerms, under MIT License
+        // https://github.com/LuckPerms/LuckPerms
+        return ComponentSerialization.CODEC.decode(
+                RegistryAccess.EMPTY.createSerializationContext(JsonOps.INSTANCE),
+                GsonComponentSerializer.gson().serializeToTree(component)
+        ).getOrThrow(IllegalArgumentException::new).getFirst();
+    }
 }

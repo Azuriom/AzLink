@@ -9,8 +9,8 @@ java {
 }
 
 ext {
-    minecraft_version = '1.21.4'
-    neo_version = '21.4.10-beta'
+    minecraft_version = '1.21.8'
+    neo_version = '21.8.4-beta'
 }
 
 neoForge {

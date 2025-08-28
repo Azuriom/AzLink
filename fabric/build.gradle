@@ -1,5 +1,5 @@
 plugins {
-    id 'fabric-loom' version '1.9.2'
+    id 'fabric-loom' version '1.11-SNAPSHOT'
     id 'com.gradleup.shadow' version '8.3.5'
 }
 
@@ -9,10 +9,10 @@ java {
 }
 
 ext {
-    minecraft_version = '1.21.4'
-    yarn_mappings = '1.21.4+build.8'
-    loader_version = '0.16.14'
-    fabric_version = '0.119.3+1.21.4'
+    minecraft_version = '1.21.8'
+    yarn_mappings = '1.21.8+build.1'
+    loader_version = '0.17.2'
+    fabric_version = '0.132.0+1.21.8'
 }
 
 dependencies {
