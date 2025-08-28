@@ -3,9 +3,9 @@ plugins {
 }
 
 repositories {
-    maven { url 'https://repo.papermc.io/repository/maven-public/' }
-    maven { url 'https://maven.elytrium.net/repo/' }
-    maven { url 'https://repo.nickuc.com/maven-releases/' }
+    maven { url = 'https://repo.papermc.io/repository/maven-public/' }
+    maven { url = 'https://maven.elytrium.net/repo/' }
+    maven { url = 'https://repo.nickuc.com/maven-releases/' }
 }
 
 dependencies {

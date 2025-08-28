@@ -6,9 +6,9 @@ import com.azuriom.azlink.bukkit.injector.InjectedHttpServer;
 import com.azuriom.azlink.bukkit.injector.NettyLibraryLoader;
 import com.azuriom.azlink.bukkit.integrations.AuthMeIntegration;
 import com.azuriom.azlink.bukkit.integrations.FoliaSchedulerAdapter;
-import com.azuriom.azlink.bukkit.integrations.MoneyPlaceholderExpansion;
 import com.azuriom.azlink.bukkit.integrations.SkinsRestorerIntegration;
 import com.azuriom.azlink.bukkit.integrations.NLoginIntegration;
+import com.azuriom.azlink.bukkit.placeholders.BasePlaceholderExpansion;
 import com.azuriom.azlink.common.AzLinkPlatform;
 import com.azuriom.azlink.common.AzLinkPlugin;
 import com.azuriom.azlink.common.command.CommandSender;
@@ -104,7 +104,7 @@ public final class AzLinkBukkitPlugin extends JavaPlugin implements AzLinkPlatfo
         }
 
         if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
-            MoneyPlaceholderExpansion.enable(this);
+            BasePlaceholderExpansion.enable(this);
         }
     }
 

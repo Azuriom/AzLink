@@ -22,3 +22,20 @@ nlogin-integration: false
 # When enabled, if SkinsRestorer is installed, and the SkinAPI plugin is present on the website,
 # the player's skin will be updated to the website's skin
 skinrestorer-integration: false
+
+# When PlaceholderAPI is installed, AzLink will register some placeholders
+# that can be used in the server.
+placeholders:
+  # By default, %azlink_money% is registered and can be used to get the player's money.
+  # If the Shop plugin is installed on the website, you can enable the shop placeholders.
+  # The available placeholders are listed on https://github.com/Azuriom/AzLink#shop-placeholders
+  shop: false
+
+  # If the vote plugin is installed on the website, you can enable the vote placeholders.
+  # The available placeholders are listed on https://github.com/Azuriom/AzLink#vote-placeholders
+  vote: false
+
+  # Duration format with placeholders for hours, minutes, and seconds.
+  # Use %H/%M/%S for zero-padded (e.g. 03, 12) and %h/%m/%s for non-padded (e.g. 3, 12).
+  # Example: "%H:%M:%S" for "01:30:05", and "%h h %m m %s s" for "1 h 30 m 5 s".
+  duration-format: "%H:%M:%S"
