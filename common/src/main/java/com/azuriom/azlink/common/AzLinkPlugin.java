@@ -8,6 +8,7 @@ import com.azuriom.azlink.common.data.PlayerData;
 import com.azuriom.azlink.common.data.ServerData;
 import com.azuriom.azlink.common.data.SystemData;
 import com.azuriom.azlink.common.data.WorldData;
+import com.azuriom.azlink.common.gson.InstantAdapter;
 import com.azuriom.azlink.common.http.client.HttpClient;
 import com.azuriom.azlink.common.http.server.HttpServer;
 import com.azuriom.azlink.common.http.server.NettyHttpServer;
@@ -27,6 +28,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -36,8 +38,13 @@ import java.util.stream.Collectors;
 
 public class AzLinkPlugin {
 
-    private static final Gson GSON = new Gson();
-    private static final Gson GSON_PRETTY_PRINT = new GsonBuilder().setPrettyPrinting().create();
+    private static final Gson GSON = new GsonBuilder()
+            .registerTypeAdapter(Instant.class, new InstantAdapter())
+            .create();
+    private static final Gson GSON_PRETTY_PRINT = new GsonBuilder()
+            .setPrettyPrinting()
+            .registerTypeAdapter(Instant.class, new InstantAdapter())
+            .create();
 
     private final HttpClient httpClient = new HttpClient(this);
     private final UserManager userManager = new UserManager(this);
@@ -205,6 +212,10 @@ public class AzLinkPlugin {
             }
         }
         return -1;
+    }
+
+    public boolean isConfigured() {
+        return this.config != null && this.config.isValid();
     }
 
     public static Gson getGson() {
