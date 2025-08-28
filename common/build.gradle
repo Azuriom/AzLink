@@ -1,6 +1,6 @@
 repositories {
-    maven { url 'https://repo.codemc.io/repository/maven-public/' }
-    maven { url 'https://repo.nickuc.com/maven-releases/' }
+    maven { url = 'https://repo.codemc.io/repository/maven-public/' }
+    maven { url = 'https://repo.nickuc.com/maven-releases/' }
 }
 
 dependencies {
