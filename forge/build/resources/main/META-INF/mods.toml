@@ -1,0 +1,11 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+license="MIT"
+
+[[mods]]
+modId="azlink"
+version="1.3.9"
+displayName="AzLink"
+displayURL="https://github.com/Azuriom/AzLink"
+authors="Azuriom"
+description="Link Azuriom to your Minecraft server."
