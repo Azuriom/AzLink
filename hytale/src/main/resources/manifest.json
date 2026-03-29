@@ -11,5 +11,5 @@
   "Website": "https://azuriom.com",
   "ServerVersion": "*",
   "Main": "com.azuriom.azlink.hytale.AzLinkHytalePlugin",
-  "IncludesAssetPack": true
+  "IncludesAssetPack": false
 }
