@@ -17,9 +17,6 @@ ext {
 
 dependencies {
     implementation project(':azlink-common')
-    implementation 'net.kyori:adventure-api:4.21.0'
-    implementation 'net.kyori:adventure-text-serializer-gson:4.21.0'
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.21.0'
     minecraft "com.mojang:minecraft:${project.ext.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.ext.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.ext.loader_version}"
@@ -40,10 +37,7 @@ shadowJar {
     dependencies {
         exclude 'net.fabricmc:.*'
         include dependency('com.azuriom:.*')
-        include dependency('net.kyori:.*')
     }
-
-    relocate 'net.kyori', 'com.azuriom.azlink.libs'
 }
 
 remapJar {

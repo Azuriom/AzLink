@@ -1,6 +1,8 @@
 package com.azuriom.azlink.fabric.command;
 
+import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
+import com.azuriom.azlink.fabric.MinecraftTextAdapter;
 import net.minecraft.command.permission.Permission;
 import net.minecraft.command.permission.PermissionLevel;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -29,7 +31,12 @@ public class FabricPlayer implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        this.player.sendMessage(TextAdapter.toText(message));
+        sendMessage(TextComponent.text(message));
+    }
+
+    @Override
+    public void sendMessage(TextComponent message) {
+        this.player.sendMessage(MinecraftTextAdapter.toText(message));
     }
 
     @Override

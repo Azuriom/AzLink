@@ -37,9 +37,6 @@ configurations {
 
 dependencies {
     shade project(':azlink-common')
-    shade 'net.kyori:adventure-api:4.21.0'
-    shade 'net.kyori:adventure-text-serializer-gson:4.21.0'
-    shade 'net.kyori:adventure-text-serializer-legacy:4.21.0'
 }
 
 processResources {
@@ -54,10 +51,7 @@ shadowJar {
 
     dependencies {
         include dependency('com.azuriom:.*')
-        include dependency('net.kyori:.*')
     }
-
-    relocate 'net.kyori', 'com.azuriom.azlink.libs'
 }
 
 build {

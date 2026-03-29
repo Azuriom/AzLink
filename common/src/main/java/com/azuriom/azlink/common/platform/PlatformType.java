@@ -7,6 +7,8 @@ public enum PlatformType {
     SPONGE("Sponge"),
     VELOCITY("Velocity"),
     NUKKIT("Nukkit"),
+    FABRIC("Fabric"),
+    NEOFORGE("NeoForge"),
     HYTALE("Hytale");
 
     private final String name;

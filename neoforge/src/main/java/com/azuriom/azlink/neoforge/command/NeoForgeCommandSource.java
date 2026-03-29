@@ -1,6 +1,8 @@
 package com.azuriom.azlink.neoforge.command;
 
+import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
+import com.azuriom.azlink.neoforge.MinecraftComponentAdapter;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.permissions.Permission;
 import net.minecraft.server.permissions.PermissionLevel;
@@ -34,7 +36,12 @@ public class NeoForgeCommandSource implements CommandSender {
 
     @Override
     public void sendMessage(String message) {
-        this.source.sendSystemMessage(ComponentAdapter.toComponent(message));
+        sendMessage(TextComponent.text(message));
+    }
+
+    @Override
+    public void sendMessage(TextComponent message) {
+        this.source.sendSystemMessage(MinecraftComponentAdapter.toComponent(message));
     }
 
     @Override
