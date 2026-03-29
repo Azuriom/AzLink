@@ -1,5 +1,7 @@
 package com.azuriom.azlink.sponge.command;
 
+import com.azuriom.azlink.common.chat.AdventureComponentAdapter;
+import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -50,6 +52,11 @@ public class SpongeCommandSender implements CommandSender {
     @Override
     public void sendMessage(String message) {
         this.audience.sendMessage(SERIALIZER.deserialize(message));
+    }
+
+    @Override
+    public void sendMessage(TextComponent message) {
+        this.audience.sendMessage(AdventureComponentAdapter.toAdventure(message));
     }
 
     @Override

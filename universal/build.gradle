@@ -10,10 +10,11 @@ dependencies {
     implementation project(':azlink-common')
     implementation project(':azlink-bukkit')
     implementation project(':azlink-bungee')
+    implementation project(':azlink-hytale')
+    implementation project(':azlink-nukkit')
     implementation project(':azlink-sponge')
     implementation project(':azlink-sponge-legacy')
     implementation project(':azlink-velocity')
-    implementation project(':azlink-nukkit')
 }
 
 shadowJar {

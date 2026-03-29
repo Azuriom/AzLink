@@ -10,6 +10,6 @@ dependencies {
 
 processResources {
     filesMatching('*.yml') {
-        expand 'pluginVersion': project.version
+        expand 'pluginVersion': version
     }
 }

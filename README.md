@@ -3,7 +3,7 @@
 [![Tests](https://img.shields.io/github/actions/workflow/status/Azuriom/AzLink/build.yml?branch=master&style=flat-square)](https://github.com/Azuriom/AzLink/actions/workflows/build.yml)
 [![Chat](https://img.shields.io/discord/625774284823986183?color=5865f2&label=Discord&logo=discord&logoColor=fff&style=flat-square)](https://azuriom.com/discord)
 
-AzLink is a plugin to link a Minecraft server or proxy with [Azuriom](https://azuriom.com/).
+AzLink is a plugin to link a Minecraft or Hytale server or proxy with [Azuriom](https://azuriom.com/).
 
 This plugin currently supports the following platforms:
 * [Bukkit/Spigot/Paper/Folia](https://papermc.io/)
@@ -11,6 +11,7 @@ This plugin currently supports the following platforms:
 * [Sponge](https://www.spongepowered.org/)
 * [Velocity](https://velocitypowered.com/)
 * [Nukkit](https://cloudburstmc.org/articles/)
+* [Hytale](https://hytale.com/)
 
 > [!NOTE]
 > NeoForge and Fabric versions of the plugin are available in the [dev/mods branch](https://github.com/Azuriom/AzLink/tree/dev/mods).

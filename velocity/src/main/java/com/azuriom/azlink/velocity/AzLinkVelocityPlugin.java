@@ -132,7 +132,7 @@ public final class AzLinkVelocityPlugin implements AzLinkPlatform {
 
     @Override
     public String getPluginVersion() {
-        return "${pluginVersion}";
+        return VersionInfo.VERSION;
     }
 
     @Override

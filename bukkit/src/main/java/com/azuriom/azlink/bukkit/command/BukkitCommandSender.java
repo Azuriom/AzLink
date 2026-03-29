@@ -1,5 +1,6 @@
 package com.azuriom.azlink.bukkit.command;
 
+import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Entity;
@@ -32,6 +33,11 @@ public class BukkitCommandSender implements CommandSender {
     @Override
     public void sendMessage(String message) {
         this.sender.sendMessage(ChatColor.translateAlternateColorCodes('&', message));
+    }
+
+    @Override
+    public void sendMessage(TextComponent message) {
+        sendMessage(message.toMinecraftLegacy());
     }
 
     @Override

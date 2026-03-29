@@ -1,5 +1,7 @@
 package com.azuriom.azlink.velocity.command;
 
+import com.azuriom.azlink.common.chat.AdventureComponentAdapter;
+import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.velocitypowered.api.command.CommandSource;
 import com.velocitypowered.api.proxy.Player;
@@ -32,6 +34,11 @@ public class VelocityCommandSender implements CommandSender {
     @Override
     public void sendMessage(String message) {
         this.source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(message));
+    }
+
+    @Override
+    public void sendMessage(TextComponent message) {
+        this.source.sendMessage(AdventureComponentAdapter.toAdventure(message));
     }
 
     @Override

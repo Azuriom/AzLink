@@ -12,6 +12,7 @@ dependencies {
     compileOnly 'org.slf4j:slf4j-api:1.7.36'
     compileOnly 'com.google.code.gson:gson:2.13.1'
     compileOnly 'io.netty:netty-all:4.1.42.Final'
+    compileOnly 'net.kyori:adventure-api:4.26.1'
     compileOnly 'net.skinsrestorer:skinsrestorer-api:15.0.2'
     compileOnly 'com.nickuc.login:nlogin-api:10.3'
 
@@ -28,7 +29,7 @@ sourceSets {
     main {
         blossom {
             javaSources {
-                property('version', project.version.toString())
+                property('version', version.toString())
             }
         }
     }

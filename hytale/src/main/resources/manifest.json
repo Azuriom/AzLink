@@ -1,0 +1,15 @@
+{
+  "Group": "Azuriom",
+  "Name": "AzLink",
+  "Version": "${pluginVersion}",
+  "Description": "The plugin to link your Azuriom website with your Hytale server.",
+  "Authors": [
+    {
+      "Name": "Azuriom"
+    }
+  ],
+  "Website": "https://azuriom.com",
+  "ServerVersion": "*",
+  "Main": "com.azuriom.azlink.hytale.AzLinkHytalePlugin",
+  "IncludesAssetPack": false
+}

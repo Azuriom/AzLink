@@ -15,6 +15,7 @@ def modules = [
         'common',
         'bukkit',
         'bungee',
+        'hytale',
         'sponge',
         'sponge-legacy',
         'velocity',
