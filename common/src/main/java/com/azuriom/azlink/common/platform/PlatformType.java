@@ -8,6 +8,7 @@ public enum PlatformType {
     VELOCITY("Velocity"),
     NUKKIT("Nukkit"),
     FABRIC("Fabric"),
+    FORGE("Forge"),
     NEOFORGE("NeoForge"),
     HYTALE("Hytale");
 

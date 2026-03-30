@@ -1,0 +1,40 @@
+plugins {
+    id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+    id 'com.gradleup.shadow' version '9.3.1'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
+
+ext {
+    minecraft_version = '1.21.11'
+    forge_version = '61.1.0'
+}
+
+repositories {
+    minecraft.mavenizer(it)
+    maven fg.forgeMaven
+    maven fg.minecraftLibsMaven
+}
+
+dependencies {
+    def forgeVersion = "${project.ext.minecraft_version}-${project.ext.forge_version}"
+
+    implementation project(':azlink-common')
+    implementation minecraft.dependency("net.minecraftforge:forge:${forgeVersion}")
+    annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
+}
+
+shadowJar {
+    archiveFileName = "AzLink-Forge-${project.version}-${project.ext.minecraft_version}.jar"
+
+    dependencies {
+        include dependency('com.azuriom:.*')
+    }
+}
+
+build {
+    dependsOn shadowJar
+}

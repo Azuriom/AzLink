@@ -23,6 +23,7 @@ def modules = [
         'universal',
         'universal-legacy',
         'fabric',
+        'forge',
         'neoforge',
 ]
 

@@ -16,6 +16,13 @@ subprojects {
     }
 
     repositories {
+        // Fix for Forge: "Could not find lwjgl-freetype-3.3.3-natives-macos-patch.jar"
+        maven {
+            url = 'https://libraries.minecraft.net'
+            content {
+                includeModule('org.lwjgl', 'lwjgl-freetype')
+            }
+        }
         mavenCentral()
     }
 }
