@@ -59,6 +59,8 @@ When the shop and/or vote plugins are installed on your Azuriom website, the int
 * `%azlink_vote_sites_[id]_url%`: URL of vote site with given ID
 * `%azlink_vote_top_[position]_name%`: name of player at given position in vote ranking
 * `%azlink_vote_top_[position]_votes%`: vote count of player at given position in ranking
+* `%azlink_vote_goal_progress%`: number of votes currently counted toward the monthly vote goal
+* `%azlink_vote_goal_target%`: total number of votes required to reach the monthly vote goal
 
 ### Shop Placeholders
 * `%azlink_shop_goal_progress%`: current progress of the shop goal this month
