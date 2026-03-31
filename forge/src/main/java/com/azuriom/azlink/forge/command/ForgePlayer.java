@@ -4,14 +4,10 @@ import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.forge.MinecraftComponentAdapter;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.permissions.Permission;
-import net.minecraft.server.permissions.PermissionLevel;
 
 import java.util.UUID;
 
 public class ForgePlayer implements CommandSender {
-
-    private static final Permission PERMISSION_LEVEL_OWNERS = new Permission.HasCommandLevel(PermissionLevel.OWNERS);
 
     private final ServerPlayer player;
 
@@ -41,6 +37,6 @@ public class ForgePlayer implements CommandSender {
 
     @Override
     public boolean hasPermission(String permission) {
-        return this.player.permissions().hasPermission(PERMISSION_LEVEL_OWNERS);
+        return this.player.hasPermissions(3);
     }
 }

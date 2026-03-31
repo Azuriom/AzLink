@@ -9,7 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
-import java.net.URI;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -47,8 +46,8 @@ public final class MinecraftComponentAdapter {
         }
 
         if (component.url() != null) {
-            URI uri = URI.create(component.url());
-            result.withStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(uri)));
+            ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, component.url());
+            result.withStyle(Style.EMPTY.withClickEvent(clickEvent));
         }
 
         for (TextComponent child : component.children()) {

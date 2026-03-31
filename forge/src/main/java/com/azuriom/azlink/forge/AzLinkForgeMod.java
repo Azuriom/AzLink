@@ -23,7 +23,7 @@ import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.server.ServerAboutToStartEvent;
 import net.minecraftforge.event.server.ServerStoppingEvent;
-import net.minecraftforge.eventbus.api.listener.SubscribeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
@@ -68,7 +68,6 @@ public final class AzLinkForgeMod implements AzLinkPlatform {
         }
 
         MinecraftForge.EVENT_BUS.register(this);
-        TickEvent.ServerTickEvent.Pre.BUS.addListener(e -> this.tpsTask.run());
     }
 
     @SubscribeEvent
@@ -90,6 +89,11 @@ public final class AzLinkForgeMod implements AzLinkPlatform {
     public void onRegisterCommands(RegisterCommandsEvent event) {
         var command = new ForgeCommandExecutor<>(this.plugin);
         command.register(event.getDispatcher());
+    }
+
+    @SubscribeEvent
+    public void onTickStart(TickEvent.ServerTickEvent.Pre event) {
+        this.tpsTask.run();
     }
 
     @Override

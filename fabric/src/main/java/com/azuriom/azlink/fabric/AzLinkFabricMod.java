@@ -133,7 +133,7 @@ public final class AzLinkFabricMod implements AzLinkPlatform, DedicatedServerMod
     @Override
     public void dispatchConsoleCommand(String command) {
         ServerCommandSource source = getServer().getCommandSource();
-        getServer().getCommandManager().parseAndExecute(source, command);
+        getServer().getCommandManager().executeWithPrefix(source, command);
     }
 
     @Override

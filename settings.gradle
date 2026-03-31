@@ -4,6 +4,10 @@ pluginManagement {
             name = 'Fabric'
             url = 'https://maven.fabricmc.net/'
         }
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
         mavenCentral()
         gradlePluginPortal()
     }
@@ -15,13 +19,13 @@ def modules = [
         'common',
         'bukkit',
         'bungee',
-        'hytale',
+        //'hytale',
         'sponge',
         'sponge-legacy',
         'velocity',
         'nukkit',
-        'universal',
-        'universal-legacy',
+        //'universal',
+        //'universal-legacy',
         'fabric',
         'forge',
         'neoforge',

@@ -10,7 +10,6 @@ import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 
-import java.net.URI;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -48,8 +47,8 @@ public final class MinecraftTextAdapter {
         }
 
         if (component.url() != null) {
-            URI uri = URI.create(component.url());
-            result.fillStyle(Style.EMPTY.withClickEvent(new ClickEvent.OpenUrl(uri)));
+            ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.OPEN_URL, component.url());
+            result.fillStyle(Style.EMPTY.withClickEvent(clickEvent));
         }
 
         for (TextComponent child : component.children()) {
