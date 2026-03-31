@@ -28,7 +28,7 @@ def modules = [
         //'universal-legacy',
         'fabric',
         'forge',
-        'neoforge',
+        //'neoforge',
 ]
 
 modules.each {

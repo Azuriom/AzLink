@@ -1,5 +1,5 @@
 modLoader = "javafml"
-loaderVersion = "[52,)"
+loaderVersion = "[47,)"
 license = "MIT"
 issueTrackerURL="https://github.com/Azuriom/AzLink/issues"
 

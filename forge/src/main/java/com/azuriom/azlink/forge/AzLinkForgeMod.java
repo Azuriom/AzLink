@@ -92,8 +92,10 @@ public final class AzLinkForgeMod implements AzLinkPlatform {
     }
 
     @SubscribeEvent
-    public void onTickStart(TickEvent.ServerTickEvent.Pre event) {
-        this.tpsTask.run();
+    public void onTickStart(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            this.tpsTask.run();
+        }
     }
 
     @Override

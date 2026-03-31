@@ -1,18 +1,18 @@
 plugins {
-    id 'fabric-loom' version '1.12-SNAPSHOT'
+    id 'fabric-loom' version '1.10-SNAPSHOT'
     id 'com.gradleup.shadow' version '9.2.2'
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 
 ext {
-    minecraft_version = '1.21.1'
-    yarn_mappings = '1.21.1+build.3'
+    minecraft_version = '1.20.1'
+    yarn_mappings = '1.20.1+build.10'
     loader_version = '0.18.5'
-    fabric_version = '0.116.9+1.21.1'
+    fabric_version = '0.92.7+1.20.1'
 }
 
 dependencies {

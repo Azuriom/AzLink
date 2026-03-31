@@ -3,7 +3,6 @@ package com.azuriom.azlink.fabric;
 import com.azuriom.azlink.common.chat.TextColor;
 import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.chat.TextDecoration;
-import net.minecraft.component.Component;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
@@ -14,7 +13,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * Adapter to convert {@link TextComponent} to Minecraft {@link Component}.
+ * Adapter to convert {@link TextComponent} to Minecraft {@link Text}.
  */
 public final class MinecraftTextAdapter {
 
