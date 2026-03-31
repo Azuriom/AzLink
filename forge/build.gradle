@@ -1,16 +1,11 @@
 plugins {
-    id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+    id 'net.minecraftforge.gradle' version '[7.0.13,8)'
     id 'com.gradleup.shadow' version '9.3.1'
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
-}
-
 ext {
-    minecraft_version = '1.21.11'
-    forge_version = '61.1.0'
+    minecraft_version = '26.1'
+    forge_version = '62.0.1'
 }
 
 repositories {
@@ -25,6 +20,12 @@ dependencies {
     implementation project(':azlink-common')
     implementation minecraft.dependency("net.minecraftforge:forge:${forgeVersion}")
     annotationProcessor 'net.minecraftforge:eventbus-validator:7.0.1'
+}
+
+processResources {
+    filesMatching('**/*.toml') {
+        expand 'version': version
+    }
 }
 
 shadowJar {

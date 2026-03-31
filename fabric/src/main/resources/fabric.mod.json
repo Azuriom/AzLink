@@ -20,8 +20,8 @@
   },
   "mixins": [],
   "depends": {
-    "fabricloader": ">=0.14.11",
-    "fabric-api": "*",
-    "minecraft": "~1.21"
+    "fabricloader": ">=0.18.4",
+    "fabric-api-base": "*",
+    "minecraft": ">=26.1"
   }
 }

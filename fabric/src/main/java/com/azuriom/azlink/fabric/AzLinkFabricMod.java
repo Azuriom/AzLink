@@ -21,8 +21,9 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.command.ServerCommandSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,11 +113,11 @@ public final class AzLinkFabricMod implements AzLinkPlatform, DedicatedServerMod
 
     @Override
     public Optional<WorldData> getWorldData() {
-        int loadedChunks = Streams.stream(getServer().getWorlds())
-                .mapToInt(w -> w.getChunkManager().getLoadedChunkCount())
+        int loadedChunks = Streams.stream(getServer().getAllLevels())
+                .mapToInt(w -> w.getChunkSource().getLoadedChunksCount())
                 .sum();
-        int entities = Streams.stream(getServer().getWorlds())
-                .mapToInt(w -> Iterables.size(w.iterateEntities()))
+        int entities = Streams.stream(getServer().getAllLevels())
+                .mapToInt(w -> Iterables.size(w.getAllEntities()))
                 .sum();
 
         return Optional.of(new WorldData(this.tpsTask.getTps(), loadedChunks, entities));
@@ -124,25 +125,27 @@ public final class AzLinkFabricMod implements AzLinkPlatform, DedicatedServerMod
 
     @Override
     public Stream<CommandSender> getOnlinePlayers() {
-        return getServer().getPlayerManager()
-                .getPlayerList()
+        return getServer().getPlayerList()
+                .getPlayers()
                 .stream()
                 .map(FabricPlayer::new);
     }
 
     @Override
     public void dispatchConsoleCommand(String command) {
-        ServerCommandSource source = getServer().getCommandSource();
-        getServer().getCommandManager().parseAndExecute(source, command);
+        CommandSourceStack console = this.getServer().createCommandSourceStack();
+        Commands commandManager = console.getServer().getCommands();
+        var parsed = commandManager.getDispatcher().parse(command, console);
+        commandManager.performCommand(parsed, command);
     }
 
     @Override
     public int getMaxPlayers() {
-        return getServer().getMaxPlayerCount();
+        return getServer().getMaxPlayers();
     }
 
     private SchedulerAdapter initScheduler() {
-        return new JavaSchedulerAdapter(getServer()::executeSync);
+        return new JavaSchedulerAdapter(getServer()::executeIfPossible);
     }
 
     @SuppressWarnings("deprecation")

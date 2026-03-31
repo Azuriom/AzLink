@@ -114,7 +114,7 @@ public final class AzLinkForgeMod implements AzLinkPlatform {
 
     @Override
     public PlatformInfo getPlatformInfo() {
-        String name = ModList.get().getModContainerById("forge")
+        String name = ModList.getModContainerById("forge")
                 .map(mc -> mc.getModInfo().getDisplayName())
                 .orElse("Forge");
 
@@ -128,7 +128,7 @@ public final class AzLinkForgeMod implements AzLinkPlatform {
 
     @Override
     public String getPluginVersion() {
-        return ModList.get().getModContainerById(MODID)
+        return ModList.getModContainerById(MODID)
                 .map(mc -> mc.getModInfo().getVersion().toString())
                 .orElse("unknown");
     }

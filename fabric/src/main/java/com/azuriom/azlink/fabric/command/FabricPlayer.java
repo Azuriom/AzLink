@@ -2,20 +2,20 @@ package com.azuriom.azlink.fabric.command;
 
 import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
-import com.azuriom.azlink.fabric.MinecraftTextAdapter;
-import net.minecraft.command.permission.Permission;
-import net.minecraft.command.permission.PermissionLevel;
-import net.minecraft.server.network.ServerPlayerEntity;
+import com.azuriom.azlink.fabric.MinecraftComponentAdapter;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
 
 import java.util.UUID;
 
 public class FabricPlayer implements CommandSender {
 
-    private static final Permission PERMISSION_LEVEL_OWNERS = new Permission.Level(PermissionLevel.OWNERS);
+    private static final Permission PERMISSION_LEVEL_OWNERS = new Permission.HasCommandLevel(PermissionLevel.OWNERS);
 
-    private final ServerPlayerEntity player;
+    private final ServerPlayer player;
 
-    public FabricPlayer(ServerPlayerEntity player) {
+    public FabricPlayer(ServerPlayer player) {
         this.player = player;
     }
 
@@ -26,7 +26,7 @@ public class FabricPlayer implements CommandSender {
 
     @Override
     public UUID getUuid() {
-        return this.player.getUuid();
+        return this.player.getUUID();
     }
 
     @Override
@@ -36,11 +36,11 @@ public class FabricPlayer implements CommandSender {
 
     @Override
     public void sendMessage(TextComponent message) {
-        this.player.sendMessage(MinecraftTextAdapter.toText(message));
+        this.player.sendSystemMessage(MinecraftComponentAdapter.toComponent(message));
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return this.player.getPermissions().hasPermission(PERMISSION_LEVEL_OWNERS);
+        return this.player.permissions().hasPermission(PERMISSION_LEVEL_OWNERS);
     }
 }

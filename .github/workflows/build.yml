@@ -55,8 +55,8 @@ jobs:
       - name: Upload AzLink-Forge.jar
         uses: actions/upload-artifact@v4
         with:
-          name: AzLink-NeoForge
-          path: neoforge/build/libs/AzLink-Forge-*.jar
+          name: AzLink-Forge
+          path: forge/build/libs/AzLink-Forge-*.jar
           overwrite: true
 
       - name: Upload AzLink-NeoForge.jar

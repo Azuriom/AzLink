@@ -2,27 +2,27 @@ package com.azuriom.azlink.fabric.command;
 
 import com.azuriom.azlink.common.chat.TextComponent;
 import com.azuriom.azlink.common.command.CommandSender;
-import com.azuriom.azlink.fabric.MinecraftTextAdapter;
-import net.minecraft.command.permission.Permission;
-import net.minecraft.command.permission.PermissionLevel;
-import net.minecraft.entity.Entity;
-import net.minecraft.server.command.ServerCommandSource;
+import com.azuriom.azlink.fabric.MinecraftComponentAdapter;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.server.permissions.Permission;
+import net.minecraft.server.permissions.PermissionLevel;
+import net.minecraft.world.entity.Entity;
 
 import java.util.UUID;
 
 public class FabricCommandSource implements CommandSender {
 
-    private static final Permission PERMISSION_LEVEL_OWNERS = new Permission.Level(PermissionLevel.OWNERS);
+    private static final Permission PERMISSION_LEVEL_OWNERS = new Permission.HasCommandLevel(PermissionLevel.OWNERS);
 
-    private final ServerCommandSource source;
+    private final CommandSourceStack source;
 
-    public FabricCommandSource(ServerCommandSource source) {
+    public FabricCommandSource(CommandSourceStack source) {
         this.source = source;
     }
 
     @Override
     public String getName() {
-        return this.source.getName();
+        return this.source.getTextName();
     }
 
     @Override
@@ -30,8 +30,8 @@ public class FabricCommandSource implements CommandSender {
         Entity entity = this.source.getEntity();
 
         return entity != null
-                ? entity.getUuid()
-                : UUID.nameUUIDFromBytes(this.source.getName().getBytes());
+                ? entity.getUUID()
+                : UUID.nameUUIDFromBytes(this.source.getTextName().getBytes());
     }
 
     @Override
@@ -41,11 +41,11 @@ public class FabricCommandSource implements CommandSender {
 
     @Override
     public void sendMessage(TextComponent message) {
-        this.source.sendMessage(MinecraftTextAdapter.toText(message));
+        this.source.sendSystemMessage(MinecraftComponentAdapter.toComponent(message));
     }
 
     @Override
     public boolean hasPermission(String permission) {
-        return this.source.getPermissions().hasPermission(PERMISSION_LEVEL_OWNERS);
+        return this.source.permissions().hasPermission(PERMISSION_LEVEL_OWNERS);
     }
 }

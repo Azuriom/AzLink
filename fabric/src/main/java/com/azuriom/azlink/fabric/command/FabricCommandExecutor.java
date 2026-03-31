@@ -11,11 +11,11 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import net.minecraft.server.command.ServerCommandSource;
+import net.minecraft.commands.CommandSourceStack;
 
 import java.util.concurrent.CompletableFuture;
 
-public class FabricCommandExecutor<S extends ServerCommandSource>
+public class FabricCommandExecutor<S extends CommandSourceStack>
         extends AzLinkCommand implements Command<S>, SuggestionProvider<S> {
 
     public FabricCommandExecutor(AzLinkPlugin plugin) {
