@@ -13,14 +13,14 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, Listener {
 
-    private final Map<Integer, VoteSite> voteSites = new HashMap<>();
-    private final Map<String, VoteUser> users = new HashMap<>();
+    private final Map<Integer, VoteSite> voteSites = new ConcurrentHashMap<>();
+    private final Map<String, VoteUser> users = new ConcurrentHashMap<>();
     private final List<TopVoteUser> topVotes = new ArrayList<>();
     private volatile VoteGoal goal;
 
@@ -98,7 +98,7 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
                 case "sites":
                     return sitePlaceholder(parts);
                 case "goal":
-                    return goalPlaceholder(parts);
+                    return goalPlaceholder(parts[1]);
                 default:
                     return null;
             }
@@ -139,18 +139,14 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
         return null;
     }
 
-    private String goalPlaceholder(String[] parts) throws NumberFormatException {
-        VoteGoal currentGoal = this.goal;
+    private String goalPlaceholder(String action) {
+        VoteGoal goal = this.goal;
 
-        if (currentGoal == null) {
-            return "0";
-        }
-
-        switch (parts[1]) {
+        switch (action) {
             case "target":
-                return Integer.toString(currentGoal.target);
+                return goal != null ? Integer.toString(goal.target) : "0";
             case "progress":
-                return Integer.toString(currentGoal.progress);
+                return goal != null ? Integer.toString(goal.progress) : "0";
             default:
                 return null;
         }
@@ -269,7 +265,9 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
     }
 
     private VoteUser getUserFromPlayer(OfflinePlayer player) {
-        return this.users.get(player.getName().toLowerCase(Locale.ROOT));
+        String name = player.getName();
+
+        return name != null ? this.users.get(name.toLowerCase(Locale.ROOT)) : null;
     }
 
     private String formatDuration(Duration duration) {
