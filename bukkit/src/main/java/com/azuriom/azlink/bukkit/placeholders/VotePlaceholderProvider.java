@@ -13,15 +13,16 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, Listener {
 
-    private final Map<Integer, VoteSite> voteSites = new HashMap<>();
-    private final Map<String, VoteUser> users = new HashMap<>();
+    private final Map<Integer, VoteSite> voteSites = new ConcurrentHashMap<>();
+    private final Map<String, VoteUser> users = new ConcurrentHashMap<>();
     private final List<TopVoteUser> topVotes = new ArrayList<>();
+    private volatile VoteGoal goal;
 
     private volatile boolean pendingRefresh = true;
     private volatile Instant lastUpdate = Instant.MIN;
@@ -64,7 +65,9 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
                 "%azlink_vote_sites_[id]_name%",
                 "%azlink_vote_sites_[id]_url%",
                 "%azlink_vote_top_[position]_name%",
-                "%azlink_vote_top_[position]_votes%"
+                "%azlink_vote_top_[position]_votes%",
+                "%azlink_vote_goal_target%",
+                "%azlink_vote_goal_progress%"
         );
     }
 
@@ -94,6 +97,8 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
                     return topPlaceholder(parts);
                 case "sites":
                     return sitePlaceholder(parts);
+                case "goal":
+                    return goalPlaceholder(parts[1]);
                 default:
                     return null;
             }
@@ -132,6 +137,19 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
         }
 
         return null;
+    }
+
+    private String goalPlaceholder(String action) {
+        VoteGoal goal = this.goal;
+
+        switch (action) {
+            case "target":
+                return goal != null ? Integer.toString(goal.target) : "0";
+            case "progress":
+                return goal != null ? Integer.toString(goal.progress) : "0";
+            default:
+                return null;
+        }
     }
 
     private String sitePlaceholder(String[] parts) throws NumberFormatException {
@@ -229,6 +247,7 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
                     this.voteSites.clear();
                     this.users.clear();
                     this.topVotes.clear();
+                    this.goal = response.goal;
 
                     for (VoteSite site : response.sites) {
                         this.voteSites.put(site.id, site);
@@ -246,7 +265,9 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
     }
 
     private VoteUser getUserFromPlayer(OfflinePlayer player) {
-        return this.users.get(player.getName().toLowerCase(Locale.ROOT));
+        String name = player.getName();
+
+        return name != null ? this.users.get(name.toLowerCase(Locale.ROOT)) : null;
     }
 
     private String formatDuration(Duration duration) {
@@ -260,6 +281,12 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
         public List<VoteUser> users = new ArrayList<>();
         @SerializedName("top_votes")
         public List<TopVoteUser> topVotes = new ArrayList<>();
+        public VoteGoal goal;
+    }
+
+    public static class VoteGoal {
+        public int target;
+        public int progress;
     }
 
     public static class VoteUser {
