@@ -2,9 +2,8 @@ package com.azuriom.azlink.bukkit.placeholders;
 
 import com.azuriom.azlink.bukkit.AzLinkBukkitPlugin;
 import com.azuriom.azlink.common.http.client.HttpClient;
-import com.google.common.base.Strings;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.time.Instant;
@@ -36,6 +35,7 @@ public class ShopPlaceholderProvider implements PlaceholderProvider {
                 "%azlink_shop_goal_progress%",
                 "%azlink_shop_goal_total%",
                 "%azlink_shop_goal_percentage%",
+                "%azlink_shop_goal_progressbar%",
                 "%azlink_shop_top_[position]_name%",
                 "%azlink_shop_top_[position]_amount%",
                 "%azlink_shop_top_[position]_currency%",
@@ -81,16 +81,14 @@ public class ShopPlaceholderProvider implements PlaceholderProvider {
 
         switch (type) {
             case "progress":
-                return String.valueOf(this.goalProgress);
+                return Double.toString(this.goalProgress);
             case "total":
-                return String.valueOf(this.goalTotal);
+                return Double.toString(this.goalTotal);
             case "percentage":
                 return String.format("%.2f%%", proportion * 100);
             case "progressbar":
-                int length = 15;
-                int filled = (int) Math.round(length * Math.min(proportion, 1));
-
-                return Strings.repeat("■", filled) + ChatColor.GRAY + Strings.repeat("■", length - filled);
+                FileConfiguration config = this.plugin.getConfig();
+                return formatProgressBar(proportion, config.getConfigurationSection("placeholders"));
             default:
                 return null;
         }

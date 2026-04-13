@@ -39,3 +39,12 @@ placeholders:
   # Use %H/%M/%S for zero-padded (e.g. 03, 12) and %h/%m/%s for non-padded (e.g. 3, 12).
   # Example: "%H:%M:%S" for "01:30:05", and "%h h %m m %s s" for "1 h 30 m 5 s".
   duration-format: "%H:%M:%S"
+
+  # Configuration for the progress bar of the vote and shop placeholders for the monthly goal.
+  progress-bar:
+    # The character used to represent the filled portion of the progress bar.
+    fill: "█"
+    # The character used to delimit the filled and unfilled portions of the progress bar.
+    separator: "&7"
+    # The total length of the progress bar in characters.
+    length: 15

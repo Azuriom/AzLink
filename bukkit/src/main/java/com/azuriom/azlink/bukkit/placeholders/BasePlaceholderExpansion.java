@@ -69,13 +69,13 @@ public class BasePlaceholderExpansion extends PlaceholderExpansion implements Ta
     public void start() {
         this.providers.put("money", new MoneyPlaceholderProvider());
 
-        if (plugin.getConfig().getBoolean("placeholders.shop")) {
-            this.providers.put("shop", new ShopPlaceholderProvider(plugin));
+        if (this.plugin.getConfig().getBoolean("placeholders.shop")) {
+            this.providers.put("shop", new ShopPlaceholderProvider(this.plugin));
             this.plugin.getLogger().info("Shop placeholders successfully enabled.");
         }
 
-        if (plugin.getConfig().getBoolean("placeholders.vote")) {
-            this.providers.put("vote", new VotePlaceholderProvider(plugin));
+        if (this.plugin.getConfig().getBoolean("placeholders.vote")) {
+            this.providers.put("vote", new VotePlaceholderProvider(this.plugin));
             this.plugin.getLogger().info("Vote placeholders successfully enabled.");
         }
     }

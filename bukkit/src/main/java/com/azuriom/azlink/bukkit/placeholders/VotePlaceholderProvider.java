@@ -4,6 +4,7 @@ import com.azuriom.azlink.bukkit.AzLinkBukkitPlugin;
 import com.azuriom.azlink.common.http.client.HttpClient;
 import com.google.gson.annotations.SerializedName;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.HandlerList;
@@ -67,7 +68,9 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
                 "%azlink_vote_top_[position]_name%",
                 "%azlink_vote_top_[position]_votes%",
                 "%azlink_vote_goal_target%",
-                "%azlink_vote_goal_progress%"
+                "%azlink_vote_goal_progress%",
+                "%azlink_vote_goal_percentage%",
+                "%azlink_vote_goal_progressbar%"
         );
     }
 
@@ -139,14 +142,20 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
         return null;
     }
 
-    private String goalPlaceholder(String action) {
+    private String goalPlaceholder(String type) {
         VoteGoal goal = this.goal;
+        double proportion = goal != null ? (double) goal.progress / goal.target : 0;
 
-        switch (action) {
+        switch (type) {
             case "target":
                 return goal != null ? Integer.toString(goal.target) : "0";
             case "progress":
                 return goal != null ? Integer.toString(goal.progress) : "0";
+            case "percentage":
+                return String.format("%.2f%%", proportion * 100);
+            case "progressbar":
+                FileConfiguration config = this.plugin.getConfig();
+                return formatProgressBar(proportion, config.getConfigurationSection("placeholders"));
             default:
                 return null;
         }
@@ -154,7 +163,7 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
 
     private String sitePlaceholder(String[] parts) throws NumberFormatException {
         if (parts[1].equals("count")) {
-            return Integer.toString(voteSites.size());
+            return Integer.toString(this.voteSites.size());
         }
 
         if (parts.length < 3) {
@@ -162,7 +171,7 @@ public class VotePlaceholderProvider implements PlaceholderProvider, Runnable, L
         }
 
         int id = Integer.parseInt(parts[1]);
-        VoteSite site = voteSites.get(id);
+        VoteSite site = this.voteSites.get(id);
 
         if (site == null) {
             return "<unknown>";

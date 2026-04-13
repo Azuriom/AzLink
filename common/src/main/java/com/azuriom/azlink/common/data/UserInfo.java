@@ -13,11 +13,11 @@ public class UserInfo {
     }
 
     public int getId() {
-        return id;
+        return this.id;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setMoney(double money) {
@@ -25,6 +25,6 @@ public class UserInfo {
     }
 
     public double getMoney() {
-        return money;
+        return this.money;
     }
 }

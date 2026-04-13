@@ -15,10 +15,10 @@ public class EditMoneyResult {
     }
 
     public double getOldBalance() {
-        return oldBalance;
+        return this.oldBalance;
     }
 
     public double getNewBalance() {
-        return newBalance;
+        return this.newBalance;
     }
 }

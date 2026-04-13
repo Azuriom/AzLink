@@ -12,17 +12,24 @@ This plugin currently supports the following platforms:
 * [Velocity](https://velocitypowered.com/)
 * [Nukkit](https://cloudburstmc.org/articles/)
 * [Hytale](https://hytale.com/)
+* [Fabric](https://fabricmc.net/)
+* [Forge](https://files.minecraftforge.net/)
+* [NeoForge](https://neoforged.net/)
 
 > [!NOTE]
-> NeoForge and Fabric versions of the plugin are available in the [dev/mods branch](https://github.com/Azuriom/AzLink/tree/dev/mods).
+> Code for Fabric, Forge and NeoForge versions of AzLink is available in the [dev/mods branch](https://github.com/Azuriom/AzLink/tree/dev/mods).
 
 ## Setup
 
-### Installation
+### Download
 
-The plugin works with the same .jar for all the platforms, except Bukkit/Spigot 1.7.10 which requires the legacy version of the plugin.
+The latest version of AzLink for _Minecraft: Java Edition_ can be downloaded on [Modrinth](https://modrinth.com/project/azuriom).
 
-You just need to download the plugin, add it to the `plugins` folder of your server, and restart your server.
+For Nukkit and Hytale, you can download the plugin from the [GitHub Releases](https://github.com/Azuriom/AzLink/releases).
+
+## Installation
+
+Download AzLink, add it to the `plugins` or `mods` folder of your server, and restart your server.
 
 ## Building
 
@@ -61,11 +68,14 @@ When the shop and/or vote plugins are installed on your Azuriom website, the int
 * `%azlink_vote_top_[position]_votes%`: vote count of player at given position in ranking
 * `%azlink_vote_goal_progress%`: number of votes currently counted toward the monthly vote goal
 * `%azlink_vote_goal_target%`: total number of votes required to reach the monthly vote goal
+* `%azlink_vote_goal_percentage%`: percentage progress toward the monthly vote goal
+* `%azlink_vote_goal_progressbar%`: progress bar of recent votes toward the monthly vote goal
 
 ### Shop Placeholders
 * `%azlink_shop_goal_progress%`: current progress of the shop goal this month
 * `%azlink_shop_goal_total%`: total amount of the shop goal this month
 * `%azlink_shop_goal_percentage%`: percentage progress of the shop goal this month
+* `%azlink_shop_goal_progressbar%`: progress bar of the shop goal this month
 * `%azlink_shop_top_[position]_name%`: name of top customer at given position this month
 * `%azlink_shop_top_[position]_amount%`: amount spent by top customer at given position
 * `%azlink_shop_top_[position]_currency%`: currency of top customer at given position

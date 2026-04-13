@@ -1,7 +1,10 @@
 package com.azuriom.azlink.bukkit.placeholders;
 
+import com.google.common.base.Strings;
 import me.clip.placeholderapi.PlaceholderAPIPlugin;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -46,5 +49,15 @@ public interface PlaceholderProvider {
                 .replace("%h", Long.toString(hours))
                 .replace("%m", Long.toString(minutes))
                 .replace("%s", Long.toString(seconds));
+    }
+
+    default String formatProgressBar(double progress, ConfigurationSection config) {
+        int totalLength = config.getInt("progress-bar.length", 15);
+        String fill = config.getString("progress-bar.fill", "█");
+        String separator = config.getString("progress-bar.separator", "&7");
+        int filled = (int) Math.round(totalLength * Math.max(Math.min(progress, 1), 0));
+        String sep = ChatColor.translateAlternateColorCodes('&', separator);
+
+        return Strings.repeat(fill, filled) + sep + Strings.repeat(fill, totalLength - filled);
     }
 }

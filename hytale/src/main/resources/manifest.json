@@ -9,7 +9,7 @@
     }
   ],
   "Website": "https://azuriom.com",
-  "ServerVersion": "*",
+  "ServerVersion": "${hytaleVersion}",
   "Main": "com.azuriom.azlink.hytale.AzLinkHytalePlugin",
   "IncludesAssetPack": false
 }

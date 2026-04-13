@@ -32,19 +32,19 @@ public class InjectedHttpServer implements HttpServer {
     public void start() {
         // Make sure Netty isn't relocated
         if (!HttpDecoder.class.getSuperclass().getName().startsWith("io.")) {
-            plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is not supported with AzLink legacy.");
+            this.plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is not supported with AzLink legacy.");
             return;
         }
 
         if (!Bukkit.getServer().getClass().getSimpleName().equals("CraftServer")) {
-            plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is only supported on CraftBukkit based servers. You can use an other port for AzLink.");
+            this.plugin.getLoggerAdapter().error("Injecting HTTP server on server channel is only supported on CraftBukkit based servers. You can use an other port for AzLink.");
             return;
         }
 
         try {
             inject();
         } catch (Exception e) {
-            plugin.getLoggerAdapter().error("Unable to inject HTTP server. Try using a different port for AzLink", e);
+            this.plugin.getLoggerAdapter().error("Unable to inject HTTP server. Try using a different port for AzLink", e);
         }
     }
 
@@ -82,7 +82,7 @@ public class InjectedHttpServer implements HttpServer {
 
                 injectServerChannel((ChannelFuture) item);
 
-                plugin.getLoggerAdapter().info("HTTP server successfully injected.");
+                this.plugin.getLoggerAdapter().info("HTTP server successfully injected.");
 
                 return;
             }
@@ -96,7 +96,7 @@ public class InjectedHttpServer implements HttpServer {
             return; // We are not injected
         }
 
-        Channel channel = serverChannel.channel();
+        Channel channel = this.serverChannel.channel();
 
         channel.eventLoop().submit(() -> {
             try {
@@ -106,7 +106,7 @@ public class InjectedHttpServer implements HttpServer {
             }
         });
 
-        serverChannel = null;
+        this.serverChannel = null;
     }
 
     private void injectServerChannel(ChannelFuture future) {
@@ -139,9 +139,9 @@ public class InjectedHttpServer implements HttpServer {
             @Override
             protected void initChannel(Channel channel) {
                 try {
-                    channel.eventLoop().submit(() -> channel.pipeline().addFirst(new HttpDecoder(plugin.getPlugin())));
+                    channel.eventLoop().submit(() -> channel.pipeline().addFirst(new HttpDecoder(InjectedHttpServer.this.plugin.getPlugin())));
                 } catch (Exception e) {
-                    plugin.getLoggerAdapter().error("Unable to init channel", e);
+                    InjectedHttpServer.this.plugin.getLoggerAdapter().error("Unable to init channel", e);
                 }
             }
         };

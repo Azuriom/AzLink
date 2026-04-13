@@ -19,6 +19,6 @@ public class WebsiteResponse {
     }
 
     public List<UserInfo> getUsers() {
-        return users;
+        return this.users;
     }
 }

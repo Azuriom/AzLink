@@ -49,7 +49,7 @@ public class AzLinkCommand {
                 return;
             }
 
-            plugin.getScheduler().executeAsync(() -> setup(sender, args[1], args[2]));
+            this.plugin.getScheduler().executeAsync(() -> setup(sender, args[1], args[2]));
             return;
         }
 
