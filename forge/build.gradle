@@ -30,8 +30,13 @@ processResources {
     }
 }
 
+reobf {
+    shadowJar {}
+}
+
 shadowJar {
     archiveFileName = "AzLink-Forge-${project.version}-${project.ext.minecraft_version}.jar"
+    finalizedBy 'reobfShadowJar'
 
     dependencies {
         include dependency('com.azuriom:.*')
