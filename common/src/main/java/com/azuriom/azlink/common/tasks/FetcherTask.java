@@ -101,6 +101,7 @@ public class FetcherTask implements Runnable {
 
             for (String command : entry.getValue()) {
                 command = command.replace("{player}", playerName)
+                        .replace("{name}", playerName)
                         .replace("{uuid}", player != null ? player.getUuid().toString() : "?");
 
                 this.plugin.getLogger().info("Dispatching command for player " + playerName + ": " + command);

@@ -23,9 +23,7 @@ This plugin currently supports the following platforms:
 
 ### Download
 
-The latest version of AzLink for _Minecraft: Java Edition_ can be downloaded on [Modrinth](https://modrinth.com/project/azuriom).
-
-For Nukkit and Hytale, you can download the plugin from the [GitHub Releases](https://github.com/Azuriom/AzLink/releases).
+The latest version of AzLink can be downloaded from [AzLink download page](https://azuriom.com/en/azlink).
 
 ## Installation
 

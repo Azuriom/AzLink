@@ -38,8 +38,6 @@ public final class HytaleComponentAdapter {
                 return message.bold(true);
             case ITALIC:
                 return message.italic(true);
-            case UNDERLINE:
-                return message; //.underlined(true); TODO missing method in Hytale
             default:
                 return message;
         }

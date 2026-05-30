@@ -2,7 +2,7 @@ repositories {
     maven { url = 'https://maven.hytale.com/release/' }
 }
 
-def hytaleVersion = '2026.03.26-89796e57b'
+def hytaleVersion = '0.5.3'
 
 dependencies {
     implementation project(':azlink-common')

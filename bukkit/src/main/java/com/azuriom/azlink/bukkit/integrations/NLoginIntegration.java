@@ -39,7 +39,10 @@ public class NLoginIntegration extends BaseNLogin implements Listener {
 
     @EventHandler
     public void onPasswordUpdate(PasswordUpdateEvent event) {
-        handleUpdatePassword(event.getPlayerId(), event.getPlayerName(), event.getNewPassword());
+        // Password is null on unregister, see https://github.com/Azuriom/AzLink/issues/63
+        if (event.getNewPassword() != null) {
+            handleUpdatePassword(event.getPlayerId(), event.getPlayerName(), event.getNewPassword());
+        }
     }
 
     public static void register(AzLinkBukkitPlugin plugin) {

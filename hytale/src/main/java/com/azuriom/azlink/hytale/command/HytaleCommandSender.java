@@ -16,7 +16,7 @@ public class HytaleCommandSender implements com.azuriom.azlink.common.command.Co
 
     @Override
     public String getName() {
-        return this.sender.getDisplayName();
+        return this.sender.getUsername();
     }
 
     @Override
