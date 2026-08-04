@@ -7,26 +7,26 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class HashTest {
 
     @ParameterizedTest
     @MethodSource("hashTestData")
     void testSha256(String[] data) {
-        assertEquals(data[1], Hash.SHA_256.hash(data[0]));
+        assertTrue(Hash.SHA_256.matches(data[0], data[1]));
     }
 
     @ParameterizedTest
     @MethodSource("hashTestData")
     void testSha384(String[] data) {
-        assertEquals(data[2], Hash.SHA_384.hash(data[0]));
+        assertTrue(Hash.SHA_384.matches(data[0], data[2]));
     }
 
     @ParameterizedTest
     @MethodSource("hashTestData")
     void testSha512(String[] data) {
-        assertEquals(data[3], Hash.SHA_512.hash(data[0]));
+        assertTrue(Hash.SHA_512.matches(data[0], data[3]));
     }
 
     private static Stream<Arguments> hashTestData() {

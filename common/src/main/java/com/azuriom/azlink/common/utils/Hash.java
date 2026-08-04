@@ -5,9 +5,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * Simple class to create md5 and sha hash.
+ * Simple class to compare MD5 and SHA hashes.
  *
- * <p>md5 and sha1 shouldn't be used anymore.</p>
+ * <p>MD5 and SHA-1 shouldn't be used anymore.</p>
  */
 public enum Hash {
 
@@ -29,21 +29,40 @@ public enum Hash {
         return this.name;
     }
 
-    public String hash(String text) {
+    /**
+     * Hashes {@code text}, decodes the expected hexadecimal hash
+     * into bytes, then compares both byte arrays.
+     */
+    public boolean matches(String text, String expectedHexHash) {
+        if (expectedHexHash == null) {
+            return false;
+        }
+
         try {
             MessageDigest digest = MessageDigest.getInstance(this.name);
-            byte[] hash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
-            StringBuilder result = new StringBuilder(2 * hash.length);
+            byte[] actualHash = digest.digest(text.getBytes(StandardCharsets.UTF_8));
+            byte[] expectedHash = decodeHex(expectedHexHash);
 
-            for (byte b : hash) {
-                String hex = Integer.toHexString(b & 0xff);
-
-                (hex.length() > 1 ? result : result.append('0')).append(hex);
-            }
-
-            return result.toString();
+            return expectedHash != null && MessageDigest.isEqual(actualHash, expectedHash);
         } catch (NoSuchAlgorithmException e) {
             throw new UnsupportedOperationException(this.name + " is not supported on this platform", e);
         }
+    }
+
+    private static byte[] decodeHex(String value) {
+        byte[] result = new byte[value.length() / 2];
+
+        for (int i = 0; i < result.length; i++) {
+            int high = Character.digit(value.charAt(i * 2), 16);
+            int low = Character.digit(value.charAt(i * 2 + 1), 16);
+
+            if (high < 0 || low < 0) {
+                return null;
+            }
+
+            result[i] = (byte) ((high << 4) | low);
+        }
+
+        return result;
     }
 }
