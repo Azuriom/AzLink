@@ -17,6 +17,7 @@ ext {
 
 dependencies {
     implementation project(':azlink-common')
+    implementation include('io.netty:netty-codec-http:4.1.97.Final')
     minecraft "com.mojang:minecraft:${project.ext.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.ext.yarn_mappings}:v2"
     modImplementation "net.fabricmc:fabric-loader:${project.ext.loader_version}"
@@ -37,6 +38,7 @@ shadowJar {
     dependencies {
         exclude 'net.fabricmc:.*'
         include dependency('com.azuriom:.*')
+        include dependency('io.netty:netty-codec-http')
     }
 }
 

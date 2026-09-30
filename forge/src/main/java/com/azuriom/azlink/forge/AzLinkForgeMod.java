@@ -181,7 +181,7 @@ public final class AzLinkForgeMod implements AzLinkPlatform {
     }
 
     private SchedulerAdapter initScheduler() {
-        return new JavaSchedulerAdapter(this.getServer()::executeIfPossible);
+        return new JavaSchedulerAdapter(this.getServer());
     }
 
     private MinecraftServer getServer() {

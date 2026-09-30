@@ -37,6 +37,7 @@ configurations {
 
 dependencies {
     shade project(':azlink-common')
+    shade 'io.netty:netty-codec-http:4.1.97.Final'
 }
 
 processResources {
@@ -51,6 +52,7 @@ shadowJar {
 
     dependencies {
         include dependency('com.azuriom:.*')
+        include dependency('io.netty:netty-codec-http')
     }
 }
 

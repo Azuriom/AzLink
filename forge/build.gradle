@@ -17,6 +17,8 @@ dependencies {
     def forgeVersion = "${project.ext.minecraft_version}-${project.ext.forge_version}"
 
     implementation project(':azlink-common')
+    implementation 'io.netty:netty-codec-http:4.1.97.Final'
+
     minecraft "net.minecraftforge:forge:${forgeVersion}"
 }
 
@@ -40,6 +42,7 @@ shadowJar {
 
     dependencies {
         include dependency('com.azuriom:.*')
+        include dependency('io.netty:netty-codec-http')
     }
 }
 
