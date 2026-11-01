@@ -162,12 +162,43 @@ public class AzLinkCommand {
             return;
         }
 
-        if (!user.isPresent()) {
-            sender.sendMessage(TextComponent.text("Unable to find player '" + args[2] + "', please try again in few seconds or use '/azlink fetch'.", TextColor.RED));
+        if (user.isPresent()) {
+            editMoney(sender, user.get(), action, amount);
             return;
         }
 
-        this.plugin.getUserManager().editMoney(user.get(), action, amount)
+        String name = args[2];
+
+        if (!isOnline(name)) {
+            sendUnknownPlayer(sender, name);
+            return;
+        }
+
+        // The player may have joined after the last data fetch, refresh the users before giving up
+        MoneyAction moneyAction = action;
+
+        this.plugin.fetch().whenComplete((v, ex) -> {
+            Optional<UserInfo> fetchedUser = this.plugin.getUserManager().getUserByName(name);
+
+            if (fetchedUser.isPresent()) {
+                editMoney(sender, fetchedUser.get(), moneyAction, amount);
+            } else {
+                sendUnknownPlayer(sender, name);
+            }
+        });
+    }
+
+    private boolean isOnline(String name) {
+        return this.plugin.getPlatform().getOnlinePlayers()
+                .anyMatch(player -> player.getName().equalsIgnoreCase(name));
+    }
+
+    private void sendUnknownPlayer(CommandSender sender, String name) {
+        sender.sendMessage(TextComponent.text("Unable to find player '" + name + "', please try again in few seconds or use '/azlink fetch'.", TextColor.RED));
+    }
+
+    private void editMoney(CommandSender sender, UserInfo user, MoneyAction action, double amount) {
+        this.plugin.getUserManager().editMoney(user, action, amount)
                 .thenAccept(u -> {
                     sender.sendMessage(TextComponent.text("Money has been edited successfully.", TextColor.GREEN));
                     sender.sendMessage(TextComponent.text("New balance: " + u.getMoney(), TextColor.GREEN));

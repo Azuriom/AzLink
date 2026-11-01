@@ -20,6 +20,7 @@ public class FetcherTask implements Runnable {
 
     private Instant lastFullDataSent = Instant.MIN;
     private Instant lastRequest = Instant.MIN;
+    private volatile CompletableFuture<Void> lastFetch = CompletableFuture.completedFuture(null);
 
     public FetcherTask(AzLinkPlugin plugin) {
         this.plugin = plugin;
@@ -37,9 +38,13 @@ public class FetcherTask implements Runnable {
     public CompletableFuture<Void> fetch() {
         Instant now = Instant.now();
 
-        if (!this.plugin.getConfig().isValid()
-                || this.lastRequest.isAfter(now.minusSeconds(5))) {
+        if (!this.plugin.getConfig().isValid()) {
             return CompletableFuture.completedFuture(null);
+        }
+
+        if (this.lastRequest.isAfter(now.minusSeconds(5))) {
+            // A request was just sent, let callers wait for its response instead of returning immediately
+            return this.lastFetch;
         }
 
         this.plugin.getPlatform().prepareDataAsync();
@@ -52,9 +57,13 @@ public class FetcherTask implements Runnable {
         boolean sendFullData = currentTime.getMinute() % 15 == 0
                 && this.lastFullDataSent.isBefore(now.minusSeconds(60));
 
-        return CompletableFuture.supplyAsync(() -> this.plugin.getServerData(sendFullData), sync)
+        CompletableFuture<Void> fetch = CompletableFuture.supplyAsync(() -> this.plugin.getServerData(sendFullData), sync)
                 .thenComposeAsync(this.plugin.getHttpClient()::postData, async)
                 .thenAcceptAsync(res -> handleResponse(res, sendFullData), sync);
+
+        this.lastFetch = fetch;
+
+        return fetch;
     }
 
     private void handleResponse(WebsiteResponse response, boolean sendFullData) {
