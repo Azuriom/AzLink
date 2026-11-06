@@ -5,6 +5,7 @@ import com.azuriom.azlink.common.command.CommandSender;
 import com.azuriom.azlink.common.data.UserInfo;
 import com.azuriom.azlink.common.data.WebsiteResponse;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,14 +13,18 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class FetcherTask implements Runnable {
+
+    private static final Duration MIN_REQUEST_INTERVAL = Duration.ofSeconds(5);
 
     private final AzLinkPlugin plugin;
 
     private Instant lastFullDataSent = Instant.MIN;
     private Instant lastRequest = Instant.MIN;
+    private CompletableFuture<Void> scheduledFetch;
 
     public FetcherTask(AzLinkPlugin plugin) {
         this.plugin = plugin;
@@ -27,6 +32,10 @@ public class FetcherTask implements Runnable {
 
     @Override
     public void run() {
+        if (Instant.now().isBefore(nextRequestTime())) {
+            return;
+        }
+
         fetch().exceptionally(ex -> {
             this.plugin.getLogger().error("Unable to send data to the website: " + ex.getMessage());
 
@@ -34,12 +43,19 @@ public class FetcherTask implements Runnable {
         });
     }
 
-    public CompletableFuture<Void> fetch() {
+    public synchronized CompletableFuture<Void> fetch() {
         Instant now = Instant.now();
 
-        if (!this.plugin.getConfig().isValid()
-                || this.lastRequest.isAfter(now.minusSeconds(5))) {
+        if (!this.plugin.getConfig().isValid()) {
             return CompletableFuture.completedFuture(null);
+        }
+
+        Instant nextRequest = nextRequestTime();
+
+        if (now.isBefore(nextRequest)) {
+            // The request in progress may already have missed what the caller is waiting for,
+            // like commands the website just queued, so send another one as soon as possible
+            return scheduleFetch(Duration.between(now, nextRequest).toMillis() + 1);
         }
 
         this.plugin.getPlatform().prepareDataAsync();
@@ -55,6 +71,35 @@ public class FetcherTask implements Runnable {
         return CompletableFuture.supplyAsync(() -> this.plugin.getServerData(sendFullData), sync)
                 .thenComposeAsync(this.plugin.getHttpClient()::postData, async)
                 .thenAcceptAsync(res -> handleResponse(res, sendFullData), sync);
+    }
+
+    private Instant nextRequestTime() {
+        return this.lastRequest.plus(MIN_REQUEST_INTERVAL);
+    }
+
+    private CompletableFuture<Void> scheduleFetch(long delayMillis) {
+        if (this.scheduledFetch != null) {
+            return this.scheduledFetch;
+        }
+
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        this.scheduledFetch = future;
+
+        this.plugin.getScheduler().scheduleAsyncLater(() -> {
+            synchronized (this) {
+                this.scheduledFetch = null;
+            }
+
+            fetch().whenComplete((result, ex) -> {
+                if (ex != null) {
+                    future.completeExceptionally(ex);
+                } else {
+                    future.complete(null);
+                }
+            });
+        }, delayMillis, TimeUnit.MILLISECONDS);
+
+        return future;
     }
 
     private void handleResponse(WebsiteResponse response, boolean sendFullData) {
